@@ -1,0 +1,72 @@
+[
+    {
+      "discipline": "Chant",
+      "schedules": [
+        {
+          "day": "Mercredi",
+          "timeSlots": [
+            {
+                "startHour": "14H",
+                "endHour": "18H"
+            }
+          ]
+        }   
+      ],
+      "pricings": [
+        {
+            "profile": "Adulte",
+            "pricing": "65"
+        }
+      ],
+      "place": {
+        "title": "Permanence ASAM",
+        "streetAddress": "60 avenue de Cessart",
+        "postalCode": "50100",
+        "city": "CHERBOURG-EN-COTENTIN",
+        "latitude": 49.644728045985666,
+        "longitude": -1.6319322004669419
+      },
+      "information": "Chansons françaises et internationales"
+    },
+    {
+      "discipline": "Danse Country",
+      "schedules": [
+        {
+          "day": "Mercredi",
+            "timeSlots": [
+                {
+                    "startHour": "19H",
+                    "endHour": "20H"
+                },
+                {
+                    "startHour": "20H",
+                    "endHour": "21H"
+                },
+                {
+                    "startHour": "21H",
+                    "endHour": "22H"
+                }
+            ]
+        }
+      ],
+      "pricings": [
+        {
+          "profile": "Seul",
+          "pricing": "78"
+        },
+        {
+          "profile": "Couple",
+          "pricing": "134"
+        }
+      ],
+      "place": {
+        "title": "Porte des 3 Hangars",
+        "streetAddress": "La Saline",
+        "postalCode": "50120",
+        "city": "CHERBOURG-EN-COTENTIN",
+        "latitude": 49.6518949282649,
+        "longitude": -1.6451449915493113
+      },
+      "information": "Débutants, novices et confirmés"
+    }
+]
