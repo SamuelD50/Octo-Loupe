@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
 
 class AgeSelectionPage extends StatefulWidget {
-  const AgeSelectionPage({super.key});
+  final List<String> selectedAges;
+  const AgeSelectionPage({super.key, required this.selectedAges});
 
   @override
   AgeSelectionPageState createState() => AgeSelectionPageState();
 }
 
 class AgeSelectionPageState extends State<AgeSelectionPage> {
+  late List<String> selectedAges;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAges = List.from(widget.selectedAges);
+  }
 
   final List<Map<String, String>> ages = [
     {"name": "0-2 ans", "image": "assets/images/ballon.jpg"},
@@ -20,8 +28,6 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
     {"name": "Adulte", "image": "assets/images/individuel.jpg"},
     {"name": "Senior", "image": "assets/images/cyclisme.jpg"},
   ];
-
-  List<String> selectedAges = [];
 
   @override
   Widget build(BuildContext context) {

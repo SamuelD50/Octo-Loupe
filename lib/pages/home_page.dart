@@ -93,11 +93,15 @@ class HomePageState extends State<HomePage> {
                     Icons.category,
                     'Par catégorie',
                     () async {
-                      final categories = await Navigator.push(
+                      final List<String>? categories = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => CategorySelectionPage(selectedCategories: selectedCategories)),
                       );
-                      return categories;
+                      if (categories != null) {
+                        setState(() {
+                          selectedCategories = categories;
+                        });
+                      }
                     },
                   ),
                   _buildCriteriaTile(
@@ -105,11 +109,15 @@ class HomePageState extends State<HomePage> {
                     Icons.accessibility_new,
                     'Par âge',
                     () async {
-                      final ages = await Navigator.push(
+                      final List<String>? ages = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => AgeSelectionPage(selectedAges: selectedAges)),
                       );
-                      return ages;
+                      if (ages != null) {
+                        setState(() {
+                          selectedAges = ages;
+                        });
+                      }
                     },
                   ),
                   /* _buildCriteriaTile(
@@ -151,6 +159,24 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
             ],
+            if (selectedAges.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8.0,
+                  children: selectedAges.map((age) {
+                    return Chip(
+                      label: Text(age),
+                      onDeleted: () {
+                        setState(() {
+                          selectedAges.remove(age);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
             Padding(
               padding: const EdgeInsets.all(16),
               child: ElevatedButton(
@@ -170,14 +196,9 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCriteriaTile(BuildContext context, IconData icon, String label, Future<List<String>> Function() pageBuilder) {
+  Widget _buildCriteriaTile(BuildContext context, IconData icon, String label, Future<void> Function() pageBuilder) {
     return GestureDetector(
-      onTap: () async {
-        final categories = await pageBuilder();
-        setState(() {
-          selectedCategories = List<String>.from(categories);
-        });
-      },
+      onTap: pageBuilder,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
