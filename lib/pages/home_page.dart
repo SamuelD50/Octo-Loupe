@@ -13,6 +13,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   List<String> selectedCategories = [];
+  List<String> selectedAges = [];
   
   @override
   Widget build(BuildContext context) {
@@ -94,18 +95,24 @@ class HomePageState extends State<HomePage> {
                     () async {
                       final categories = await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CategorySelectionPage()),
+                        MaterialPageRoute(builder: (context) => CategorySelectionPage(selectedCategories: selectedCategories)),
                       );
                       return categories;
                     },
                   ),
-                  /* _buildCriteriaTile(
+                  _buildCriteriaTile(
                     context,
                     Icons.accessibility_new,
                     'Par âge',
-                    AgeSelectionPage(),
+                    () async {
+                      final ages = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AgeSelectionPage(selectedAges: selectedAges)),
+                      );
+                      return ages;
+                    },
                   ),
-                  _buildCriteriaTile(
+                  /* _buildCriteriaTile(
                     context,
                     Icons.date_range,
                     'Par jour',

@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
 
 class CategorySelectionPage extends StatefulWidget {
-  const CategorySelectionPage({super.key});
+  final List<String> selectedCategories;
+  const CategorySelectionPage({super.key, required this.selectedCategories});
 
   @override
   CategorySelectionPageState createState() => CategorySelectionPageState();
 }
 
 class CategorySelectionPageState extends State<CategorySelectionPage> {
+  late List<String> selectedCategories;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedCategories = List.from(widget.selectedCategories);
+  }
 
   final List<Map<String, String>> categories = [
     {"name": "Ballon", "image": "assets/images/ballon.jpg"},
@@ -24,8 +32,6 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
     {"name": "Plein air", "image": "assets/images/plein_air.jpg"},
     {"name": "Mécanique", "image": "assets/images/mecanique.jpg"},
   ];
-
-  List<String> selectedCategories = [];
 
   @override
   Widget build(BuildContext context) {
