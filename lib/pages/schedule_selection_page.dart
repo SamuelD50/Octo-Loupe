@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TimeSelectionPage extends StatelessWidget {
-  const TimeSelectionPage({super.key});
+class ScheduleSelectionPage extends StatelessWidget {
+  const ScheduleSelectionPage({super.key});
 
   @override
   Widget build(BuildContext context) {

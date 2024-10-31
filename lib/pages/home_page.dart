@@ -2,6 +2,9 @@ import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'category_selection_page.dart';
 import 'age_selection_page.dart';
+import 'day_selection_page.dart';
+import 'schedule_selection_page.dart';
+import 'sector_selection_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +17,9 @@ class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   List<String> selectedCategories = [];
   List<String> selectedAges = [];
+  List<String> selectedDays = [];
+  List<String> selectedSchedules = [];
+  List<String> selectedSectors = [];
   
   @override
   Widget build(BuildContext context) {
@@ -82,7 +88,6 @@ class HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-
             // Critères de sélection
             Expanded(
               child: ListView(
@@ -120,24 +125,54 @@ class HomePageState extends State<HomePage> {
                       }
                     },
                   ),
-                  /* _buildCriteriaTile(
+                  _buildCriteriaTile(
                     context,
                     Icons.date_range,
                     'Par jour',
-                    CategorySelectionPage(),
+                    () async {
+                      final List<String>? days = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DaySelectionPage(selectedDays:selectedDays)),
+                      );
+                      if (days != null) {
+                        setState(() {
+                          selectedDays = days;
+                        });
+                      }
+                    },
                   ),
                   _buildCriteriaTile(
                     context,
                     Icons.access_time,
                     'Par horaire',
-                    CategorySelectionPage(),
+                    () async {
+                      final List<String>? schedules = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ScheduleSelectionPage(selectedSchedules:selectedSchedules)),
+                      );
+                      if (schedules != null) {
+                        setState(() {
+                          selectedSchedules = schedules;
+                        });
+                      }
+                    },
                   ),
                   _buildCriteriaTile(
                     context,
                     Icons.apartment_rounded,
                     'Par secteur',
-                    CategorySelectionPage(),
-                  ), */
+                    () async {
+                      final List<String>? sectors = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SectorSelectionPage(selectedSectors:selectedSectors)),
+                      );
+                      if (sectors != null) {
+                        setState(() {
+                          selectedSectors = sectors;
+                        });
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -174,6 +209,60 @@ class HomePageState extends State<HomePage> {
                       },
                     );
                   }).toList(),
+                ),
+              ),
+            ],
+            if (selectedDays.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8.0,
+                  children: selectedDays.map((day) {
+                    return Chip(
+                      label: Text(day),
+                      onDeleted: () {
+                        setState(() {
+                          selectedDays.remove(day);
+                        });
+                      },
+                    );
+                  }).toList()
+                ),
+              ),
+            ],
+            if (selectedSchedules.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8.0,
+                  children: selectedSchedules.map((schedule) {
+                    return Chip(
+                      label: Text(schedule),
+                      onDeleted: () {
+                        setState(() {
+                          selectedSchedules.remove(schedule);
+                        });
+                      },
+                    );
+                  }).toList()
+                ),
+              ),
+            ],
+            if (selectedSectors.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8.0,
+                  children: selectedSectors.map((sector) {
+                    return Chip(
+                      label: Text(sector),
+                      onDeleted: () {
+                        setState(() {
+                          selectedSectors.remove(sector);
+                        });
+                      },
+                    );
+                  }).toList()
                 ),
               ),
             ],
