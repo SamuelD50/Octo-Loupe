@@ -22,7 +22,7 @@ class ActivityPageState extends State<ActivityPage> {
   }
 
   Future<void> _loadActivities() async {
-    final response = await http.get(Uri.parse('https://raw.githubusercontent.com/SamuelD50/Octo-Loupe/refs/heads/main/db.json'));
+    final response = await http.get(Uri.parse('https://raw.githubusercontent.com/SamuelD50/Octo-Loupe/refs/heads/main/lib/db.json'));
 
     if(response.statusCode == 200) {
       List<dynamic> jsonData = jsonDecode(response.body);

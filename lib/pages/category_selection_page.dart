@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
 
-class CategoriesPage extends StatelessWidget {
-  CategoriesPage({super.key});
+class CategorySelectionPage extends StatefulWidget {
+  const CategorySelectionPage({super.key});
+
+  @override
+  CategorySelectionPageState createState() => CategorySelectionPageState();
+}
+
+class CategorySelectionPageState extends State<CategorySelectionPage> {
 
   final List<Map<String, String>> categories = [
     {"name": "Ballon", "image": "assets/images/ballon.jpg"},
@@ -19,6 +25,8 @@ class CategoriesPage extends StatelessWidget {
     {"name": "Mécanique", "image": "assets/images/mecanique.jpg"},
   ];
 
+  List<String> selectedCategories = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,52 +42,92 @@ class CategoriesPage extends StatelessWidget {
             ],
           ),
         ),
-        child: GridView.builder(
-          padding: const EdgeInsets.all(8.0),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Deux colonnes
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-          ),
-          itemCount: categories.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                /* // Naviguer vers la page des sports pour cette catégorie
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SportsPage(category: categories[index]["name"]!),
-                  ),
-                ); */
-              },
-              child: Card(
-                elevation: 4,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      categories[index]["image"]!,
-                      fit: BoxFit.cover,
-                    ),
-                    Container(
-                      color: Colors.black54,
-                      child: Center(
-                        child: Text(
-                          categories[index]["name"]!,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+        child: Column(
+          children: [ 
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Deux colonnes
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                ),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final categoryName = categories[index]["name"]!;
+                  final isSelected = selectedCategories.contains(categoryName);
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          selectedCategories.remove(categoryName);
+                          debugPrint('Désélectionné: $categoryName');
+                        } else {
+                          selectedCategories.add(categoryName);
+                          debugPrint('Sélectionné: $categoryName');
+                        }
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.blueAccent : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: isSelected
+                          ? []
+                          : [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(2, 2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                      ),
+                      child: Card(
+                        elevation: isSelected ? 2 : 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                categories[index]["image"]!,
+                                fit:BoxFit.cover,
+                              ),
+                            ),
+                            Container(
+                              color: Colors.black54,
+                              child: Center(
+                                child: Text(
+                                  categoryName,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, selectedCategories);
+              },
+              child: Text('Valider'),
+            ),
+          ],
         ),
       ),
     );
@@ -87,6 +135,7 @@ class CategoriesPage extends StatelessWidget {
 }
         
 
+/* 
 // Exemple de page pour afficher les sports d'une catégorie
 class SportsPage extends StatelessWidget {
   final String category;
@@ -115,4 +164,4 @@ class SportsPage extends StatelessWidget {
       ),
     );
   }
-}
+} */

@@ -1,6 +1,7 @@
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'category_selection_page.dart';
+import 'age_selection_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  List<String> selectedCategories = [];
   
   @override
   Widget build(BuildContext context) {
@@ -89,35 +91,59 @@ class HomePageState extends State<HomePage> {
                     context,
                     Icons.category,
                     'Par catégorie',
-                    CategoriesPage(),
+                    () async {
+                      final categories = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CategorySelectionPage()),
+                      );
+                      return categories;
+                    },
                   ),
-                  _buildCriteriaTile(
+                  /* _buildCriteriaTile(
                     context,
                     Icons.accessibility_new,
                     'Par âge',
-                    CategoriesPage(),
+                    AgeSelectionPage(),
                   ),
                   _buildCriteriaTile(
                     context,
                     Icons.date_range,
                     'Par jour',
-                    CategoriesPage(),
+                    CategorySelectionPage(),
                   ),
                   _buildCriteriaTile(
                     context,
                     Icons.access_time,
                     'Par horaire',
-                    CategoriesPage(),
+                    CategorySelectionPage(),
                   ),
                   _buildCriteriaTile(
                     context,
                     Icons.apartment_rounded,
                     'Par secteur',
-                    CategoriesPage(),
-                  ),
+                    CategorySelectionPage(),
+                  ), */
                 ],
               ),
             ),
+            if (selectedCategories.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8.0,
+                  children: selectedCategories.map((category) {
+                    return Chip(
+                      label: Text(category),
+                      onDeleted: () {
+                        setState(() {
+                          selectedCategories.remove(category);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
             Padding(
               padding: const EdgeInsets.all(16),
               child: ElevatedButton(
@@ -137,13 +163,13 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCriteriaTile(BuildContext context, IconData icon, String label, Widget page) {
+  Widget _buildCriteriaTile(BuildContext context, IconData icon, String label, Future<List<String>> Function() pageBuilder) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context, 
-          MaterialPageRoute(builder: (context) => page),
-        );
+      onTap: () async {
+        final categories = await pageBuilder();
+        setState(() {
+          selectedCategories = List<String>.from(categories);
+        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
