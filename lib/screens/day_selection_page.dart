@@ -1,36 +1,53 @@
 import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
 
-class AgeSelectionPage extends StatefulWidget {
-  final List<String> selectedAges;
-  const AgeSelectionPage({super.key, required this.selectedAges});
+class DaySelectionPage extends StatefulWidget {
+  final List<String> selectedDays;
+  final bool isSport;
+
+  const DaySelectionPage({
+    super.key,
+    required this.selectedDays,
+    required this.isSport,
+  });
 
   @override
-  AgeSelectionPageState createState() => AgeSelectionPageState();
+  DaySelectionPageState createState() => DaySelectionPageState();
 }
 
-class AgeSelectionPageState extends State<AgeSelectionPage> {
-  late List<String> selectedAges;
+class DaySelectionPageState extends State<DaySelectionPage> {
+  late List<String> selectedDays;
 
   @override
   void initState() {
     super.initState();
-    selectedAges = List.from(widget.selectedAges);
+    selectedDays = List.from(widget.selectedDays);
   }
 
-  final List<Map<String, String>> ages = [
-    {"name": "0-2 ans", "image": "assets/images/ballon.jpg"},
-    {"name": "2-4 ans", "image": "assets/images/nautique.jpg"},
-    {"name": "4-7 ans", "image": "assets/images/combat.jpg"},
-    {"name": "7-11 ans", "image": "assets/images/athlétisme.jpg"},
-    {"name": "11-15 ans", "image": "assets/images/raquette.jpg"},
-    {"name": "15-18 ans", "image": "assets/images/collectif.jpg"},
-    {"name": "Adulte", "image": "assets/images/individuel.jpg"},
-    {"name": "Senior", "image": "assets/images/cyclisme.jpg"},
+  final List<Map<String, String>> sportDays =[
+    {"name": "Lundi", "image": "assets/images/ballon.jpg"},
+    {"name": "Mardi", "image": "assets/images/nautique.jpg"},
+    {"name": "Mercredi", "image": "assets/images/combat.jpg"},
+    {"name": "Jeudi", "image": "assets/images/athlétisme.jpg"},
+    {"name": "Vendredi", "image": "assets/images/raquette.jpg"},
+    {"name": "Samedi", "image": "assets/images/collectif.jpg"},
+    {"name": "Dimanche", "image": "assets/images/individuel.jpg"},
+  ];
+
+  final List<Map<String, String>> cultureDays =[
+    {"name": "Lundi", "image": "assets/images/ballon.jpg"},
+    {"name": "Mardi", "image": "assets/images/nautique.jpg"},
+    {"name": "Mercredi", "image": "assets/images/combat.jpg"},
+    {"name": "Jeudi", "image": "assets/images/athlétisme.jpg"},
+    {"name": "Vendredi", "image": "assets/images/raquette.jpg"},
+    {"name": "Samedi", "image": "assets/images/collectif.jpg"},
+    {"name": "Dimanche", "image": "assets/images/individuel.jpg"},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final days = widget.isSport ? sportDays : cultureDays;
+    
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Container(
@@ -50,23 +67,24 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Deux colonnes
+                  crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
-                itemCount: ages.length,
+                itemCount: days.length,
                 itemBuilder: (context, index) {
-                  final ageName = ages[index]["name"]!;
-                  final isSelected = selectedAges.contains(ageName);
+                  final dayName = days[index]["name"]!;
+                  final isSelected = selectedDays.contains(dayName);
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
                         if (isSelected) {
-                          selectedAges.remove(ageName);
-                          debugPrint('Désélectionné: $ageName');
+                          selectedDays.remove(dayName);
+                          debugPrint('Désélectionné: $dayName');
                         } else {
-                          selectedAges.add(ageName);
+                          selectedDays.add(dayName);
+                          debugPrint('Séléctionné: $dayName');
                         }
                       });
                     },
@@ -80,7 +98,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                           ? []
                           : [
                               BoxShadow(
-                                color:Colors.black54,
+                                color: Colors.black54,
                                 offset: Offset(2, 2),
                                 blurRadius: 4,
                               ),
@@ -88,7 +106,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                       ),
                       child: Card(
                         elevation: isSelected ? 2 : 4,
-                        shape : RoundedRectangleBorder(
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Stack(
@@ -97,7 +115,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
-                                ages[index]["image"]!,
+                                days[index]["image"]!,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -105,7 +123,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                               color: Colors.black54,
                               child: Center(
                                 child: Text(
-                                  ageName,
+                                  dayName,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
@@ -120,17 +138,17 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                     ),
                   );
                 },
-              ),
+              )
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, selectedAges);
+                Navigator.pop(context, selectedDays);
               },
               child: Text('Valider'),
             ),
           ],
         ),
-      ),
+      )
     );
   }
 }

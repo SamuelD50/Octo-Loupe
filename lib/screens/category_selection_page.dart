@@ -3,7 +3,13 @@ import '../components/custom_app_bar.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   final List<String> selectedCategories;
-  const CategorySelectionPage({super.key, required this.selectedCategories});
+  final bool isSport;
+
+  const CategorySelectionPage({
+    super.key,
+    required this.selectedCategories,
+    required this.isSport,
+    });
 
   @override
   CategorySelectionPageState createState() => CategorySelectionPageState();
@@ -18,23 +24,31 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
     selectedCategories = List.from(widget.selectedCategories);
   }
 
-  final List<Map<String, String>> categories = [
+  final List<Map<String, String>> sportCategories = [
     {"name": "Ballon", "image": "assets/images/ballon.jpg"},
-    {"name": "Nautique", "image": "assets/images/nautique.jpg"},
-    {"name": "Combat", "image": "assets/images/combat.jpg"},
+    {"name": "Nautique et aquatique", "image": "assets/images/nautique.jpg"},
+    {"name": "Combat et force", "image": "assets/images/combat.jpg"},
     {"name": "Athlétisme", "image": "assets/images/athlétisme.jpg"},
     {"name": "Raquette", "image": "assets/images/raquette.jpg"},
-    {"name": "Collectif", "image": "assets/images/collectif.jpg"},
-    {"name": "Individuel", "image": "assets/images/individuel.jpg"},
     {"name": "Cyclisme", "image": "assets/images/cyclisme.jpg"},
-    {"name": "Equestre", "image": "assets/images/equestre.jpg"},
+    {"name": "Equestre et animaux", "image": "assets/images/equestre.jpg"},
     {"name": "Glisse", "image": "assets/images/glisse.jpg"},
-    {"name": "Plein air", "image": "assets/images/plein_air.jpg"},
+    {"name": "Tir et précision", "image": "assets/images/plein_air.jpg"},
     {"name": "Mécanique", "image": "assets/images/mecanique.jpg"},
+    {"name": "Gymnastique", "image": "assets/images/mecanique.jpg"}
+  ];
+
+  final List<Map<String, String>> cultureCategories = [
+    {"name": "Beaux-arts", "image": "assets/images/ballon.jpg"},
+    {"name": "Théâtre", "image": "assets/images/nautique.jpg"},
+    {"name": "Histoire de l'art", "image": "assets/images/combat.jpg"},
+    {"name": "Philosophie", "image": "assets/images/athlétisme.jpg"},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final categories = widget.isSport ? sportCategories : cultureCategories;
+    
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Container(

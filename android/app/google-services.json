@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "655391099057",
+    "project_id": "octoloupe-c814f",
+    "storage_bucket": "octoloupe-c814f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655391099057:android:207679935e6ca7d8f73a90",
+        "android_client_info": {
+          "package_name": "com.octoloupe.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgZRAPkpSeyQiQOFDg7ONBiSmqRe10wWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655391099057:android:49901312e6d28543f73a90",
+        "android_client_info": {
+          "package_name": "com.octoloupe.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgZRAPkpSeyQiQOFDg7ONBiSmqRe10wWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

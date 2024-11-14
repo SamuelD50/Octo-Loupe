@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'components/custom_app_bar.dart';
-import 'components/custom_bottom_navigation_bar.dart';
+import 'components/custom_navbar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() => runApp(const App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const MyApp());
+}
 
-class App extends StatelessWidget {
-  const App({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +19,10 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
       home: const MainPage(),
+     /*  routes: {
+        '/login': (context) => const AuthPage(onTap: ),
+        '/contact' : (context) => const ContactPage(),
+      } */
     );
   }
 }
@@ -25,7 +35,7 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Container(),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomNavBar(),
     );
   }
 }

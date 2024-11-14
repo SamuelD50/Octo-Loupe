@@ -14,6 +14,7 @@ class ContactPage extends StatefulWidget {
 }
 
 class ContactPageState extends State<ContactPage> {
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -23,6 +24,22 @@ class ContactPageState extends State<ContactPage> {
 
   final List<String> _titles = ['Mademoiselle', 'Madame', 'Monsieur'];
   String? _selectedTitle;
+
+  //
+  //https://www.youtube.com/watch?v=RDwst9icjAY
+ /*  Future sendEmail() async {
+    final email = 'octoloupe@gmail.com';
+    final token = ''
+
+    final smtpServer = gmailSaslXoauth2(email, accessToken);
+    final message = Message()
+      ..from = Address(email, 'Application Octoloupe Info Service')
+      ..recipients = ['duflos.samuel@gmail.com']
+      ..subject = $subject
+      ..text = 'Titre: $title\nPrénom: $firstName\nNom: $name\nEmail: $email\n\nMessage:\n$body';
+  } */
+
+  //
 
   Future<void> sendEmail(String title, String firstName, String name, String email, String subject, String body) async {
     final smtpServer = gmailSaslXoauth2(dotenv.env['EMAIL'] ?? '', dotenv.env['PASSWORD'] ?? '');
@@ -71,7 +88,7 @@ class ContactPageState extends State<ContactPage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amber,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 16),

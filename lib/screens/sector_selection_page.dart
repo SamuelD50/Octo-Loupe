@@ -1,35 +1,46 @@
 import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
 
-class DaySelectionPage extends StatefulWidget {
-  final List<String> selectedDays;
-  const DaySelectionPage({super.key, required this.selectedDays});
+class SectorSelectionPage extends StatefulWidget {
+  final List<String> selectedSectors;
+  final bool isSport;
+
+  const SectorSelectionPage({
+    super.key,
+    required this.selectedSectors,
+    required this.isSport,
+  });
 
   @override
-  DaySelectionPageState createState() => DaySelectionPageState();
+  SectorSelectionPageState createState() => SectorSelectionPageState();
 }
 
-class DaySelectionPageState extends State<DaySelectionPage> {
-  late List<String> selectedDays;
+class SectorSelectionPageState extends State<SectorSelectionPage> {
+  late List<String> selectedSectors;
 
   @override
   void initState() {
     super.initState();
-    selectedDays = List.from(widget.selectedDays);
+    selectedSectors = List.from(widget.selectedSectors);
   }
 
-  final List<Map<String, String>> days =[
-    {"name": "Lundi", "image": "assets/images/ballon.jpg"},
-    {"name": "Mardi", "image": "assets/images/nautique.jpg"},
-    {"name": "Mercredi", "image": "assets/images/combat.jpg"},
-    {"name": "Jeudi", "image": "assets/images/athlétisme.jpg"},
-    {"name": "Vendredi", "image": "assets/images/raquette.jpg"},
-    {"name": "Samedi", "image": "assets/images/collectif.jpg"},
-    {"name": "Dimanche", "image": "assets/images/individuel.jpg"},
+  final List<Map<String, String>> sportSectors = [
+    {"name": "Equeurdreville-Haineville", "image": "assets/images/ballon.jpg"},
+    {"name": "Cherbourg-Centre", "image": "assets/images/nautique.jpg"},
+    {"name": "Tourlaville", "image": "assets/images/combat.jpg"},
+    {"name": "Querqueville", "image": "assets/images/athlétisme.jpg"},
+  ];
+
+  final List<Map<String, String>> cultureSectors = [
+    {"name": "Equeurdreville-Haineville", "image": "assets/images/ballon.jpg"},
+    {"name": "Cherbourg-Centre", "image": "assets/images/nautique.jpg"},
+    {"name": "Tourlaville", "image": "assets/images/combat.jpg"},
+    {"name": "Querqueville", "image": "assets/images/athlétisme.jpg"},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final sectors = widget.isSport ? sportSectors : cultureSectors;
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Container(
@@ -53,20 +64,20 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
-                itemCount: days.length,
+                itemCount: sectors.length,
                 itemBuilder: (context, index) {
-                  final dayName = days[index]["name"]!;
-                  final isSelected = selectedDays.contains(dayName);
+                  final sectorName = sectors[index]["name"]!;
+                  final isSelected = selectedSectors.contains(sectorName);
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
                         if (isSelected) {
-                          selectedDays.remove(dayName);
-                          debugPrint('Désélectionné: $dayName');
+                          selectedSectors.remove(sectorName);
+                          debugPrint('Sélectionné: $sectorName');
                         } else {
-                          selectedDays.add(dayName);
-                          debugPrint('Séléctionné: $dayName');
+                          selectedSectors.add(sectorName);
+                          debugPrint('Sélectionné: $sectorName');
                         }
                       });
                     },
@@ -79,12 +90,12 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         boxShadow: isSelected
                           ? []
                           : [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(2, 2),
-                                blurRadius: 4,
-                              ),
-                            ],
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(2, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
                       ),
                       child: Card(
                         elevation: isSelected ? 2 : 4,
@@ -97,7 +108,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
-                                days[index]["image"]!,
+                                sectors[index]["image"]!,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -105,7 +116,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               color: Colors.black54,
                               child: Center(
                                 child: Text(
-                                  dayName,
+                                  sectorName,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
@@ -124,7 +135,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, selectedDays);
+                Navigator.pop(context, selectedSectors);
               },
               child: Text('Valider'),
             ),
