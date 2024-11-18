@@ -16,7 +16,7 @@ class AuthService {
     String firstName,
     String name,
     String role,
-    ) async {
+  ) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -37,7 +37,7 @@ class AuthService {
         ); 
 
         // Save user in Firestore
-        DatabaseService(user.uid).saveUser(newUser);
+        await DatabaseService(user.uid).saveUser(newUser);
 
         if (!user.emailVerified) {
           await user.sendEmailVerification();
@@ -57,6 +57,54 @@ class AuthService {
     return null;
   }
 
+  Future<UserCredential?> createAdminWithEmailAndPassword(
+    String email,
+    String password,
+    String firstName,
+    String name,
+    String role,
+  ) async {
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        String role = "admin";
+
+        UserModel newUser = UserModel(
+          uid: user.uid,
+          email: user.email ?? '',
+          password: password,
+          firstName: firstName,
+          name: name,
+          role: role,
+        );
+
+        await DatabaseService(user.uid).saveUser(newUser);
+
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+          debugPrint('Email verification is sent to ${user.email}');
+        }
+      }
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        debugPrint('The password provided is too weak');
+      } else if (e.code == 'email-already-in-use') {
+        debugPrint('The account already exists for that email.');
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+    return null;
+  }
+
+
   //SignIn with email and password
   Future<UserCredential?> signInWithEmailAndPassword(
     String email,
@@ -71,10 +119,13 @@ class AuthService {
       User? user = userCredential.user;
       if (user != null) {
         DatabaseService(user.uid).getUser(user.uid).listen((userData) {
-          debugPrint('User data: ${userData.firstName} ${userData.name}');
+          if (userData != null) {
+            debugPrint('User data: ${userData.firstName} ${userData.name}');
+          } else {
+            debugPrint('User data not found for user: ${user.uid}');
+          }
         });
       }
-
       return userCredential; 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

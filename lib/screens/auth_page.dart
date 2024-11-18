@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:octoloupe/model/user_model.dart';
+import 'package:octoloupe/screens/admin_central_page.dart';
 import 'package:octoloupe/services/authentication.dart';
+
 import '../components/custom_app_bar.dart';
 import '../components/loader_spinning.dart';
 
@@ -20,21 +24,6 @@ class AuthPageState extends State<AuthPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    firstNameController.dispose();
-    nameController.dispose();
-    newEmailController.dispose();
-    newPasswordController.dispose();
-    super.dispose();
-  }
-
- // Toggle SignIn/SignOut?
-
- // Loading?
-
   final _formSignUpKey = GlobalKey<FormState>();
   //Controllers pour la partie Création de compte
   final firstNameController = TextEditingController();
@@ -42,7 +31,17 @@ class AuthPageState extends State<AuthPage> {
   final newEmailController = TextEditingController();
   final newPasswordController = TextEditingController();
 
+  final _formSignUpAdminKey = GlobalKey<FormState>();
+  //Controller pour la créationd de compte admin
+  final firstNameAdminController = TextEditingController();
+  final nameAdminController = TextEditingController();
+  final newEmailAdminController = TextEditingController();
+  final newPasswordAdminController = TextEditingController();
+
   bool loading = false;
+  int _selectedIndex = 0;
+  bool _isPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
 
   final AuthService _authService = AuthService();
 
@@ -70,7 +69,28 @@ class AuthPageState extends State<AuthPage> {
 
       if (userCredential != null) {
         debugPrint('Connexion réussie');
-        Navigator.pushReplacementNamed(context, '/home');
+
+        //Collect user data from Firestore
+        User? user = userCredential.user;
+        if (user != null) {
+          final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+
+          if (!mounted) return;
+          
+          if (userDoc.exists) {
+            final userData = UserModel.fromFirestore(userDoc);
+            if (userData.role == 'admin') {
+              debugPrint('Redirection vers AdminPage');
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(builder: (context) => AdminCentralPage()),
+              );
+            } else {
+              debugPrint('Redirection vers HomePage');
+              Navigator.pushReplacementNamed(context, '/HomePage');
+            }
+          }
+        }
       } else {
         debugPrint('Connexion failed');
       }
@@ -78,6 +98,48 @@ class AuthPageState extends State<AuthPage> {
       if (!mounted) return;
 
       setState(() {  
+        loading = false;
+      });
+      debugPrint('Erreur: $e');
+    }
+  }
+
+  Future<void> _signUpAdmin() async {
+    final firstName = firstNameAdminController.text.trim();
+    final name = nameAdminController.text.trim();
+    final email = newEmailAdminController.text.trim();
+    final password = newPasswordAdminController.text.trim();
+
+    if (firstName.isEmpty || name.isEmpty || email.isEmpty || password.isEmpty) {
+      debugPrint('Veuillez remplir tous les champs');
+      return;
+    }
+
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
+        email, password, firstName, name, 'admin',
+      );
+
+      if(!mounted) return;
+
+      setState(() {
+        loading = false;
+      });
+
+      if (userCredential != null) {
+        debugPrint('Compte administrateur créé avec succès');
+        Navigator.pushReplacementNamed(context, '/AdminCentralPage');
+      } else {
+        debugPrint('Echec de la création de compte');
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
         loading = false;
       });
       debugPrint('Erreur: $e');
@@ -112,13 +174,13 @@ class AuthPageState extends State<AuthPage> {
 
       if (userCredential != null) {
         debugPrint('Compte créé avec succès');
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/HomePage');
       } else {
         debugPrint('Echec de la création de compte');
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       setState(() {
         loading = false;
       });
@@ -126,173 +188,239 @@ class AuthPageState extends State<AuthPage> {
     }
   }
 
+  void _clearFormFields() {
+    emailController.clear();
+    passwordController.clear();
+    firstNameController.clear();
+    nameController.clear();
+    newEmailController.clear();
+    newPasswordController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return loading ? Loading() : Scaffold(
       appBar: const CustomAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-            colors: [
-              Color(0xFF5D71FF),
-              Color(0xFFF365C7),
-            ],
-          ),
-        ), 
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Connexion',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [
+                  Color(0xFF5D71FF),
+                  Color(0xFFF365C7),
+                ],
+              ),
+            ),
+          ), 
+          Align(
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Text(
+                      'Mon compte',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Form(
-                  key: _formSignInKey,
-                  child: Column(
+                  const SizedBox(height: 32),
+                  ToggleButtons(
+                    isSelected: [_selectedIndex == 0, _selectedIndex == 1],
+                    onPressed: (int index) {
+                      setState(() {
+                        _selectedIndex = index;
+                        _clearFormFields();
+                      });
+                    },
+                    color: Colors.black,
+                    selectedColor: Colors.white,
+                    fillColor: Color(0xFF5B59B4),
+                    borderColor: Color(0xFF5B59B4),
+                    selectedBorderColor: Color(0xFF5B59B4),
+                    borderRadius:  BorderRadius.circular(20.0),
                     children: [
-                      TextFormField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'E-mail',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre e-mail';
-                          }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                            return 'Veuillez entrer un e-mail valide';
-                          }
-                          return null;
-                        },
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 1),
+                        child: Center(child: Text('Se connecter')),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: passwordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Mot de passe',
-                          border: OutlineInputBorder(),
-                        ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre mot de passe';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => _signIn(),
-                        child: const Text('Se connecter'),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 1),
+                        child: Center(child: Text('Créer un compte')),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 32),
-
-                const Divider(
-                  color: Colors.white,
-                  thickness: 1,
-                  indent: 20,
-                  endIndent: 20,
-                ),
-
-                const SizedBox(height: 32),
-
-                Text(
-                  'Créer un compte',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  const SizedBox(height: 32),
+                  _selectedIndex == 0 ?
+                  Form(
+                    key: _formSignInKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: emailController,
+                            decoration: const InputDecoration(
+                              labelText: 'E-mail',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer votre e-mail';
+                              }
+                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                return 'Veuillez entrer un e-mail valide';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: passwordController,
+                            obscureText: !_isPasswordVisible,
+                            decoration: InputDecoration(
+                              labelText: 'Mot de passe',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer votre mot de passe';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        ElevatedButton(
+                          onPressed: () => _signIn(),
+                          child: const Text('Se connecter'),
+                        ),
+                        const SizedBox(height: 32)
+                      ],
+                    ),
+                  ) :
+                  Form(
+                    key: _formSignUpKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child:TextFormField(
+                            controller: firstNameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Prénom',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer votre prénom';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: nameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Nom',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer votre nom';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child:TextFormField(
+                            controller: newEmailController,
+                            decoration: const InputDecoration(
+                              labelText: 'E-mail',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer votre e-mail';
+                              }
+                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                return 'Veuillez entrer un e-mail valide';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: newPasswordController,
+                            obscureText: !_isNewPasswordVisible,
+                            decoration: InputDecoration(
+                              labelText: 'Mot de passe',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isNewPasswordVisible = !_isNewPasswordVisible;
+                                  });
+                                },
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer votre mot de passe';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        ElevatedButton(
+                          onPressed: () => _signUp(),
+                          child: const Text('Créer un compte'),
+                        ),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Form(
-                  key: _formSignUpKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: firstNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Prénom',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre prénom';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nom',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre nom';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: newEmailController,
-                        decoration: const InputDecoration(
-                          labelText: 'E-mail',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre e-mail';
-                          }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                            return 'Veuillez entrer un e-mail valide';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: newPasswordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Mot de passe',
-                          border: OutlineInputBorder(),
-                        ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre mot de passe';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => _signUp(),
-                        child: const Text('Créer un compte'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
   }
 }

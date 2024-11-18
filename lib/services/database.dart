@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../model/user_model.dart';
+import 'dart:async';
 
 class DatabaseService {
   final String uid;
@@ -20,10 +21,21 @@ class DatabaseService {
   }
 
   //Collect user from Firestore
-  Stream<UserModel> getUser(String uid) {
+  Stream<UserModel?> getUser(String uid) {
+    debugPrint('Fetching user with UID: $uid');
     return userCollection
       .doc(uid)
       .snapshots()
-      .map((snapshot) => UserModel.fromFirestore(snapshot));
+      .map((snapshot) {
+        if (snapshot.exists) {
+          return UserModel.fromFirestore(snapshot);
+        } else {
+          debugPrint('No user data found for UID: $uid');
+          return null;
+        }
+      }).handleError((error) {
+        debugPrint('Error fetching user data: $error');
+        return null;
+      });
   }
 }

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:octoloupe/screens/admin_central_page.dart';
+
+import 'package:octoloupe/screens/auth_page.dart';
+import 'package:octoloupe/screens/contact_page.dart';
+import 'package:octoloupe/screens/home_page.dart';
 import 'components/custom_app_bar.dart';
 import 'components/custom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,10 +24,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
       home: const MainPage(),
-     /*  routes: {
-        '/login': (context) => const AuthPage(onTap: ),
-        '/contact' : (context) => const ContactPage(),
-      } */
+      initialRoute: '/',
+      routes: {
+        '/HomePage': (context) => HomePage(),
+        '/AuthPage': (context) => AuthPage(),
+        '/ContactPage': (context) => ContactPage(),
+        '/AdminCentralPage': (context) => AdminCentralPage(),
+      }
     );
   }
 }
