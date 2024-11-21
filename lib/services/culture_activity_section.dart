@@ -21,15 +21,26 @@ class CultureService {
 
   //Read CultureCategories
   Future<List<CultureCategory>> getCultureCategories() async {
-    final snapshot = await FirebaseFirestore.instance
-      .collection('cultures')
-      .doc('categories')
-      .collection('items')
-      .get();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+        .collection('filters')
+        .doc('cultures')
+        .collection('categories')
+        .get();
 
-    return snapshot.docs.map((doc) {
-      return CultureCategory.fromJson(doc.data());
-    }).toList();
+      debugPrint('Nombre de catégories récupérées : ${snapshot.docs.length}');
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        final name = data['name'] ?? 'Catégorie inconnue';
+        final image = data['image'] ?? 'assets/images/glisse.jpg';
+
+        debugPrint('Catégorie récupérée: $name, Image: $image');
+        return CultureCategory(name: name, image: image);
+      }).toList();
+    } catch (e) {
+      debugPrint('Error during collecting categories: $e');
+      return [];
+    }
   }
 
   //Update CultureCategory
