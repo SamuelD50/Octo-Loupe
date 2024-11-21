@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
+import 'package:octoloupe/model/sport_filter_model.dart';
+import 'package:octoloupe/model/culture_filter_model.dart';
+import 'package:octoloupe/services/sport_activity_section.dart';
+import 'package:octoloupe/services/culture_activity_section.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   final List<String> selectedCategories;
@@ -17,171 +22,155 @@ class CategorySelectionPage extends StatefulWidget {
 
 class CategorySelectionPageState extends State<CategorySelectionPage> {
   late List<String> selectedCategories;
+  late Future<List<SportCategory>> sportCategoriesFonction;
 
   @override
   void initState() {
     super.initState();
     selectedCategories = List.from(widget.selectedCategories);
+    sportCategoriesFonction = SportService().getSportCategories();
   }
 
-  final List<Map<String, String>> sportCategories = [
-    {"name": "Ballon", "image": "assets/images/ballon.jpg"},
-    {"name": "Nautique et aquatique", "image": "assets/images/nautique.jpg"},
-    {"name": "Combat et force", "image": "assets/images/combat.jpg"},
-    {"name": "Athlétisme", "image": "assets/images/athlétisme.jpg"},
-    {"name": "Raquette", "image": "assets/images/raquette.jpg"},
-    {"name": "Cyclisme", "image": "assets/images/cyclisme.jpg"},
-    {"name": "Equestre et animaux", "image": "assets/images/equestre.jpg"},
-    {"name": "Glisse", "image": "assets/images/glisse.jpg"},
-    {"name": "Tir et précision", "image": "assets/images/plein_air.jpg"},
-    {"name": "Mécanique", "image": "assets/images/mecanique.jpg"},
-    {"name": "Gymnastique", "image": "assets/images/mecanique.jpg"}
-  ];
-
-  final List<Map<String, String>> cultureCategories = [
+/*   final List<Map<String, String>> cultureCategories = [
     {"name": "Beaux-arts", "image": "assets/images/ballon.jpg"},
     {"name": "Théâtre", "image": "assets/images/nautique.jpg"},
     {"name": "Histoire de l'art", "image": "assets/images/combat.jpg"},
     {"name": "Philosophie", "image": "assets/images/athlétisme.jpg"},
-  ];
+  ]; */
 
   @override
   Widget build(BuildContext context) {
-    final categories = widget.isSport ? sportCategories : cultureCategories;
+/*     final categories = widget.isSport ? sportCategories : cultureCategories; */
     
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-            colors: [
-              Color(0xFF5D71FF),
-              Color(0xFFF365C7),
-            ],
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [
+                  Color(0xFF5D71FF),
+                  Color(0xFFF365C7),
+                ],
+              ),
+            ),
           ),
-        ),
-        child: Column(
-          children: [ 
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(8.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Deux colonnes
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                ),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final categoryName = categories[index]["name"]!;
-                  final isSelected = selectedCategories.contains(categoryName);
+          Align(
+            alignment: Alignment.center,
+            child: SingleChildScrollView(   
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [ 
+                  FutureBuilder<List<SportCategory>>(
+                    future: sportCategoriesFonction,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('Aucune catégorie trouvée'));
+                      }
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          selectedCategories.remove(categoryName);
-                          debugPrint('Désélectionné: $categoryName');
-                        } else {
-                          selectedCategories.add(categoryName);
-                          debugPrint('Sélectionné: $categoryName');
-                        }
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.blueAccent : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: isSelected
-                          ? []
-                          : [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(2, 2),
-                                blurRadius: 4,
-                              ),
-                            ],
-                      ),
-                      child: Card(
-                        elevation: isSelected ? 2 : 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                      final sportCategories = snapshot.data!;
+
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(8.0),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // Deux colonnes
+                          crossAxisSpacing: 8.0,
+                          mainAxisSpacing: 8.0,
                         ),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                categories[index]["image"]!,
-                                fit:BoxFit.cover,
+                        itemCount: sportCategories.length,
+                        itemBuilder: (context, index) {
+                          final categoryName = sportCategories[index].name;
+                          final isSelected = selectedCategories.contains(categoryName);
+
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  selectedCategories.remove(categoryName);
+                                  debugPrint('Désélectionné: $categoryName');
+                                } else {
+                                  selectedCategories.add(categoryName);
+                                  debugPrint('Sélectionné: $categoryName');
+                                }
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                              decoration: BoxDecoration(
+                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: isSelected
+                                  ? []
+                                  : [
+                                      BoxShadow(
+                                        color: Colors.black54,
+                                        offset: Offset(2, 2),
+                                        blurRadius: 4,
+                                      ),
+                                    ],
                               ),
-                            ),
-                            Container(
-                              color: Colors.black54,
-                              child: Center(
-                                child: Text(
-                                  categoryName,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              child: Card(
+                                elevation: isSelected ? 2 : 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.asset(
+                                        sportCategories[index].image,
+                                        fit:BoxFit.cover,
+                                      ),
+                                    ),
+                                    Container(
+                                      color: Colors.black54,
+                                      child: Center(
+                                        child: Text(
+                                          categoryName,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context, selectedCategories);
+                      },
+                      child: Text('Valider'),
                     ),
-                  );
-                },
+                  ),  
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, selectedCategories);
-              },
-              child: Text('Valider'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
-        
-
-/* 
-// Exemple de page pour afficher les sports d'une catégorie
-class SportsPage extends StatelessWidget {
-  final String category;
-
-  const SportsPage({super.key, required this.category});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
-          child: Text(
-            'Sports de la catégorie:', // Affiche le texte avec la catégorie
-            style: TextStyle(
-              fontSize: 24, // Taille de la police
-              color: Colors.white, // Couleur du texte
-              fontWeight: FontWeight.bold, // Épaisseur de la police
-            ),
-            textAlign: TextAlign.center, // Centre le texte
-          ),
-        ),
-      ),
-    );
-  }
-} */

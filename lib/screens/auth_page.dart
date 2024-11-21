@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
+import 'package:octoloupe/screens/home_page.dart';
+import 'package:octoloupe/screens/reset_password_page.dart';
 import 'package:octoloupe/services/authentication.dart';
 
 import '../components/custom_app_bar.dart';
@@ -30,13 +32,6 @@ class AuthPageState extends State<AuthPage> {
   final nameController = TextEditingController();
   final newEmailController = TextEditingController();
   final newPasswordController = TextEditingController();
-
-  final _formSignUpAdminKey = GlobalKey<FormState>();
-  //Controller pour la créationd de compte admin
-  final firstNameAdminController = TextEditingController();
-  final nameAdminController = TextEditingController();
-  final newEmailAdminController = TextEditingController();
-  final newPasswordAdminController = TextEditingController();
 
   bool loading = false;
   int _selectedIndex = 0;
@@ -87,7 +82,10 @@ class AuthPageState extends State<AuthPage> {
               );
             } else {
               debugPrint('Redirection vers HomePage');
-              Navigator.pushReplacementNamed(context, '/HomePage');
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
             }
           }
         }
@@ -104,46 +102,11 @@ class AuthPageState extends State<AuthPage> {
     }
   }
 
-  Future<void> _signUpAdmin() async {
-    final firstName = firstNameAdminController.text.trim();
-    final name = nameAdminController.text.trim();
-    final email = newEmailAdminController.text.trim();
-    final password = newPasswordAdminController.text.trim();
-
-    if (firstName.isEmpty || name.isEmpty || email.isEmpty || password.isEmpty) {
-      debugPrint('Veuillez remplir tous les champs');
-      return;
-    }
-
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
-        email, password, firstName, name, 'admin',
-      );
-
-      if(!mounted) return;
-
-      setState(() {
-        loading = false;
-      });
-
-      if (userCredential != null) {
-        debugPrint('Compte administrateur créé avec succès');
-        Navigator.pushReplacementNamed(context, '/AdminCentralPage');
-      } else {
-        debugPrint('Echec de la création de compte');
-      }
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        loading = false;
-      });
-      debugPrint('Erreur: $e');
-    }
+  void _resetPassword() {
+    Navigator.pushReplacement(
+      context, 
+      MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+    );
   }
 
   Future<void> _signUp() async {
@@ -310,6 +273,20 @@ class AuthPageState extends State<AuthPage> {
                               }
                               return null;
                             },
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: TextButton(
+                              onPressed: _resetPassword,
+                              child: const Text(
+                                'Mot de passe oublié ?',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 32),

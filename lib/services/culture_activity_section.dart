@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/model/sport_filter_model.dart';
+import 'package:octoloupe/model/culture_filter_model.dart';
 
 
-class SportService {
+class CultureService {
   //CRUD SportCategories
 
-  //Create SportCategory
-  Future<void> addSportCategory(String name, String image) async {
+  //Create CultureCategory
+  Future<void> addCultureCategory(String name, String image) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('categories')
       .collection('items')
       .add({
@@ -19,37 +19,24 @@ class SportService {
       debugPrint('Adding new category $name successfully');
   }
 
-  //Read SportCategories
-  Future<List<SportCategory>> getSportCategories() async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-        .collection('filters')
-        .doc('sports')
-        .collection('categories')
-        .get();
+  //Read CultureCategories
+  Future<List<CultureCategory>> getCultureCategories() async {
+    final snapshot = await FirebaseFirestore.instance
+      .collection('cultures')
+      .doc('categories')
+      .collection('items')
+      .get();
 
-      debugPrint('Nombre de catégories récupérées: ${snapshot.docs.length}');
-
-      return snapshot.docs.map((doc) {
-        final data = doc.data();
-        final name = data['name'] ?? 'Catégorie inconnue';
-        final image = data['image'] ?? 'assets/images/glisse.jpg';
-
-        debugPrint('Catégorie récupérée: $name, Image: $image');
-
-        return SportCategory(name: name, image: image);
-      }).toList();
-    } catch (e) {
-      debugPrint('Error during collecting categories: $e');
-      return [];
-    }
+    return snapshot.docs.map((doc) {
+      return CultureCategory.fromJson(doc.data());
+    }).toList();
   }
 
-  //Update SportCategory
-  Future<void> updateSportCategory(String categoryId, String newName, String newImage) async {
+  //Update CultureCategory
+  Future<void> updateCultureCategory(String categoryId, String newName, String newImage) async {
     try {
       await FirebaseFirestore.instance
-        .collection('sports')
+        .collection('cultures')
         .doc('categories')
         .collection('items')
         .doc(categoryId)
@@ -63,10 +50,10 @@ class SportService {
     }
   }
 
-  //Delete SportCategory
-  Future<void> deleteSportCategory(String categoryId) async {
+  //Delete CultureCategory
+  Future<void> deleteCultureCategory(String categoryId) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('categories')
       .collection('items')
       .doc(categoryId)
@@ -74,12 +61,12 @@ class SportService {
       debugPrint('Category with ID $categoryId deleted');
   }
 
-  //CRUD SportAges
+  //CRUD CultureAges
 
-  //Create SportAge
-  Future<void> addSportAge(String name, String image) async {
+  //Create CultureAge
+  Future<void> addCultureAge(String name, String image) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('ages')
       .collection('items')
       .add({
@@ -89,24 +76,24 @@ class SportService {
       debugPrint('Adding new age $name successfully');
   }
 
-  //Read SportAges
-  Future<List<SportAge>> getSportAges() async {
+  //Read CultureAges
+  Future<List<CultureAge>> getCultureAges() async {
     final snapshot = await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('ages')
       .collection('items')
       .get();
 
     return snapshot.docs.map((doc) {
-      return SportAge.fromJson(doc.data());
+      return CultureAge.fromJson(doc.data());
     }).toList();
   }
 
-  //Update SportAge
-  Future<void> updateSportAge(String ageId, String newName, String newImage) async {
+  //Update CultureAge
+  Future<void> updateCultureAge(String ageId, String newName, String newImage) async {
     try {
       await FirebaseFirestore.instance
-        .collection('sports')
+        .collection('cultures')
         .doc('ages')
         .collection('items')
         .doc(ageId)
@@ -120,10 +107,10 @@ class SportService {
     }
   }
 
-  //Delete SportAge
-  Future<void> deleteSportAge(String ageId) async {
+  //Delete CultureAge
+  Future<void> deleteCultureAge(String ageId) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('ages')
       .collection('items')
       .doc(ageId)
@@ -131,12 +118,12 @@ class SportService {
       debugPrint('Age with $ageId deleted');
   }
 
-  //CRUD SportDays
+  //CRUD CultureDays
 
-  //Create SportDay
-  Future<void> addSportDay(String name, String image) async {
+  //Create CultureDay
+  Future<void> addCultureDay(String name, String image) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('days')
       .collection('items')
       .add({
@@ -146,24 +133,24 @@ class SportService {
       debugPrint('Adding new day $name successfully');
   }
 
-  //Read SportDays
-  Future<List<SportDay>> getSportDays() async {
+  //Read CultureDays
+  Future<List<CultureDay>> getCultureDays() async {
     final snapshot = await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('days')
       .collection('items')
       .get();
 
     return snapshot.docs.map((doc) {
-      return SportDay.fromJson(doc.data());
+      return CultureDay.fromJson(doc.data());
     }).toList();
   }
 
-  //Update SportDay
-  Future<void> updateSportDay(String dayId, String newName, String newImage) async {
+  //Update CultureDay
+  Future<void> updateCultureDay(String dayId, String newName, String newImage) async {
     try {
       await FirebaseFirestore.instance
-        .collection('sports')
+        .collection('cultures')
         .doc('days')
         .collection('items')
         .doc(dayId)
@@ -177,10 +164,10 @@ class SportService {
     }
   }
 
-  //Delete SportDay
-  Future<void> deleteSportDay(String dayId) async {
+  //Delete CultureDay
+  Future<void> deleteCultureDay(String dayId) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('days')
       .collection('items')
       .doc(dayId)
@@ -189,12 +176,12 @@ class SportService {
   }
 
 
-  //CRUD SportSchedules
+  //CRUD CultureSchedules
 
-  //Create SportSchedules
-  Future<void> addSportSchedule(String name, String image) async {
+  //Create CultureSchedules
+  Future<void> addCultureSchedule(String name, String image) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('schedules')
       .collection('items')
       .add({
@@ -204,24 +191,24 @@ class SportService {
       debugPrint('Adding new schedule $name successfully');
   }
 
-  //Read SportSchedules
-  Future<List<SportSchedule>> getSportSchedules() async {
+  //Read CultureSchedules
+  Future<List<CultureSchedule>> getCultureSchedules() async {
     final snapshot = await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('schedules')
       .collection('items')
       .get();
 
     return snapshot.docs.map((doc) {
-      return SportSchedule.fromJson(doc.data());
+      return CultureSchedule.fromJson(doc.data());
     }).toList();
   }
 
-  //Update SportSchedule
-  Future<void> updateSportSchedule(String scheduleId, String newName, String newImage) async {
+  //Update CultureSchedule
+  Future<void> updateCultureSchedule(String scheduleId, String newName, String newImage) async {
     try {
       await FirebaseFirestore.instance
-        .collection('sports')
+        .collection('cultures')
         .doc('schedules')
         .collection('items')
         .doc(scheduleId)
@@ -235,10 +222,10 @@ class SportService {
     }
   }
 
-  //Delete SportCategory
-  Future<void> deleteSportSchedule(String scheduleId) async {
+  //Delete CultureCategory
+  Future<void> deleteCultureSchedule(String scheduleId) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('schedules')
       .collection('items')
       .doc(scheduleId)
@@ -247,12 +234,12 @@ class SportService {
   }
 
 
-  //CRUD SportSectors
+  //CRUD CultureSectors
 
-  //Create SportSectors
-  Future<void> addSportSector(String name, String image) async {
+  //Create CultureSectors
+  Future<void> addCultureSector(String name, String image) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('sectors')
       .collection('items')
       .add({
@@ -262,24 +249,24 @@ class SportService {
       debugPrint('Adding new sector $name successfully');
   }
 
-  //Read SportSectors
-  Future<List<SportSector>> getSportSectors() async {
+  //Read CultureSectors
+  Future<List<CultureSector>> getCultureSectors() async {
     final snapshot = await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('sectors')
       .collection('items')
       .get();
 
     return snapshot.docs.map((doc) {
-      return SportSector.fromJson(doc.data());
+      return CultureSector.fromJson(doc.data());
     }).toList();
   }
 
   //Update SportSector
-  Future<void> updateSportSector(String sectorId, String newName, String newImage) async {
+  Future<void> updateCultureSector(String sectorId, String newName, String newImage) async {
     try {
       await FirebaseFirestore.instance
-        .collection('sports')
+        .collection('cultures')
         .doc('sectors')
         .collection('items')
         .doc(sectorId)
@@ -294,9 +281,9 @@ class SportService {
   }
 
   //Delete SportCategory
-  Future<void> deleteSportSector(String sectorId) async {
+  Future<void> deleteCultureSector(String sectorId) async {
     await FirebaseFirestore.instance
-      .collection('sports')
+      .collection('cultures')
       .doc('sectors')
       .collection('items')
       .doc(sectorId)

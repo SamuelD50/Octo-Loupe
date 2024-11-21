@@ -154,7 +154,7 @@ class AuthService {
     return _auth.currentUser;
   }
 
-  /* //Update email
+/*  //Update email
   Future<void> updateEmail(String newEmail) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -167,7 +167,7 @@ class AuthService {
     } catch (e) {
       debugPrint('Error updating email: $e');
     }
-  }
+  } */
 
   //Send email to reset password
   Future<void> sendPasswordResetEmail(String email) async {
@@ -200,9 +200,7 @@ class AuthService {
     } catch (e) {
       debugPrint('Error updating password: $e');
     }
-  } */
-
-  
+  }
 
   //Delete User
   Future<void> deleteUser() async {

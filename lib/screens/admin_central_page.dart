@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/screens/admin_add_admin_page.dart';
+import 'package:octoloupe/screens/admin_interface_page.dart';
+import 'package:octoloupe/screens/auth_page.dart';
+import 'package:octoloupe/services/authentication.dart';
 
 class AdminCentralPage extends StatefulWidget {
   const AdminCentralPage({super.key});
@@ -9,7 +13,34 @@ class AdminCentralPage extends StatefulWidget {
 }
 
 class AdminCentralPageState extends State<AdminCentralPage> {
+
+  final AuthService _authService = AuthService();
   
+  Future<void> _signOut() async {
+    try {
+      await  _authService.signOut();
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AuthPage()),
+      );
+    } catch (e) {
+      debugPrint('Error during disconnection: $e');
+    }
+  }
+
+  Future<void> _deleteUser() async {
+    try {
+      await _authService.deleteUser();
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AuthPage()),
+      );
+    } catch (e) {
+      debugPrint('Error while deleting account: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +79,15 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         )
                       ),
                       onPressed: () {
-                        /* Navigator.push(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ModifierInterfacePage()),
-                        ); */
+                          MaterialPageRoute(builder: (context) => AdminInterfacePage()),
+                        );
                       },
                       child: Text('Modifier l\'interface de l\'application'),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 40),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -78,7 +109,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Ajouter ou modifier une activité'),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 40),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -98,6 +129,60 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         ); */
                       },
                       child: Text('Mon profil utilisateur'),
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5B59B4), // Fill color
+                        foregroundColor: Colors.white, // Text color
+                        side: BorderSide(color: Color(0xFF5B59B4)), // Border color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0), // Border radius
+                        ),
+                      ),
+                      onPressed: () {
+                        // Naviguer vers une autre page ici
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdminAddAdminPage()),
+                        );
+                      },
+                      child: Text('Ajouter un profil administrateur'),
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5B59B4), // Fill color
+                        foregroundColor: Colors.white, // Text color
+                        side: BorderSide(color: Color(0xFF5B59B4)), // Border color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0), // Border radius
+                        ),
+                      ),
+                      onPressed: _deleteUser,
+                      child: Text('Supprimer mon compte utilisateur'),
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red, // Fill color
+                        foregroundColor: Colors.white, // Text color
+                        side: BorderSide(color: Colors.red), // Border color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0), // Border radius
+                        ),
+                      ),
+                      onPressed: _signOut,
+                      child: Text('Se déconnecter'),
                     ),
                   ),
                 ],

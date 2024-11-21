@@ -14,11 +14,11 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedSection = 0;
   
   void _resetFilters() {
     setState(() {
-      if (_selectedIndex == 0) {
+      if (_selectedSection == 0) {
       selectedCategoriesSport = [];
       selectedAgesSport = [];
       selectedDaysSport = [];
@@ -97,10 +97,10 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   ToggleButtons(
-                    isSelected: [_selectedIndex == 0, _selectedIndex == 1],
-                    onPressed: (int index) {
+                    isSelected: [_selectedSection == 0, _selectedSection == 1],
+                    onPressed: (int section) {
                       setState(() {
-                        _selectedIndex = index;
+                        _selectedSection = section;
                         _resetFilters();
                       });
                     },
@@ -133,13 +133,13 @@ class HomePageState extends State<HomePage> {
                             final List<String>? categories = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => CategorySelectionPage(
-                                selectedCategories: _selectedIndex == 0 ? selectedCategoriesSport : selectedCategoriesCulture,
-                                isSport: _selectedIndex == 0,
+                                selectedCategories: _selectedSection == 0 ? selectedCategoriesSport : selectedCategoriesCulture,
+                                isSport: _selectedSection == 0,
                               )),
                             );
                             if (categories != null) {
                               setState(() {
-                                if (_selectedIndex == 0) {
+                                if (_selectedSection == 0) {
                                   selectedCategoriesSport = categories;
                                 } else {
                                   selectedCategoriesCulture = categories;
@@ -147,7 +147,7 @@ class HomePageState extends State<HomePage> {
                               });
                             }
                           },
-                          isSport: _selectedIndex == 0,
+                          isSport: _selectedSection == 0,
                         ),
                         _buildCriteriaTile(
                           context,
@@ -157,13 +157,13 @@ class HomePageState extends State<HomePage> {
                             final List<String>? ages = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => AgeSelectionPage(
-                                selectedAges: _selectedIndex == 0 ? selectedAgesSport : selectedAgesCulture,
-                                isSport: _selectedIndex == 0,
+                                selectedAges: _selectedSection == 0 ? selectedAgesSport : selectedAgesCulture,
+                                isSport: _selectedSection == 0,
                               )),
                             );
                             if (ages != null) {
                               setState(() {
-                                if (_selectedIndex == 0) {
+                                if (_selectedSection == 0) {
                                   selectedAgesSport = ages;
                                 } else {
                                   selectedAgesCulture = ages;
@@ -171,7 +171,7 @@ class HomePageState extends State<HomePage> {
                               });
                             }
                           },
-                          isSport: _selectedIndex == 0,
+                          isSport: _selectedSection == 0,
                         ),
                         _buildCriteriaTile(
                           context,
@@ -181,13 +181,13 @@ class HomePageState extends State<HomePage> {
                             final List<String>? days = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => DaySelectionPage(
-                                selectedDays: _selectedIndex == 0 ? selectedDaysSport : selectedDaysCulture,
-                                isSport: _selectedIndex == 0,
+                                selectedDays: _selectedSection == 0 ? selectedDaysSport : selectedDaysCulture,
+                                isSport: _selectedSection == 0,
                               )),
                             );
                             if (days != null) {
                               setState(() {
-                                if (_selectedIndex == 0) {
+                                if (_selectedSection == 0) {
                                   selectedDaysSport = days;
                                 } else {
                                   selectedDaysCulture = days;
@@ -195,7 +195,7 @@ class HomePageState extends State<HomePage> {
                               });
                             }
                           },
-                          isSport: _selectedIndex == 0,
+                          isSport: _selectedSection == 0,
                         ),
                         _buildCriteriaTile(
                           context,
@@ -205,13 +205,13 @@ class HomePageState extends State<HomePage> {
                             final List<String>? schedules = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ScheduleSelectionPage(
-                                selectedSchedules: _selectedIndex == 0 ? selectedSchedulesSport : selectedSchedulesCulture,
-                                isSport: _selectedIndex == 0,
+                                selectedSchedules: _selectedSection == 0 ? selectedSchedulesSport : selectedSchedulesCulture,
+                                isSport: _selectedSection == 0,
                               )),
                             );
                             if (schedules != null) {
                               setState(() {
-                                if (_selectedIndex == 0) {
+                                if (_selectedSection == 0) {
                                   selectedSchedulesSport = schedules;
                                 } else {
                                   selectedSchedulesCulture = schedules;
@@ -219,7 +219,7 @@ class HomePageState extends State<HomePage> {
                               });
                             }
                           },
-                          isSport: _selectedIndex == 0,
+                          isSport: _selectedSection == 0,
                         ),
                         _buildCriteriaTile(
                           context,
@@ -229,13 +229,13 @@ class HomePageState extends State<HomePage> {
                             final List<String>? sectors = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => SectorSelectionPage(
-                                selectedSectors: _selectedIndex == 0 ? selectedSectorsSport : selectedSectorsCulture,
-                                isSport: _selectedIndex == 0,
+                                selectedSectors: _selectedSection == 0 ? selectedSectorsSport : selectedSectorsCulture,
+                                isSport: _selectedSection == 0,
                               )),
                             );
                             if (sectors != null) {
                               setState(() {
-                                if (_selectedIndex == 0) {
+                                if (_selectedSection == 0) {
                                   selectedSectorsSport = sectors;
                                 } else {
                                   selectedSectorsCulture = sectors;
@@ -243,12 +243,12 @@ class HomePageState extends State<HomePage> {
                               });
                             }
                           },
-                          isSport: _selectedIndex == 0,
+                          isSport: _selectedSection == 0,
                         ),
                       ],
                     ),
                   ),
-                  if (_selectedIndex == 0 && selectedCategoriesSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedCategoriesSport.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -266,7 +266,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 1 && selectedCategoriesCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedCategoriesCulture.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -284,7 +284,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 0 && selectedAgesSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedAgesSport.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -302,7 +302,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 1 && selectedAgesCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedAgesCulture.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -320,7 +320,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 0 && selectedDaysSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedDaysSport.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -338,7 +338,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 1 && selectedDaysCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedDaysCulture.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -356,7 +356,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 0 && selectedSchedulesSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSchedulesSport.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -374,7 +374,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 1 && selectedSchedulesCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedSchedulesCulture.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -392,7 +392,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 0 && selectedSectorsSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSectorsSport.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
@@ -410,7 +410,7 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedIndex == 1 && selectedSectorsCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedSectorsCulture.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
