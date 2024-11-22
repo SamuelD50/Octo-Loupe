@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/screens/auth_page.dart';

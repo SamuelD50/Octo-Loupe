@@ -175,7 +175,7 @@ class SportService {
         });
       debugPrint('Adding new day $name successfully');
     } catch (e) {
-      debugPrint('Error adding day; $e');
+      debugPrint('Error adding day: $e');
     }
   }
 
@@ -192,7 +192,7 @@ class SportService {
 
       return snapshot.docs.map((doc) {
         final data = doc.data();
-        final name = data['name'] ?? 'Unknow day';
+        final name = data['name'] ?? 'Unknown day';
         final image = data['image'] ?? 'assets/images/glisse.jpg';
 
         debugPrint('Day fetched: $name, Image: $image');
