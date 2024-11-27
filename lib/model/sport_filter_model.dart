@@ -41,16 +41,19 @@ class SportFilterModel {
 }
 
 class SportCategory {
+  final String id;
   final String name;
   final String image;
 
   SportCategory({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory SportCategory.fromJson(Map<String, dynamic> json) {
     return SportCategory(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -58,6 +61,7 @@ class SportCategory {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -65,16 +69,19 @@ class SportCategory {
 }
 
 class SportAge {
+  final String id;
   final String name;
   final String image;
 
   SportAge({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory SportAge.fromJson(Map<String, dynamic> json) {
     return SportAge(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -82,6 +89,7 @@ class SportAge {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -89,16 +97,19 @@ class SportAge {
 }
 
 class SportDay {
+  final String id;
   final String name;
   final String image;
 
   SportDay({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory SportDay.fromJson(Map<String, dynamic> json) {
     return SportDay(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -106,6 +117,7 @@ class SportDay {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -113,16 +125,19 @@ class SportDay {
 }
 
 class SportSchedule {
+  final String id;
   final String name;
   final String image;
 
   SportSchedule({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory SportSchedule.fromJson(Map<String, dynamic> json) {
     return SportSchedule(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -130,6 +145,7 @@ class SportSchedule {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -137,16 +153,19 @@ class SportSchedule {
 }
 
 class SportSector {
+  final String id;
   final String name;
   final String image;
 
   SportSector({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory SportSector.fromJson(Map<String, dynamic> json) {
     return SportSector(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -154,6 +173,7 @@ class SportSector {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };

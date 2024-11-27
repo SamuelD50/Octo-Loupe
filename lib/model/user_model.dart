@@ -27,7 +27,7 @@ class UserModel {
     return UserModel(
       uid: snapshot.id,
       email: '',
-      password: '',  // Ou une valeur par défaut si nécessaire
+      password: '', 
       firstName: '',
       name: '',
       role: '',
@@ -36,28 +36,13 @@ class UserModel {
 
   return UserModel(
     uid: snapshot.id,
-    email: data['email'] ?? '',  // Valeur par défaut si l'email est manquant
-    password: data['password'] ?? '',  // Valeur par défaut pour le mot de passe
+    email: data['email'] ?? '',
+    password: data['password'] ?? '', 
     firstName: data['firstName'] ?? '',
     name: data['name'] ?? '',
     role: data['role'] ?? '',
   );
   }
-
-
-  /* factory UserModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data();
-    if (data == null) throw Exception("User data not found");
-
-    return UserModel(
-      uid: snapshot.id,
-      email: data['email'],
-      password: data['password'],
-      firstName: data['firstName'],
-      name: data['name'],
-      role: data['role'],
-    );
-  } */
 
   //Convert UserModel instance to firestore map
   Map<String, dynamic> toMap() {

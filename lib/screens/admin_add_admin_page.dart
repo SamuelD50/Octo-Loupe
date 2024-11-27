@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
-import 'package:octoloupe/services/authentication.dart';
+import 'package:octoloupe/services/auth_service.dart';
 
 class AdminAddAdminPage extends StatefulWidget {
   const AdminAddAdminPage({super.key});
@@ -32,42 +32,41 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
     final email = newEmailAdminController.text.trim();
     final password = newPasswordAdminController.text.trim();
 
-    if (firstName.isEmpty || name.isEmpty || email.isEmpty || password.isEmpty) {
-      debugPrint('Veuillez remplir tous les champs');
-      return;
-    }
-
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
-        email, password, firstName, name, 'admin',
-      );
-
-      if(!mounted) return;
-
+    if (_formSignUpAdminKey.currentState?.validate() ?? false) {
       setState(() {
-        loading = false;
+        loading = true;
       });
 
-      if (userCredential != null) {
-        debugPrint('Compte administrateur créé avec succès');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AdminCentralPage()),
+      try {
+        UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
+          email, password, firstName, name, 'admin',
         );
-      } else {
-        debugPrint('Echec de la création de compte administrateur');
-      }
-    } catch (e) {
-      if (!mounted) return;
 
-      setState(() {
-        loading = false;
-      });
-      debugPrint('Erreur: $e');
+        if(!mounted) return;
+
+        setState(() {
+          loading = false;
+        });
+
+        if (userCredential != null) {
+          debugPrint('Administrator account created successfully');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdminCentralPage()),
+          );
+        } else {
+          debugPrint('Failed to create administrator account');
+        }
+      } catch (e) {
+        if (!mounted) return;
+
+        setState(() {
+          loading = false;
+        });
+        debugPrint('Error: $e');
+      }
+    } else {
+      debugPrint('Form validation failed');
     }
   }
 

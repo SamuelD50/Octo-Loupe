@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/services/database.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class AuthService {
@@ -37,7 +36,7 @@ class AuthService {
         ); 
 
         // Save user in Firestore
-        await DatabaseService(user.uid).saveUser(newUser);
+        await DatabaseService(user.uid).createUser(newUser);
 
         if (!user.emailVerified) {
           await user.sendEmailVerification();
@@ -73,7 +72,7 @@ class AuthService {
       User? user = userCredential.user;
 
       if (user != null) {
-        String role = "admin";
+        role = "admin";
 
         UserModel newUser = UserModel(
           uid: user.uid,
@@ -84,7 +83,7 @@ class AuthService {
           role: role,
         );
 
-        await DatabaseService(user.uid).saveUser(newUser);
+        await DatabaseService(user.uid).createUser(newUser);
 
         if (!user.emailVerified) {
           await user.sendEmailVerification();
@@ -118,13 +117,13 @@ class AuthService {
       //Collect user data from firestore
       User? user = userCredential.user;
       if (user != null) {
-        DatabaseService(user.uid).getUser(user.uid).listen((userData) {
-          if (userData != null) {
-            debugPrint('User data: ${userData.firstName} ${userData.name}');
-          } else {
-            debugPrint('User data not found for user: ${user.uid}');
-          }
-        });
+        UserModel? userData = await DatabaseService(user.uid).getUser();
+
+        if (userData != null) {
+          debugPrint('User data: ${userData.firstName} ${userData.name}');
+        } else {
+          debugPrint('User data not found for user: ${user.uid}');
+        }
       }
       return userCredential; 
     } on FirebaseAuthException catch (e) {
@@ -207,6 +206,7 @@ class AuthService {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        await DatabaseService(user.uid).deleteUser();
         await user.delete();
         debugPrint('User deleted');
       } else {

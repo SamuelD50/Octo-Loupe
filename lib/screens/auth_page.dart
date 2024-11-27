@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
 import 'package:octoloupe/screens/home_page.dart';
 import 'package:octoloupe/screens/reset_password_page.dart';
-import 'package:octoloupe/services/authentication.dart';
-
+import 'package:octoloupe/services/auth_service.dart';
+import 'package:octoloupe/services/database.dart';
 import '../components/custom_app_bar.dart';
 import '../components/loader_spinning.dart';
 
@@ -44,61 +43,53 @@ class AuthPageState extends State<AuthPage> {
     final String email = emailController.text.trim();
     final String password = passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      debugPrint('Veuillez entre votre email et mot de passe');
-      return;
-    }
-
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      UserCredential? userCredential = await _authService.signInWithEmailAndPassword(email, password);
-
-      if (!mounted) return;
-
+    if (_formSignInKey.currentState?.validate() ?? false) {
       setState(() {
-        loading = false;
+        loading = true;
       });
 
-      if (userCredential != null) {
-        debugPrint('Connexion réussie');
+      try {
+        UserCredential? userCredential = await _authService.signInWithEmailAndPassword(email, password);
 
-        //Collect user data from Firestore
-        User? user = userCredential.user;
-        if (user != null) {
-          final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        setState(() {
+          loading = false;
+        });
 
-          if (!mounted) return;
-          
-          if (userDoc.exists) {
-            final userData = UserModel.fromFirestore(userDoc);
-            if (userData.role == 'admin') {
+        if (userCredential != null) {
+          debugPrint('Connected');
+
+          User? user = userCredential.user;
+          if (user != null) {
+            DatabaseService databaseService = DatabaseService(user.uid);
+            UserModel? userDoc = await databaseService.getUser();
+
+            if (userDoc?.role == 'admin') {
               debugPrint('Redirection vers AdminPage');
+              if (!mounted) return;
               Navigator.pushReplacement(
                 context, 
                 MaterialPageRoute(builder: (context) => AdminCentralPage()),
               );
             } else {
               debugPrint('Redirection vers HomePage');
+              if (!mounted) return;
               Navigator.pushReplacement(
                 context, 
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
             }
           }
+        } else {
+          debugPrint('Incorrect username/password pair');
         }
-      } else {
-        debugPrint('Connexion failed');
+      } catch (e) {
+        setState(() {  
+          loading = false;
+        });
+        debugPrint('Error: $e');
       }
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {  
-        loading = false;
-      });
-      debugPrint('Erreur: $e');
+    } else {
+      debugPrint('Connection failed');
     }
   }
 
@@ -115,39 +106,38 @@ class AuthPageState extends State<AuthPage> {
     final email = newEmailController.text.trim();
     final password = newPasswordController.text.trim();
 
-    if (firstName.isEmpty || name.isEmpty || email.isEmpty || password.isEmpty) {
-      debugPrint('Veuillez remplir tous les champs');
-      return;
-    }
-
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
-        email, password, firstName, name, 'user',
-      );
-
-      if (!mounted) return;
-
+    if (_formSignUpKey.currentState?.validate() ?? false) {
       setState(() {
-        loading = false;
+        loading = true;
       });
 
-      if (userCredential != null) {
-        debugPrint('Compte créé avec succès');
-        Navigator.pushReplacementNamed(context, '/HomePage');
-      } else {
-        debugPrint('Echec de la création de compte');
+      try {
+        UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
+          email, password, firstName, name, 'user',
+        );
+
+        if (!mounted) return;
+
+        setState(() {
+          loading = false;
+        });
+
+        if (userCredential != null) {
+          debugPrint('Account created successfully');
+          Navigator.pushReplacementNamed(context, '/HomePage');
+        } else {
+          debugPrint('Failed to create account');
+        }
+      } catch (e) {
+        if (!mounted) return;
+
+        setState(() {
+          loading = false;
+        });
+        debugPrint('Error: $e');
       }
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        loading = false;
-      });
-      debugPrint('Erreur: $e');
+    } else {
+      debugPrint('Form validation failed');
     }
   }
 

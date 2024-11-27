@@ -41,16 +41,19 @@ class CultureFilterModel {
 }
 
 class CultureCategory {
+  final String id;
   final String name;
   final String image;
 
   CultureCategory({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory CultureCategory.fromJson(Map<String, dynamic> json) {
     return CultureCategory(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -58,6 +61,7 @@ class CultureCategory {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -65,16 +69,19 @@ class CultureCategory {
 }
 
 class CultureAge {
+  final String id;
   final String name;
   final String image;
 
   CultureAge({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory CultureAge.fromJson(Map<String, dynamic> json) {
     return CultureAge(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -82,6 +89,7 @@ class CultureAge {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -89,16 +97,19 @@ class CultureAge {
 }
 
 class CultureDay {
+  final String id;
   final String name;
   final String image;
 
   CultureDay({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory CultureDay.fromJson(Map<String, dynamic> json) {
     return CultureDay(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -106,6 +117,7 @@ class CultureDay {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -113,16 +125,19 @@ class CultureDay {
 }
 
 class CultureSchedule {
+  final String id;
   final String name;
   final String image;
 
   CultureSchedule({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory CultureSchedule.fromJson(Map<String, dynamic> json) {
     return CultureSchedule(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -130,6 +145,7 @@ class CultureSchedule {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };
@@ -137,16 +153,19 @@ class CultureSchedule {
 }
 
 class CultureSector {
+  final String id;
   final String name;
   final String image;
 
   CultureSector({
+    required this.id,
     required this.name,
     required this.image,
   });
 
   factory CultureSector.fromJson(Map<String, dynamic> json) {
     return CultureSector(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
     );
@@ -154,6 +173,7 @@ class CultureSector {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'image': image,
     };

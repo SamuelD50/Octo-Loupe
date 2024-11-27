@@ -5,7 +5,6 @@ import 'package:octoloupe/model/sport_filter_model.dart';
 import 'package:octoloupe/model/culture_filter_model.dart';
 import 'package:octoloupe/services/sport_activity_section.dart';
 import 'package:octoloupe/services/culture_activity_section.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   final List<String> selectedCategories;
@@ -137,7 +136,10 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       ),
                                     ),
                                     Container(
-                                      color: Colors.black54,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                       child: Center(
                                         child: Text(
                                           categoryName,
@@ -233,7 +235,10 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       ),
                                     ),
                                     Container(
-                                      color: Colors.black54,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                       child: Center(
                                         child: Text(
                                           categoryName,
