@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
 class SportFilterModel {
   final List<SportCategory> categories;
   final List<SportAge> ages;
@@ -13,29 +16,45 @@ class SportFilterModel {
     required this.sectors,
   });
 
-  factory SportFilterModel.fromJson(Map<String, dynamic> json) {
-    var categoriesFromJson = json['categories'] as List? ?? [];
-    var agesFromJson = json['ages'] as List? ?? [];
-    var daysFromJson = json['days'] as List? ?? [];
-    var schedulesFromJson = json['schedules'] as List? ?? [];
-    var sectorsFromJson = json['sectors'] as List? ?? [];
-  
+  factory SportFilterModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data();
+    if (data == null) {
+      debugPrint('Aucune donnée trouvée pour la section Sport');
+      return SportFilterModel(
+        categories: [],
+        ages: [],
+        days: [],
+        schedules: [],
+        sectors: []
+      );
+    }
+
     return SportFilterModel(
-      categories: categoriesFromJson.map((e) => SportCategory.fromJson(e)).toList(),
-      ages: agesFromJson.map((e) => SportAge.fromJson(e)).toList(),
-      days: daysFromJson.map((e) => SportDay.fromJson(e)).toList(),
-      schedules: schedulesFromJson.map((e) => SportSchedule.fromJson(e)).toList(),
-      sectors: sectorsFromJson.map((e) => SportSector.fromJson(e)).toList(),
+      categories: (data['categories'] as List? ?? [])
+        .map((e) => SportCategory.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      ages: (data['ages'] as List? ?? [])
+        .map((e) => SportAge.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      days: (data['days'] as List? ?? [])
+        .map((e) => SportDay.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      schedules: (data['schedules'] as List? ?? [])
+        .map((e) => SportSchedule.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      sectors: (data['sectors'] as List? ?? [])
+        .map((e) => SportSector.fromMap(e as Map<String, dynamic>))
+        .toList(),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'categories' : categories.map((e) => e.toJson()).toList(),
-      'ages' : ages.map((e) => e.toJson()).toList(),
-      'days' : days.map((e) => e.toJson()).toList(),
-      'schedules' : schedules.map((e) => e.toJson()).toList(),
-      'sectors' : sectors.map((e) => e.toJson()).toList(),
+      'categories': categories.map((e) => e.toMap()).toList(),
+      'ages': ages.map((e) => e.toMap()).toList(),
+      'days': days.map((e) => e.toMap()).toList(),
+      'schedules': schedules.map((e) => e.toMap()).toList(),
+      'sectors': sectors.map((e) => e.toMap()).toList(),
     };
   }
 }
@@ -51,17 +70,16 @@ class SportCategory {
     required this.image,
   });
 
-  factory SportCategory.fromJson(Map<String, dynamic> json) {
+  factory SportCategory.fromMap(Map<String, dynamic> map) {
     return SportCategory(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -79,17 +97,16 @@ class SportAge {
     required this.image,
   });
 
-  factory SportAge.fromJson(Map<String, dynamic> json) {
+  factory SportAge.fromMap(Map<String, dynamic> map) {
     return SportAge(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -107,17 +124,16 @@ class SportDay {
     required this.image,
   });
 
-  factory SportDay.fromJson(Map<String, dynamic> json) {
+  factory SportDay.fromMap(Map<String, dynamic> map) {
     return SportDay(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -135,17 +151,16 @@ class SportSchedule {
     required this.image,
   });
 
-  factory SportSchedule.fromJson(Map<String, dynamic> json) {
+  factory SportSchedule.fromMap(Map<String, dynamic> map) {
     return SportSchedule(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -163,17 +178,16 @@ class SportSector {
     required this.image,
   });
 
-  factory SportSector.fromJson(Map<String, dynamic> json) {
+  factory SportSector.fromMap(Map<String, dynamic> map) {
     return SportSector(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };

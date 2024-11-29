@@ -8,7 +8,7 @@ class SportService {
   //CRUD SportCategories
 
   //Create SportCategory
-  Future<void> addSportCategory(String categoryId, String name, String image) async {
+  Future<void> addSportCategory(String? categoryId, String name, String image) async {
     await databaseService.createFilter(
       'sports',
       'categories',
@@ -25,11 +25,16 @@ class SportService {
         'sports',
         'categories',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Sport category - id: $id, name: $name, image: $image');
+
         return SportCategory(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -84,7 +89,7 @@ class SportService {
   //CRUD SportAges
 
   //Create SportAge
-  Future<void> addSportAge(String ageId, String name, String image) async {
+  Future<void> addSportAge(String? ageId, String name, String image) async {
     await databaseService.createFilter(
       'sports',
       'ages',
@@ -94,18 +99,24 @@ class SportService {
     );
   }
 
+
   //Read SportAges
   Future<List<SportAge>> getSportAges() async {
     try {
       var filtersData = await databaseService.getFilters(
         'sports',
-        'ages'
+        'ages',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Sport age - id: $id, name: $name, image: $image');
+
         return SportAge(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -161,7 +172,7 @@ class SportService {
   //CRUD SportDays
 
   //Create SportDay
-  Future<void> addSportDay(String dayId, String name, String image) async {
+  Future<void> addSportDay(String? dayId, String name, String image) async {
     await databaseService.createFilter(
       'sports',
       'days',
@@ -171,6 +182,7 @@ class SportService {
     );
   }
 
+
   //Read SportDays
   Future<List<SportDay>> getSportDays() async {
     try {
@@ -178,11 +190,16 @@ class SportService {
         'sports',
         'days',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Sport day - id: $id, name: $name, image: $image');
+
         return SportDay(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -239,8 +256,8 @@ class SportService {
   //CRUD SportSchedules
 
   //Create SportSchedules
-  Future<void> addSportSchedule(String scheduleId, String name, String image) async {
-     await databaseService.createFilter(
+  Future<void> addSportSchedule(String? scheduleId, String name, String image) async {
+    await databaseService.createFilter(
       'sports',
       'schedules',
       scheduleId,
@@ -249,18 +266,23 @@ class SportService {
     );
   }
 
- //Read SportSchedules
+  //Read SportSchedules
   Future<List<SportSchedule>> getSportSchedules() async {
     try {
       var filtersData = await databaseService.getFilters(
         'sports',
         'schedules',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Sport schedule - id: $id, name: $name, image: $image');
+
         return SportSchedule(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -318,7 +340,7 @@ class SportService {
   //CRUD SportSectors
 
   //Create SportSectors
-  Future<void> addSportSector(String sectorId, String name, String image) async {
+  Future<void> addSportSector(String? sectorId, String name, String image) async {
     await databaseService.createFilter(
       'sports',
       'sectors',
@@ -328,19 +350,23 @@ class SportService {
     );
   }
 
-
-  //Read SportSectors
+  //Read SportCategories
   Future<List<SportSector>> getSportSectors() async {
     try {
       var filtersData = await databaseService.getFilters(
         'sports',
         'sectors',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Sport sector - id: $id, name: $name, image: $image');
+
         return SportSector(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {

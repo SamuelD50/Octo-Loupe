@@ -8,7 +8,7 @@ class CultureService {
   //CRUD SportCategories
 
   //Create CultureCategory
-  Future<void> addCultureCategory(String categoryId, String name, String image) async {
+  Future<void> addCultureCategory(String? categoryId, String name, String image) async {
     await databaseService.createFilter(
       'cultures',
       'categories',
@@ -25,11 +25,16 @@ class CultureService {
         'cultures',
         'categories',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Culture category - id: $id, name: $name, image: $image');
+
         return CultureCategory(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -37,6 +42,7 @@ class CultureService {
       return [];
     }
   }
+
 
   //Read CultureCategory
   Future<CultureCategory?> getCultureCategory(String categoryId) async {
@@ -84,7 +90,7 @@ class CultureService {
   //CRUD CultureAges
 
   //Create CultureAge
-  Future<void> addCultureAge(String ageId, String name, String image) async {
+  Future<void> addCultureAge(String? ageId, String name, String image) async {
     await databaseService.createFilter(
       'cultures',
       'ages',
@@ -101,11 +107,16 @@ class CultureService {
         'cultures',
         'ages',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Culture age - id: $id, name: $name, image: $image');
+
         return CultureAge(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -160,7 +171,7 @@ class CultureService {
   //CRUD CultureDays
 
   //Create CultureDay
-  Future<void> addCultureDay(String dayId, String name, String image) async {
+  Future<void> addCultureDay(String? dayId, String name, String image) async {
     await databaseService.createFilter(
       'cultures',
       'days',
@@ -177,11 +188,16 @@ class CultureService {
         'cultures',
         'days',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Culture day - id: $id, name: $name, image: $image');
+
         return CultureDay(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -238,7 +254,7 @@ class CultureService {
   //CRUD CultureSchedules
 
   //Create CultureSchedules
-  Future<void> addCultureSchedule(String scheduleId, String name, String image) async {
+  Future<void> addCultureSchedule(String? scheduleId, String name, String image) async {
     await databaseService.createFilter(
       'cultures',
       'schedules',
@@ -255,11 +271,16 @@ class CultureService {
         'cultures',
         'schedules',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Culture schedule - id: $id, name: $name, image: $image');
+
         return CultureSchedule(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {
@@ -316,7 +337,7 @@ class CultureService {
   //CRUD CultureSectors
 
   //Create CultureSectors
-  Future<void> addCultureSector(String sectorId, String name, String image) async {
+  Future<void> addCultureSector(String? sectorId, String name, String image) async {
     await databaseService.createFilter(
       'cultures',
       'sectors',
@@ -333,11 +354,16 @@ class CultureService {
         'cultures',
         'sectors',
       );
-      return filtersData.map((data) {
+      return filtersData.map((docSnapshot) {
+        final id = docSnapshot.id;
+        final name = docSnapshot['name'] ?? 'Nom non disponible';
+        final image = docSnapshot['image'] ?? 'Default image path';
+        debugPrint('Culture sector - id: $id, name: $name, image: $image');
+
         return CultureSector(
-          id: data['id'],
-          name: data['name'],
-          image: data['image'],
+          id: id,
+          name: name,
+          image: image,
         );
       }).toList();
     } catch (e) {

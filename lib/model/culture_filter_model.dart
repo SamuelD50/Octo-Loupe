@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
 class CultureFilterModel {
   final List<CultureCategory> categories;
   final List<CultureAge> ages;
@@ -13,29 +16,45 @@ class CultureFilterModel {
     required this.sectors,
   });
 
-  factory CultureFilterModel.fromJson(Map<String, dynamic> json) {
-    var categoriesFromJson = json['categories'] as List? ?? [];
-    var agesFromJson = json['ages'] as List? ?? [];
-    var daysFromJson = json['days'] as List? ?? [];
-    var schedulesFromJson = json['schedules'] as List? ?? [];
-    var sectorsFromJson = json['sectors'] as List? ?? [];
-  
+  factory CultureFilterModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data();
+    if (data == null) {
+      debugPrint('Aucune donnée trouvée pour la section Culture');
+      return CultureFilterModel(
+        categories: [],
+        ages: [],
+        days: [],
+        schedules: [],
+        sectors: []
+      );
+    }
+
     return CultureFilterModel(
-      categories: categoriesFromJson.map((e) => CultureCategory.fromJson(e)).toList(),
-      ages: agesFromJson.map((e) => CultureAge.fromJson(e)).toList(),
-      days: daysFromJson.map((e) => CultureDay.fromJson(e)).toList(),
-      schedules: schedulesFromJson.map((e) => CultureSchedule.fromJson(e)).toList(),
-      sectors: sectorsFromJson.map((e) => CultureSector.fromJson(e)).toList(),
+      categories: (data['categories'] as List? ?? [])
+        .map((e) => CultureCategory.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      ages: (data['ages'] as List? ?? [])
+        .map((e) => CultureAge.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      days: (data['days'] as List? ?? [])
+        .map((e) => CultureDay.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      schedules: (data['schedules'] as List? ?? [])
+        .map((e) => CultureSchedule.fromMap(e as Map<String, dynamic>))
+        .toList(),
+      sectors: (data['sectors'] as List? ?? [])
+        .map((e) => CultureSector.fromMap(e as Map<String, dynamic>))
+        .toList(),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'categories' : categories.map((e) => e.toJson()).toList(),
-      'ages' : ages.map((e) => e.toJson()).toList(),
-      'days' : days.map((e) => e.toJson()).toList(),
-      'schedules' : schedules.map((e) => e.toJson()).toList(),
-      'sectors' : sectors.map((e) => e.toJson()).toList(),
+      'categories': categories.map((e) => e.toMap()).toList(),
+      'ages': ages.map((e) => e.toMap()).toList(),
+      'days': days.map((e) => e.toMap()).toList(),
+      'schedules': schedules.map((e) => e.toMap()).toList(),
+      'sectors': sectors.map((e) => e.toMap()).toList(),
     };
   }
 }
@@ -51,17 +70,16 @@ class CultureCategory {
     required this.image,
   });
 
-  factory CultureCategory.fromJson(Map<String, dynamic> json) {
+  factory CultureCategory.fromMap(Map<String, dynamic> map) {
     return CultureCategory(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -79,17 +97,16 @@ class CultureAge {
     required this.image,
   });
 
-  factory CultureAge.fromJson(Map<String, dynamic> json) {
+  factory CultureAge.fromMap(Map<String, dynamic> map) {
     return CultureAge(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -107,17 +124,16 @@ class CultureDay {
     required this.image,
   });
 
-  factory CultureDay.fromJson(Map<String, dynamic> json) {
+  factory CultureDay.fromMap(Map<String, dynamic> map) {
     return CultureDay(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -135,17 +151,16 @@ class CultureSchedule {
     required this.image,
   });
 
-  factory CultureSchedule.fromJson(Map<String, dynamic> json) {
+  factory CultureSchedule.fromMap(Map<String, dynamic> map) {
     return CultureSchedule(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
@@ -163,17 +178,16 @@ class CultureSector {
     required this.image,
   });
 
-  factory CultureSector.fromJson(Map<String, dynamic> json) {
+  factory CultureSector.fromMap(Map<String, dynamic> map) {
     return CultureSector(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'image': image,
     };
