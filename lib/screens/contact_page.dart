@@ -192,6 +192,14 @@ class ContactPageState extends State<ContactPage> {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             String title = _selectedTitle ?? '';
@@ -204,7 +212,7 @@ class ContactPageState extends State<ContactPage> {
                             sendEmail(title, firstName, name, email, subject, message);
                           }
                         },
-                        child: const Text('Envoyer'),
+                        child: Text('Envoyer'),
                       ),
                     ],
                   ),

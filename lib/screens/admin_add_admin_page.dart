@@ -99,15 +99,12 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                     key: _formSignUpAdminKey,
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: Text(
-                            'Ajouter un profil administrateur',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                        Text(
+                          'Ajouter un profil administrateur',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -194,10 +191,17 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                         ),
                         const SizedBox(height: 32),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
                           onPressed: () => _signUpAdmin(),
-                          child: const Text('Créer un compte'),
+                          child: Text('Créer un compte'),
                         ),
-                        const SizedBox(height: 32),
                       ],
                     ),
                   ),

@@ -8,13 +8,13 @@ class CultureService {
   //CRUD SportCategories
 
   //Create CultureCategory
-  Future<void> addCultureCategory(String? categoryId, String name, String image) async {
+  Future<void> addCultureCategory(String? categoryId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'cultures',
       'categories',
       categoryId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -26,15 +26,15 @@ class CultureService {
         'categories',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Culture category - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Culture category - id: $id, name: $name, imageUrl: $imageUrl');
 
         return CultureCategory(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -43,38 +43,14 @@ class CultureService {
     }
   }
 
-
-  //Read CultureCategory
-  Future<CultureCategory?> getCultureCategory(String categoryId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'cultures',
-        'categories',
-        categoryId,
-      );
-      if (filterData != null) {
-        return CultureCategory(
-          id: categoryId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching culture category: $e');
-      return null;
-    }
-  }
-
   //Update CultureCategory
-  Future<void> updateCultureCategory(String categoryId, String newName, String newImage) async {
+  Future<void> updateCultureCategory(String categoryId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'cultures',
       'categories',
       categoryId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -90,13 +66,13 @@ class CultureService {
   //CRUD CultureAges
 
   //Create CultureAge
-  Future<void> addCultureAge(String? ageId, String name, String image) async {
+  Future<void> addCultureAge(String? ageId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'cultures',
       'ages',
       ageId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -108,15 +84,15 @@ class CultureService {
         'ages',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Culture age - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Culture age - id: $id, name: $name, imageUrl: $imageUrl');
 
         return CultureAge(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -125,37 +101,14 @@ class CultureService {
     }
   }
 
-  //Read CultureAge
-  Future<CultureAge?> getCultureAge(String ageId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'cultures',
-        'ages',
-        ageId,
-      );
-      if (filterData != null) {
-        return CultureAge(
-          id: ageId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching culture age: $e');
-      return null;
-    }
-  }
-
   //Update CultureAge
-  Future<void> updateCultureAge(String ageId, String newName, String newImage) async {
+  Future<void> updateCultureAge(String ageId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'cultures',
       'ages',
       ageId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -171,13 +124,13 @@ class CultureService {
   //CRUD CultureDays
 
   //Create CultureDay
-  Future<void> addCultureDay(String? dayId, String name, String image) async {
+  Future<void> addCultureDay(String? dayId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'cultures',
       'days',
       dayId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -189,15 +142,15 @@ class CultureService {
         'days',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Culture day - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Culture day - id: $id, name: $name, imageUrl: $imageUrl');
 
         return CultureDay(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -206,38 +159,15 @@ class CultureService {
     }
   }
 
-  //Read CultureDay
-  Future<CultureDay?> getCultureDay(String dayId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'cultures',
-        'days',
-        dayId,
-      );
-      if (filterData != null) {
-        return CultureDay(
-          id: dayId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching culture day: $e');
-      return null;
-    }
-  }
-
 
   //Update CultureDay
-  Future<void> updateCultureDay(String dayId, String newName, String newImage) async {
+  Future<void> updateCultureDay(String dayId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'cultures',
       'days',
       dayId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -254,13 +184,13 @@ class CultureService {
   //CRUD CultureSchedules
 
   //Create CultureSchedules
-  Future<void> addCultureSchedule(String? scheduleId, String name, String image) async {
+  Future<void> addCultureSchedule(String? scheduleId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'cultures',
       'schedules',
       scheduleId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -272,15 +202,15 @@ class CultureService {
         'schedules',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Culture schedule - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Culture schedule - id: $id, name: $name, imageUrl: $imageUrl');
 
         return CultureSchedule(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -289,38 +219,15 @@ class CultureService {
     }
   }
 
-  //Read CultureSchedule
-  Future<CultureSchedule?> getCultureSchedule(String scheduleId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'cultures',
-        'schedules',
-        scheduleId,
-      );
-      if (filterData != null) {
-        return CultureSchedule(
-          id: scheduleId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching culture schedule: $e');
-      return null;
-    }
-  }
-
 
   //Update CultureSchedule
-  Future<void> updateCultureSchedule(String scheduleId, String newName, String newImage) async {
+  Future<void> updateCultureSchedule(String scheduleId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'cultures',
       'schedules',
       scheduleId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -337,13 +244,13 @@ class CultureService {
   //CRUD CultureSectors
 
   //Create CultureSectors
-  Future<void> addCultureSector(String? sectorId, String name, String image) async {
+  Future<void> addCultureSector(String? sectorId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'cultures',
       'sectors',
       sectorId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -355,15 +262,15 @@ class CultureService {
         'sectors',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Culture sector - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Culture sector - id: $id, name: $name, imageUrl: $imageUrl');
 
         return CultureSector(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -372,37 +279,14 @@ class CultureService {
     }
   }
 
-  //Read CultureSector
-  Future<CultureSector?> getCultureSector(String sectorId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'cultures',
-        'sectors',
-        sectorId,
-      );
-      if (filterData != null) {
-        return CultureSector(
-          id: sectorId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching culture sector: $e');
-      return null;
-    }
-  }
-
   //Update SportSector
-  Future<void> updateCultureSector(String sectorId, String newName, String newImage) async {
+  Future<void> updateCultureSector(String sectorId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'cultures',
       'sectors',
       sectorId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 

@@ -113,8 +113,16 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         const SizedBox(height: 32),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
                           onPressed: () => _resetPassword(),
-                          child: const Text('Envoyer un email de réinitialisation'),
+                          child: Text('Envoyer un email de réinitilisation'),
                         ),
                       ],
                     ),

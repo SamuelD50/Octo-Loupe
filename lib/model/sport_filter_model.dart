@@ -60,136 +60,136 @@ class SportFilterModel {
 }
 
 class SportCategory {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   SportCategory({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory SportCategory.fromMap(Map<String, dynamic> map) {
+  factory SportCategory.fromMap(Map<String, dynamic> map, {String? id}) {
     return SportCategory(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class SportAge {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   SportAge({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory SportAge.fromMap(Map<String, dynamic> map) {
+  factory SportAge.fromMap(Map<String, dynamic> map, {String? id}) {
     return SportAge(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class SportDay {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   SportDay({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory SportDay.fromMap(Map<String, dynamic> map) {
+  factory SportDay.fromMap(Map<String, dynamic> map, {String? id}) {
     return SportDay(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class SportSchedule {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   SportSchedule({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory SportSchedule.fromMap(Map<String, dynamic> map) {
+  factory SportSchedule.fromMap(Map<String, dynamic> map, {String? id}) {
     return SportSchedule(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class SportSector {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   SportSector({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory SportSector.fromMap(Map<String, dynamic> map) {
+  factory SportSector.fromMap(Map<String, dynamic> map, {String? id}) {
     return SportSector(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }

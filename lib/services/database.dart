@@ -97,7 +97,7 @@ class DatabaseService {
   final CollectionReference<Map<String, dynamic>> filtersCollection =
     FirebaseFirestore.instance.collection('filters');
 
-  Future<void> createFilter(String section, String filterType, String? filterId, String name, String image) async {
+  Future<void> createFilter(String section, String filterType, String? filterId, String name, String imageUrl) async {
     try {
       String createFilterId = filterId ?? _generateFilterId(section, filterType);
       
@@ -114,7 +114,8 @@ class DatabaseService {
           .doc(createFilterId)
           .set({
             'name': name,
-            'image': image,
+            'imageUrl': imageUrl,
+            'id': createFilterId,
           });
         debugPrint('Added new $name filter in $filterType in section $section with ID $createFilterId successfully');
       } else {
@@ -130,73 +131,6 @@ class DatabaseService {
       .doc(section)
       .collection(filterType)
       .doc().id;
-  }
- 
-
-
-    /* Future<void> createFilter(String section, String filterType, String? filterId, String name, String image) async {
-      try {
-        // Si filterId est null, on génère un ID unique
-        String createFilterId = filterId ?? _generateFilterId(section, filterType);
-
-        // Vérifier si le document existe déjà avant de l'ajouter
-        var docSnapshot = await FirebaseFirestore.instance
-            .collection('filters')
-            .doc(section)
-            .collection(filterType)
-            .doc(createFilterId)
-            .get();
-
-        // Si le document n'existe pas, on le crée
-        if (!docSnapshot.exists) {
-          await FirebaseFirestore.instance
-            .collection('filters')
-            .doc(section)
-            .collection(filterType)
-            .doc(createFilterId)
-            .set({
-              'name': name,
-              'image': image,
-            });
-
-          debugPrint('Added new $name filter in $filterType in section $section with ID $createFilterId successfully');
-        } else {
-          debugPrint('Filter with ID $createFilterId already exists in $filterType in section $section');
-        }
-      } catch (e) {
-        debugPrint('Error adding $name filter: $e');
-      }
-
-
-    // Méthode privée pour générer un ID unique sans mentionner FirebaseFirestore dans le code appelant
-    String _generateFilterId(String section, String filterType) {
-      return FirebaseFirestore.instance
-          .collection('filters')
-          .doc(section)
-          .collection(filterType)
-          .doc().id;
-    } */
-
-
-  Future<DocumentSnapshot?> getFilter(String section, String filterType, String filterId) async {
-    try {
-      var docSnapshot = await filtersCollection
-        .doc(section)
-        .collection(filterType)
-        .doc(filterId)
-        .get();
-
-      if (docSnapshot.exists) {
-        debugPrint('Fetched $filterId filter ID for $filterType in $section');
-        return docSnapshot;
-      } else {
-        debugPrint('Filter $filterId does not exist in $filterType in $section');
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching $filterId filter for $filterType in $section: $e');
-      return null;
-    }
   }
 
   Future<List<DocumentSnapshot>> getFilters(String section, String filterType) async {
@@ -214,7 +148,7 @@ class DatabaseService {
   }
 
 
-  Future<void> updateFilter(String section, String filterType, String filterId, String newName, String newImage) async {
+  Future<void> updateFilter(String section, String filterType, String filterId, String newName, String newImageUrl) async {
     try {
       var docSnapshot = await filtersCollection
         .doc(section)
@@ -229,7 +163,7 @@ class DatabaseService {
           .doc(filterId)
           .update({
             'name': newName,
-            'image': newImage,
+            'imageUrl': newImageUrl,
           });
         debugPrint('$newName filter updated successfully in $filterType in $section with ID: $filterId');
       } else {

@@ -175,15 +175,12 @@ class AuthPageState extends State<AuthPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Text(
-                      'Mon compte',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                  Text(
+                    'Mon compte',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -281,10 +278,17 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 32),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
                           onPressed: () => _signIn(),
-                          child: const Text('Se connecter'),
+                          child: Text('Se connecter'),
                         ),
-                        const SizedBox(height: 32)
                       ],
                     ),
                   ) :
@@ -375,10 +379,17 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 32),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
                           onPressed: () => _signUp(),
-                          child: const Text('Créer un compte'),
+                          child: Text('Créer un compte'),
                         ),
-                        const SizedBox(height: 32),
                       ],
                     ),
                   ),

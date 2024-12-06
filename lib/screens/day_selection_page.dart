@@ -151,8 +151,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: Image.asset(
-                                        sportDays[index].image,
+                                      child: Image.network(
+                                        sportDays[index].imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -250,8 +250,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: Image.asset(
-                                        cultureDays[index].image,
+                                      child: Image.network(
+                                        cultureDays[index].imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),

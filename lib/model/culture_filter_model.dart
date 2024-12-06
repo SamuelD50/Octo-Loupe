@@ -60,136 +60,136 @@ class CultureFilterModel {
 }
 
 class CultureCategory {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   CultureCategory({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory CultureCategory.fromMap(Map<String, dynamic> map) {
+  factory CultureCategory.fromMap(Map<String, dynamic> map, {String? id}) {
     return CultureCategory(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class CultureAge {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   CultureAge({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory CultureAge.fromMap(Map<String, dynamic> map) {
+  factory CultureAge.fromMap(Map<String, dynamic> map, {String? id}) {
     return CultureAge(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class CultureDay {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   CultureDay({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory CultureDay.fromMap(Map<String, dynamic> map) {
+  factory CultureDay.fromMap(Map<String, dynamic> map, {String? id}) {
     return CultureDay(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class CultureSchedule {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   CultureSchedule({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory CultureSchedule.fromMap(Map<String, dynamic> map) {
+  factory CultureSchedule.fromMap(Map<String, dynamic> map, {String? id}) {
     return CultureSchedule(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }
 
 class CultureSector {
-  final String id;
+  final String? id;
   final String name;
-  final String image;
+  final String imageUrl;
 
   CultureSector({
-    required this.id,
+    this.id,
     required this.name,
-    required this.image,
+    required this.imageUrl,
   });
 
-  factory CultureSector.fromMap(Map<String, dynamic> map) {
+  factory CultureSector.fromMap(Map<String, dynamic> map, {String? id}) {
     return CultureSector(
-      id: map['id'] ?? '',
+      id: id,
       name: map['name'] ?? '',
-      image: map['image'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'image': image,
+      'imageUrl': imageUrl,
     };
   }
 }

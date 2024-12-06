@@ -144,8 +144,8 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: Image.asset(
-                                        sportAges[index].image,
+                                      child: Image.network(
+                                        sportAges[index].imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -243,8 +243,8 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: Image.asset(
-                                        cultureAges[index].image,
+                                      child: Image.network(
+                                        cultureAges[index].imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),

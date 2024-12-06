@@ -8,13 +8,13 @@ class SportService {
   //CRUD SportCategories
 
   //Create SportCategory
-  Future<void> addSportCategory(String? categoryId, String name, String image) async {
+  Future<void> addSportCategory(String? categoryId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'sports',
       'categories',
       categoryId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -26,15 +26,15 @@ class SportService {
         'categories',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Sport category - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Sport category - id: $id, name: $name, imageUrl: $imageUrl');
 
         return SportCategory(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -43,37 +43,14 @@ class SportService {
     }
   }
 
-  //Read SportCategory
-  Future<SportCategory?> getSportCategory(String categoryId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'sports',
-        'categories',
-        categoryId,
-      );
-      if (filterData != null) {
-        return SportCategory(
-          id: categoryId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching sport category: $e');
-      return null;
-    }
-  }
-
   //Update SportCategory
-  Future<void> updateSportCategory(String categoryId, String newName, String newImage) async {
+  Future<void> updateSportCategory(String categoryId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'sports',
       'categories',
       categoryId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -89,13 +66,13 @@ class SportService {
   //CRUD SportAges
 
   //Create SportAge
-  Future<void> addSportAge(String? ageId, String name, String image) async {
+  Future<void> addSportAge(String? ageId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'sports',
       'ages',
       ageId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -108,15 +85,15 @@ class SportService {
         'ages',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Sport age - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Sport age - id: $id, name: $name, imageUrl: $imageUrl');
 
         return SportAge(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -125,38 +102,14 @@ class SportService {
     }
   }
 
-
-  //Read SportAge
-  Future<SportAge?> getSportAge(String ageId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'sports',
-        'ages',
-        ageId
-      );
-      if (filterData != null) {
-        return SportAge(
-          id: ageId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching age: $e');
-      return null;
-    }
-  }
-
   //Update SportAge
-  Future<void> updateSportAge(String ageId, String newName, String newImage) async {
+  Future<void> updateSportAge(String ageId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'sports',
       'ages',
       ageId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -172,13 +125,13 @@ class SportService {
   //CRUD SportDays
 
   //Create SportDay
-  Future<void> addSportDay(String? dayId, String name, String image) async {
+  Future<void> addSportDay(String? dayId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'sports',
       'days',
       dayId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -191,15 +144,15 @@ class SportService {
         'days',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Sport day - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Sport day - id: $id, name: $name, imageUrl: $imageUrl');
 
         return SportDay(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -208,38 +161,15 @@ class SportService {
     }
   }
 
-  //Read SportDay
-  Future<SportDay?> getSportDay(String dayId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'sports',
-        'days',
-        dayId,
-      );
-      if (filterData != null) {
-        return SportDay(
-          id: dayId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching sport day: $e');
-      return null;
-    }
-  }
-
 
   //Update SportDay
-  Future<void> updateSportDay(String dayId, String newName, String newImage) async {
+  Future<void> updateSportDay(String dayId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'sports',
       'days',
       dayId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -256,13 +186,13 @@ class SportService {
   //CRUD SportSchedules
 
   //Create SportSchedules
-  Future<void> addSportSchedule(String? scheduleId, String name, String image) async {
+  Future<void> addSportSchedule(String? scheduleId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'sports',
       'schedules',
       scheduleId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -274,15 +204,15 @@ class SportService {
         'schedules',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Sport schedule - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Sport schedule - id: $id, name: $name, imageUrl: $imageUrl');
 
         return SportSchedule(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -291,39 +221,14 @@ class SportService {
     }
   }
 
-  //Read SportSchedule
-  Future<SportSchedule?> getSportSchedule(String scheduleId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'sports',
-        'schedules',
-        scheduleId,
-      );
-      if (filterData != null) {
-        return SportSchedule(
-          id: scheduleId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching sport schedule: $e');
-      return null;
-    }
-  }
-
-
-
   //Update SportSchedule
-  Future<void> updateSportSchedule(String scheduleId, String newName, String newImage) async {
+  Future<void> updateSportSchedule(String scheduleId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'sports',
       'schedules',
       scheduleId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 
@@ -340,13 +245,13 @@ class SportService {
   //CRUD SportSectors
 
   //Create SportSectors
-  Future<void> addSportSector(String? sectorId, String name, String image) async {
+  Future<void> addSportSector(String? sectorId, String name, String imageUrl) async {
     await databaseService.createFilter(
       'sports',
       'sectors',
       sectorId,
       name,
-      image,
+      imageUrl,
     );
   }
 
@@ -358,15 +263,15 @@ class SportService {
         'sectors',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot.id;
+        final id = docSnapshot['id'] ?? docSnapshot.id;
         final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final image = docSnapshot['image'] ?? 'Default image path';
-        debugPrint('Sport sector - id: $id, name: $name, image: $image');
+        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
+        debugPrint('Sport sector - id: $id, name: $name, imageUrl: $imageUrl');
 
         return SportSector(
           id: id,
           name: name,
-          image: image,
+          imageUrl: imageUrl,
         );
       }).toList();
     } catch (e) {
@@ -375,37 +280,14 @@ class SportService {
     }
   }
 
-  //Read SportSector
-  Future<SportSector?> getSportSector(String sectorId) async {
-    try {
-      var filterData = await databaseService.getFilter(
-        'sports',
-        'sectors',
-        sectorId,
-      );
-      if (filterData != null) {
-        return SportSector(
-          id: sectorId,
-          name: filterData['name'],
-          image: filterData['image'],
-        );
-      } else {
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Error fetching sport sector: $e');
-      return null;
-    }
-  }
-
   //Update SportSector
-  Future<void> updateSportSector(String sectorId, String newName, String newImage) async {
+  Future<void> updateSportSector(String sectorId, String newName, String newImageUrl) async {
     await databaseService.updateFilter(
       'sports',
       'sectors',
       sectorId,
       newName,
-      newImage,
+      newImageUrl,
     );
   }
 

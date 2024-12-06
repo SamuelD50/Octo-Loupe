@@ -71,20 +71,18 @@ class HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      'Je trouve mon activité',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                  Text(
+                    'Je trouve mon activité',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
+                  SizedBox(height: 16),
                   // Barre de recherche
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Je recherche ...',
@@ -96,6 +94,7 @@ class HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
+                  SizedBox(height: 16),
                   ToggleButtons(
                     isSelected: [_selectedSection == 0, _selectedSection == 1],
                     onPressed: (int section) {
@@ -431,32 +430,34 @@ class HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            debugPrint("Bouton rechercher");
-                            /* _resetFilters(); */
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                            textStyle: TextStyle(fontSize: 18),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: Text('Rechercher'),
                         ),
+                        onPressed: () {
+                          debugPrint("Bouton rechercher");
+                        },
+                        child: Text('Rechercher'),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _resetFilters();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                            textStyle: TextStyle(fontSize: 18),
+                      SizedBox(width: 16),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: Text('Réinitialiser'),
                         ),
+                        onPressed: () {
+                          _resetFilters();
+                        },
+                        child: Text('Réinitialiser'),
                       ),
                     ],
                   ),
