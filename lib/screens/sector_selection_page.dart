@@ -93,6 +93,8 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
 
                       final sportSectors = snapshot.data!;
 
+                      sportSectors.sort((a, b) => a.name.compareTo(b.name));
+
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
@@ -192,6 +194,8 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
 
                       final cultureSectors = snapshot.data!;
 
+                      cultureSectors.sort((a, b) => a.name.compareTo(b.name));
+
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
@@ -273,14 +277,20 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                       );
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context, selectedSectors);
-                      },
-                      child: Text('Valider'),
+                  SizedBox(width: 32),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF5B59B4),
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Color(0xFF5B59B4)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                     ),
+                    onPressed: () {
+                      Navigator.pop(context, selectedSectors);
+                    },
+                    child: Text('Valider'),
                   ),  
                 ],
               ),

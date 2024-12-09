@@ -100,6 +100,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
 
                       final sportDays = snapshot.data!;
 
+                      sportDays.sort((a, b) => a.name.compareTo(b.name));
+
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
@@ -199,6 +201,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
 
                       final cultureDays = snapshot.data!;
 
+                      cultureDays.sort((a, b) => a.name.compareTo(b.name));
+
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
@@ -280,15 +284,21 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                       );
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context, selectedDays);
-                      },
-                      child: Text('Valider'),
+                  SizedBox(width: 32),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF5B59B4),
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Color(0xFF5B59B4)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                     ),
-                  ),  
+                    onPressed: () {
+                      Navigator.pop(context, selectedDays);
+                    },
+                    child: Text('Valider'),
+                  ), 
                 ],
               ),
             ),

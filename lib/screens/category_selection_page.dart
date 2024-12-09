@@ -77,13 +77,15 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
 
                       final sportCategories = snapshot.data!;
 
+                      sportCategories.sort((a, b) => a.name.compareTo(b.name));
+
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
                         ),
                         itemCount: sportCategories.length,
                         itemBuilder: (context, index) {
@@ -107,7 +109,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
                                 color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
                                   : [
@@ -121,13 +123,13 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               child: Card(
                                 elevation: isSelected ? 2 : 4,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
                                         sportCategories[index].imageUrl,
                                         fit:BoxFit.cover,
@@ -136,14 +138,14 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                       child: Center(
                                         child: Text(
                                           categoryName,
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 24,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -176,13 +178,15 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
 
                       final cultureCategories = snapshot.data!;
 
+                      cultureCategories.sort((a, b) => a.name.compareTo(b.name));
+
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, // Deux colonnes
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
                         ),
                         itemCount: cultureCategories.length,
                         itemBuilder: (context, index) {
@@ -206,7 +210,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
                                 color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
                                   : [
@@ -220,13 +224,13 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               child: Card(
                                 elevation: isSelected ? 2 : 4,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
                                         cultureCategories[index].imageUrl,
                                         fit:BoxFit.cover,
@@ -235,14 +239,14 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                       child: Center(
                                         child: Text(
                                           categoryName,
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 24,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -257,15 +261,22 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                       );
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context, selectedCategories);
-                      },
-                      child: Text('Valider'),
+                  SizedBox(height: 8),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF5B59B4),
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Color(0xFF5B59B4)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
                     ),
-                  ),  
+                    onPressed: () {
+                      Navigator.pop(context, selectedCategories);
+                    },
+                    child: Text('Valider'),
+                  ),
+                  SizedBox(height: 8),
                 ],
               ),
             ),

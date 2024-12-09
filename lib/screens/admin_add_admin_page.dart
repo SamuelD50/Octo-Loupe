@@ -110,7 +110,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                         const SizedBox(height: 32),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.9,
-                          child:TextFormField(
+                          child: TextFormField(
                             controller: firstNameAdminController,
                             decoration: const InputDecoration(
                               labelText: 'Prénom',
