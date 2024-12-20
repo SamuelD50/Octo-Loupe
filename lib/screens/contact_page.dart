@@ -82,32 +82,39 @@ class ContactPageState extends State<ContactPage> {
           Align(
             alignment: Alignment.center,
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 32),
+                      child: Text(
                         'Contact',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
-                      Text(
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Text(
                         'N\'hésitez pas à nous contacter pour modifier du contenu ou pour toutes autres questions.',
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.left,
                       ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child:DropdownButtonFormField<String>(
                         value: _selectedTitle,
-                        hint: Text('Choisissez un titre'),
+                        hint: Text('Titre'),
                         items: _titles.map((String title) {
                           return DropdownMenuItem<String>(
                             value: title,
@@ -121,29 +128,43 @@ class ContactPageState extends State<ContactPage> {
                         },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
+                          isDense: true,
                         ),
                         validator: (value) => (value == null) ? 'Veuillez choisir un titre' : null,
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextFormField(
                         controller: _firstNameController,
                         decoration: const InputDecoration(
                           labelText: 'Prénom',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) => (value == null || value.isEmpty) ? 'Veuillez entrer un prénom' : null,
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextFormField(
                         controller: _nameController,
                         decoration: const InputDecoration(
                           labelText: 'Nom',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) => (value == null || value.isEmpty) ? 'Veuillez entrer un nom' : null,
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child:TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
                           labelText: 'Email',
@@ -159,9 +180,14 @@ class ContactPageState extends State<ContactPage> {
                           }
                           return null;
                         },
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child:TextFormField(
                         controller: _subjectController,
                         decoration: const InputDecoration(
                           labelText: 'Objet',
@@ -173,49 +199,58 @@ class ContactPageState extends State<ContactPage> {
                           }
                           return null;
                         },
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child:TextFormField(
                         controller: _messageController,
                         decoration: const InputDecoration(
                           labelText: 'Message',
                           border: OutlineInputBorder(),
                         ),
                         maxLines: null,
-                        keyboardType: TextInputType.multiline,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Veuillez entrer un message';
                           }
                           return null;
                         },
+                        keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.done,
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5B59B4),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Color(0xFF5B59B4)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            String title = _selectedTitle ?? '';
-                            String firstName = _firstNameController.text;
-                            String name = _nameController.text;
-                            String email = _emailController.text;
-                            String subject = _subjectController.text;
-                            String message = _messageController.text;
-
-                            sendEmail(title, firstName, name, email, subject, message);
-                          }
-                        },
-                        child: Text('Envoyer'),
                       ),
-                    ],
-                  ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          String title = _selectedTitle ?? '';
+                          String firstName = _firstNameController.text;
+                          String name = _nameController.text;
+                          String email = _emailController.text;
+                          String subject = _subjectController.text;
+                          String message = _messageController.text;
+
+                          sendEmail(title, firstName, name, email, subject, message);
+                        }
+                      },
+                      child: Text('Envoyer'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 32),
+                    ),
+                  ],
                 ),
               ),
             ),

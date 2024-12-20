@@ -15,33 +15,14 @@ class AdminCentralPage extends StatefulWidget {
 class AdminCentralPageState extends State<AdminCentralPage> {
 
   final AuthService _authService = AuthService();
+
+  bool loading = false;
+  void setLoading(bool value) {
+    setState(() {
+      loading = value;
+    });
+  }
   
-  Future<void> _signOut() async {
-    try {
-      await  _authService.signOut();
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AuthPage()),
-      );
-    } catch (e) {
-      debugPrint('Error during disconnection: $e');
-    }
-  }
-
-  Future<void> _deleteUser() async {
-    try {
-      await _authService.deleteUser();
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AuthPage()),
-      );
-    } catch (e) {
-      debugPrint('Error while deleting account: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,24 +48,27 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4),
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: Color(0xFF5B59B4)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        )
+                  Padding(
+                    padding: EdgeInsets.only(top: 32),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          )
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AdminInterfacePage()),
+                          );
+                        },
+                        child: Text('Modifier l\'interface de l\'application'),
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AdminInterfacePage()),
-                        );
-                      },
-                      child: Text('Modifier l\'interface de l\'application'),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -144,7 +128,6 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         ),
                       ),
                       onPressed: () {
-                        // Naviguer vers une autre page ici
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => AdminAddAdminPage()),
@@ -165,7 +148,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           borderRadius: BorderRadius.circular(20.0), // Border radius
                         ),
                       ),
-                      onPressed: _deleteUser,
+                      onPressed: () {
+                        _authService.deleteUser(
+                          context: context,
+                          setLoading: setLoading,
+                        );
+                      },
                       child: Text('Supprimer mon compte utilisateur'),
                     ),
                   ),
@@ -181,9 +169,17 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           borderRadius: BorderRadius.circular(20.0), // Border radius
                         ),
                       ),
-                      onPressed: _signOut,
+                      onPressed: () {
+                        _authService.signOut(
+                          context: context,
+                          setLoading: setLoading,
+                        );
+                      },
                       child: Text('Se déconnecter'),
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 32),
                   ),
                 ],
               ),

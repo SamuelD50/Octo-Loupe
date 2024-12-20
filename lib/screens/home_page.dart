@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/components/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'category_selection_page.dart';
 import 'age_selection_page.dart';
@@ -71,15 +74,19 @@ class HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Je trouve mon activité',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Padding(
+                    padding: EdgeInsets.only(top: 32),
+                    child: Text(
+                      'Je trouve mon activité',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 32),
                   // Barre de recherche
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
@@ -95,154 +102,184 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  ToggleButtons(
-                    isSelected: [_selectedSection == 0, _selectedSection == 1],
-                    onPressed: (int section) {
-                      setState(() {
-                        _selectedSection = section;
-                        _resetFilters();
-                      });
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      EdgeInsetsGeometry padding;
+
+                      if (constraints.maxWidth < 325) {
+                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
+                      } else {
+                        padding = EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0);
+                      }
+
+                      return ToggleButtons(
+                        isSelected: [_selectedSection == 0, _selectedSection == 1],
+                        onPressed: (int section) {
+                          setState(() {
+                            _selectedSection = section;
+                            _resetFilters();
+                          });
+                        },
+                        color: Colors.black,
+                        selectedColor: Colors.white,
+                        fillColor: Color(0xFF5B59B4),
+                        borderColor: Color(0xFF5B59B4),
+                        selectedBorderColor: Color(0xFF5B59B4),
+                        borderRadius: BorderRadius.circular(20.0),
+                        direction: constraints.maxWidth < 325 ?
+                          Axis.vertical
+                          : Axis.horizontal,
+                        children: [
+                          Container(
+                            padding: padding,
+                            child: Center(child: Text('Sport')),
+                          ),
+                          Container(
+                            padding: padding,
+                            child: Center(child: Text('Culture')),
+                          ),
+                        ],
+                      );
                     },
-                    color: Colors.black,
-                    selectedColor: Colors.white,
-                    fillColor: Color(0xFF5B59B4),
-                    borderColor: Color(0xFF5B59B4),
-                    selectedBorderColor: Color(0xFF5B59B4),
-                    borderRadius: BorderRadius.circular(20.0),
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
-                        child: Center(child: Text('Sport')),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
-                        child: Center(child: Text('Culture')),
-                      ),
-                    ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        _buildCriteriaTile(
-                          context,
-                          Icons.category,
-                          'Par catégorie',
-                          () async {
-                            final List<String>? categories = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => CategorySelectionPage(
-                                selectedCategories: _selectedSection == 0 ? selectedCategoriesSport : selectedCategoriesCulture,
-                                isSport: _selectedSection == 0,
-                              )),
-                            );
-                            if (categories != null) {
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedCategoriesSport = categories;
-                                } else {
-                                  selectedCategoriesCulture = categories;
-                                }
-                              });
-                            }
-                          },
-                          isSport: _selectedSection == 0,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: _buildCriteriaTile(
+                            context,
+                            Icons.category,
+                            'Par catégorie',
+                            () async {
+                              final List<String>? categories = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CategorySelectionPage(
+                                  selectedCategories: _selectedSection == 0 ? selectedCategoriesSport : selectedCategoriesCulture,
+                                  isSport: _selectedSection == 0,
+                                )),
+                              );
+                              if (categories != null) {
+                                setState(() {
+                                  if (_selectedSection == 0) {
+                                    selectedCategoriesSport = categories;
+                                  } else {
+                                    selectedCategoriesCulture = categories;
+                                  }
+                                });
+                              }
+                            },
+                            isSport: _selectedSection == 0,
+                          ),
                         ),
-                        _buildCriteriaTile(
-                          context,
-                          Icons.accessibility_new,
-                          'Par âge',
-                          () async {
-                            final List<String>? ages = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AgeSelectionPage(
-                                selectedAges: _selectedSection == 0 ? selectedAgesSport : selectedAgesCulture,
-                                isSport: _selectedSection == 0,
-                              )),
-                            );
-                            if (ages != null) {
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedAgesSport = ages;
-                                } else {
-                                  selectedAgesCulture = ages;
-                                }
-                              });
-                            }
-                          },
-                          isSport: _selectedSection == 0,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: _buildCriteriaTile(
+                            context,
+                            Icons.accessibility_new,
+                            'Par âge',
+                            () async {
+                              final List<String>? ages = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => AgeSelectionPage(
+                                  selectedAges: _selectedSection == 0 ? selectedAgesSport : selectedAgesCulture,
+                                  isSport: _selectedSection == 0,
+                                )),
+                              );
+                              if (ages != null) {
+                                setState(() {
+                                  if (_selectedSection == 0) {
+                                    selectedAgesSport = ages;
+                                  } else {
+                                    selectedAgesCulture = ages;
+                                  }
+                                });
+                              }
+                            },
+                            isSport: _selectedSection == 0,
+                          ),
                         ),
-                        _buildCriteriaTile(
-                          context,
-                          Icons.date_range,
-                          'Par jour',
-                          () async {
-                            final List<String>? days = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DaySelectionPage(
-                                selectedDays: _selectedSection == 0 ? selectedDaysSport : selectedDaysCulture,
-                                isSport: _selectedSection == 0,
-                              )),
-                            );
-                            if (days != null) {
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedDaysSport = days;
-                                } else {
-                                  selectedDaysCulture = days;
-                                }
-                              });
-                            }
-                          },
-                          isSport: _selectedSection == 0,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: _buildCriteriaTile(
+                            context,
+                            Icons.date_range,
+                            'Par jour',
+                            () async {
+                              final List<String>? days = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => DaySelectionPage(
+                                  selectedDays: _selectedSection == 0 ? selectedDaysSport : selectedDaysCulture,
+                                  isSport: _selectedSection == 0,
+                                )),
+                              );
+                              if (days != null) {
+                                setState(() {
+                                  if (_selectedSection == 0) {
+                                    selectedDaysSport = days;
+                                  } else {
+                                    selectedDaysCulture = days;
+                                  }
+                                });
+                              }
+                            },
+                            isSport: _selectedSection == 0,
+                          ),
                         ),
-                        _buildCriteriaTile(
-                          context,
-                          Icons.access_time,
-                          'Par horaire',
-                          () async {
-                            final List<String>? schedules = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ScheduleSelectionPage(
-                                selectedSchedules: _selectedSection == 0 ? selectedSchedulesSport : selectedSchedulesCulture,
-                                isSport: _selectedSection == 0,
-                              )),
-                            );
-                            if (schedules != null) {
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSchedulesSport = schedules;
-                                } else {
-                                  selectedSchedulesCulture = schedules;
-                                }
-                              });
-                            }
-                          },
-                          isSport: _selectedSection == 0,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: _buildCriteriaTile(
+                            context,
+                            Icons.access_time,
+                            'Par horaire',
+                            () async {
+                              final List<String>? schedules = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ScheduleSelectionPage(
+                                  selectedSchedules: _selectedSection == 0 ? selectedSchedulesSport : selectedSchedulesCulture,
+                                  isSport: _selectedSection == 0,
+                                )),
+                              );
+                              if (schedules != null) {
+                                setState(() {
+                                  if (_selectedSection == 0) {
+                                    selectedSchedulesSport = schedules;
+                                  } else {
+                                    selectedSchedulesCulture = schedules;
+                                  }
+                                });
+                              }
+                            },
+                            isSport: _selectedSection == 0,
+                          ),
                         ),
-                        _buildCriteriaTile(
-                          context,
-                          Icons.apartment_rounded,
-                          'Par secteur',
-                          () async {
-                            final List<String>? sectors = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => SectorSelectionPage(
-                                selectedSectors: _selectedSection == 0 ? selectedSectorsSport : selectedSectorsCulture,
-                                isSport: _selectedSection == 0,
-                              )),
-                            );
-                            if (sectors != null) {
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSectorsSport = sectors;
-                                } else {
-                                  selectedSectorsCulture = sectors;
-                                }
-                              });
-                            }
-                          },
-                          isSport: _selectedSection == 0,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: _buildCriteriaTile(
+                            context,
+                            Icons.apartment_rounded,
+                            'Par secteur',
+                            () async {
+                              final List<String>? sectors = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SectorSelectionPage(
+                                  selectedSectors: _selectedSection == 0 ? selectedSectorsSport : selectedSectorsCulture,
+                                  isSport: _selectedSection == 0,
+                                )),
+                              );
+                              if (sectors != null) {
+                                setState(() {
+                                  if (_selectedSection == 0) {
+                                    selectedSectorsSport = sectors;
+                                  } else {
+                                    selectedSectorsCulture = sectors;
+                                  }
+                                });
+                              }
+                            },
+                            isSport: _selectedSection == 0,
+                          ),
                         ),
                       ],
                     ),
@@ -427,39 +464,91 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          debugPrint("Bouton rechercher");
-                        },
-                        child: Text('Rechercher'),
-                      ),
-                      SizedBox(width: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          _resetFilters();
-                        },
-                        child: Text('Réinitialiser'),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return constraints.maxWidth > 325 ?
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                debugPrint("Bouton rechercher");
+                                log('Rechercher');
+                              },
+                              child: Text('Rechercher'),
+                            ),
+                            SizedBox(width: 32),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                _resetFilters();
+                                /* CustomSnackBar(
+                                  message: 'Filtres réinitialisés !',
+                                  backgroundColor: Colors.amber,
+                                ).showSnackBar(context); */
+                              },
+                              child: Text('Réinitialiser'),
+                            ),
+                          ],
+                        ) :
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                debugPrint("Bouton rechercher");
+                                log('Rechercher', level: 0);
+                              },
+                              child: Text('Rechercher'),
+                            ),
+                            SizedBox(width: 16),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                _resetFilters();
+                                /* CustomSnackBar(
+                                  message: 'Filtres réinitialisés !',
+                                  backgroundColor: Colors.amber,
+                                ).showSnackBar(context); */
+                              },
+                              child: Text('Réinitialiser'),
+                            ),
+                          ],
+                        );
+                    }
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 32),
                   ),
                 ],
               ),
@@ -484,10 +573,10 @@ class HomePageState extends State<HomePage> {
                   shape: BoxShape.circle,
                   color: Color(0xFF5B59B4),
                 ),
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(10),
                 child: Icon(icon, color: Colors.white),
               ),
-              SizedBox(width: 20),
+              SizedBox(width: 15),
               Expanded(
                 child: Text(
                   label,
@@ -503,13 +592,13 @@ class HomePageState extends State<HomePage> {
                   textAlign: TextAlign.right,
                 ),
               ),
-              SizedBox(width: 20),
+              SizedBox(width: 15),
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color(0xFF5B59B4),
                 ),
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 child: Icon(icon, color: Colors.white),
               ),
             ],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../components/custom_app_bar.dart';
-import 'package:octoloupe/model/sport_filter_model.dart';
-import 'package:octoloupe/model/culture_filter_model.dart';
-import 'package:octoloupe/services/sport_activity_section.dart';
-import 'package:octoloupe/services/culture_activity_section.dart';
+import 'package:octoloupe/model/sport_filters_model.dart';
+import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/services/sport_service.dart';
+import 'package:octoloupe/services/culture_service.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   final List<String> selectedCategories;
@@ -25,6 +25,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
   late Future<List<SportCategory>> sportCategoriesFunction;
   late Future<List<CultureCategory>> cultureCategoriesFunction;
 
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +36,9 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth > 325 ? 20.0 : 14.0;
+
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
@@ -83,7 +87,9 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                          1 : MediaQuery.of(context).size.width < 600 ?
+                          2 : 3,
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                         ),
@@ -143,9 +149,10 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       child: Center(
                                         child: Text(
                                           categoryName,
-                                          style: const TextStyle(
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 20,
+                                            fontSize: fontSize,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -184,7 +191,9 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Deux colonnes
+                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                          1 : MediaQuery.of(context).size.width < 600 ?
+                          2 : 3, // Deux colonnes
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                         ),
@@ -244,9 +253,10 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       child: Center(
                                         child: Text(
                                           categoryName,
-                                          style: const TextStyle(
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 20,
+                                            fontSize: fontSize,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

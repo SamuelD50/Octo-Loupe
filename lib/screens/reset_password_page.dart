@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/screens/auth_page.dart';
@@ -12,47 +13,16 @@ class ResetPasswordPage extends StatefulWidget {
 
 class ResetPasswordPageState extends State<ResetPasswordPage> {
 
+  void setLoading(bool value) {
+    setState(() {
+      loading = value;
+    });
+  }
+  
   bool loading = false;
   final AuthService _authService = AuthService();
   final _formResetPasswordKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-
-  Future<void> _resetPassword() async {
-    final String email = emailController.text.trim();
-
-    if (email.isEmpty) {
-      debugPrint('Veuillez entre votre email');
-      return;
-    }
-
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      await _authService.sendPasswordResetEmail(email);
-
-      setState(() {
-        loading = false;
-      });
-
-      debugPrint('Reinitialisation email is sending to $email');
-
-      if (!mounted) return;
-      Navigator.pushReplacement(
-      context, 
-      MaterialPageRoute(builder: (context) => AuthPage()),
-    );
-
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {  
-        loading = false;
-      });
-      debugPrint('Erreur: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +54,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(32),
+                          padding: const EdgeInsets.only(top: 32),
                           child: Text(
                             'Réinitialiser son mot de passe',
                             style: TextStyle(
@@ -92,6 +62,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -111,7 +82,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             },
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
@@ -121,8 +92,19 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          onPressed: () => _resetPassword(),
+                          onPressed: () {
+                            if (_formResetPasswordKey.currentState?.validate() ?? false) {
+                              _authService.sendPasswordResetEmail(
+                                emailController.text,
+                                context: context,
+                                setLoading: setLoading,
+                              );
+                            }  
+                          },
                           child: Text('Envoyer un email de réinitilisation'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 32),
                         ),
                       ],
                     ),

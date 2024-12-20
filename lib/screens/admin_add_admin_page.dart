@@ -21,54 +21,15 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
   final newPasswordAdminController = TextEditingController();
 
   bool loading = false;
+  void setLoading(bool value) {
+    setState(() {
+      loading = value;
+    });
+  }
 
   bool _isNewPasswordVisible = false;
 
   final AuthService _authService = AuthService();
-  
-  Future<void> _signUpAdmin() async {
-    final firstName = firstNameAdminController.text.trim();
-    final name = nameAdminController.text.trim();
-    final email = newEmailAdminController.text.trim();
-    final password = newPasswordAdminController.text.trim();
-
-    if (_formSignUpAdminKey.currentState?.validate() ?? false) {
-      setState(() {
-        loading = true;
-      });
-
-      try {
-        UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
-          email, password, firstName, name, 'admin',
-        );
-
-        if(!mounted) return;
-
-        setState(() {
-          loading = false;
-        });
-
-        if (userCredential != null) {
-          debugPrint('Administrator account created successfully');
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AdminCentralPage()),
-          );
-        } else {
-          debugPrint('Failed to create administrator account');
-        }
-      } catch (e) {
-        if (!mounted) return;
-
-        setState(() {
-          loading = false;
-        });
-        debugPrint('Error: $e');
-      }
-    } else {
-      debugPrint('Form validation failed');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +60,16 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                     key: _formSignUpAdminKey,
                     child: Column(
                       children: [
-                        Text(
-                          'Ajouter un profil administrateur',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        Padding(
+                          padding: EdgeInsets.only(top: 32),
+                          child: Text(
+                            'Ajouter un profil administrateur',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -122,6 +87,8 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -139,6 +106,8 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -159,6 +128,8 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -187,9 +158,11 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
@@ -199,8 +172,26 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          onPressed: () => _signUpAdmin(),
+                          onPressed: () {
+                            if (_formSignUpAdminKey.currentState?.validate() ?? false) {
+                              _authService.signUpAdmin(
+                                newEmailAdminController.text,
+                                newPasswordAdminController.text,
+                                firstNameAdminController.text,
+                                nameAdminController.text,
+                                context: context,
+                                setLoading: setLoading,
+                              );
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => AdminCentralPage()),
+                            );
+                          },
                           child: Text('Créer un compte'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 32),
                         ),
                       ],
                     ),

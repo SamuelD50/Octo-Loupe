@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
 import 'package:octoloupe/screens/home_page.dart';
 import 'package:octoloupe/screens/reset_password_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
-import 'package:octoloupe/services/database.dart';
+import 'package:octoloupe/CRUD/user_crud.dart';
 import '../components/custom_app_bar.dart';
 import '../components/loader_spinning.dart';
 
@@ -25,7 +26,7 @@ class AuthPageState extends State<AuthPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final _formSignUpKey = GlobalKey<FormState>();
+  final _formSignUpUserKey = GlobalKey<FormState>();
   //Controllers pour la partie Création de compte
   final firstNameController = TextEditingController();
   final nameController = TextEditingController();
@@ -39,58 +40,10 @@ class AuthPageState extends State<AuthPage> {
 
   final AuthService _authService = AuthService();
 
-  Future<void> _signIn() async {
-    final String email = emailController.text.trim();
-    final String password = passwordController.text.trim();
-
-    if (_formSignInKey.currentState?.validate() ?? false) {
-      setState(() {
-        loading = true;
-      });
-
-      try {
-        UserCredential? userCredential = await _authService.signInWithEmailAndPassword(email, password);
-
-        setState(() {
-          loading = false;
-        });
-
-        if (userCredential != null) {
-          debugPrint('Connected');
-
-          User? user = userCredential.user;
-          if (user != null) {
-            DatabaseService databaseService = DatabaseService(user.uid);
-            UserModel? userDoc = await databaseService.getUser();
-
-            if (userDoc?.role == 'admin') {
-              debugPrint('Redirection vers AdminPage');
-              if (!mounted) return;
-              Navigator.pushReplacement(
-                context, 
-                MaterialPageRoute(builder: (context) => AdminCentralPage()),
-              );
-            } else {
-              debugPrint('Redirection vers HomePage');
-              if (!mounted) return;
-              Navigator.pushReplacement(
-                context, 
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-            }
-          }
-        } else {
-          debugPrint('Incorrect username/password pair');
-        }
-      } catch (e) {
-        setState(() {  
-          loading = false;
-        });
-        debugPrint('Error: $e');
-      }
-    } else {
-      debugPrint('Connection failed');
-    }
+  void setLoading(bool value) {
+    setState(() {
+      loading = value;
+    });
   }
 
   void _resetPassword() {
@@ -98,47 +51,6 @@ class AuthPageState extends State<AuthPage> {
       context, 
       MaterialPageRoute(builder: (context) => ResetPasswordPage()),
     );
-  }
-
-  Future<void> _signUp() async {
-    final firstName = firstNameController.text.trim();
-    final name = nameController.text.trim();
-    final email = newEmailController.text.trim();
-    final password = newPasswordController.text.trim();
-
-    if (_formSignUpKey.currentState?.validate() ?? false) {
-      setState(() {
-        loading = true;
-      });
-
-      try {
-        UserCredential? userCredential = await _authService.createUserWithEmailAndPassword(
-          email, password, firstName, name, 'user',
-        );
-
-        if (!mounted) return;
-
-        setState(() {
-          loading = false;
-        });
-
-        if (userCredential != null) {
-          debugPrint('Account created successfully');
-          Navigator.pushReplacementNamed(context, '/HomePage');
-        } else {
-          debugPrint('Failed to create account');
-        }
-      } catch (e) {
-        if (!mounted) return;
-
-        setState(() {
-          loading = false;
-        });
-        debugPrint('Error: $e');
-      }
-    } else {
-      debugPrint('Form validation failed');
-    }
   }
 
   void _clearFormFields() {
@@ -175,41 +87,60 @@ class AuthPageState extends State<AuthPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Mon compte',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32),
+                    child: Text(
+                      'Mon compte',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 32),
-                  ToggleButtons(
-                    isSelected: [_selectedIndex == 0, _selectedIndex == 1],
-                    onPressed: (int index) {
-                      setState(() {
-                        _selectedIndex = index;
-                        _clearFormFields();
-                      });
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      EdgeInsetsGeometry padding;
+
+                      if (constraints.maxWidth < 325) {
+                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
+                      } else {
+                        padding = EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0);
+                      }
+
+                      return ToggleButtons(
+                        isSelected: [_selectedIndex == 0, _selectedIndex == 1],
+                        onPressed: (int index) {
+                          setState(() {
+                            _selectedIndex = index;
+                            _clearFormFields();
+                          });
+                        },
+                        color: Colors.black,
+                        selectedColor: Colors.white,
+                        fillColor: Color(0xFF5B59B4),
+                        borderColor: Color(0xFF5B59B4),
+                        selectedBorderColor: Color(0xFF5B59B4),
+                        borderRadius:  BorderRadius.circular(20.0),
+                        direction: constraints.maxWidth < 325 ?
+                          Axis.vertical
+                          : Axis.horizontal,
+                        children: [
+                          Container(
+                            padding: padding,
+                            child: Center(child: Text('Se connecter')),
+                          ),
+                          Container(
+                            padding: padding,
+                            child: Center(child: Text('Créer un compte')),
+                          ),
+                        ],
+                      );
                     },
-                    color: Colors.black,
-                    selectedColor: Colors.white,
-                    fillColor: Color(0xFF5B59B4),
-                    borderColor: Color(0xFF5B59B4),
-                    selectedBorderColor: Color(0xFF5B59B4),
-                    borderRadius:  BorderRadius.circular(20.0),
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 1),
-                        child: Center(child: Text('Se connecter')),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 1),
-                        child: Center(child: Text('Créer un compte')),
-                      ),
-                    ],
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
                   _selectedIndex == 0 ?
                   Form(
                     key: _formSignInKey,
@@ -262,7 +193,7 @@ class AuthPageState extends State<AuthPage> {
                             },
                           ),
                         ),
-                        const SizedBox(height: 5),
+                        /* const SizedBox(height: 2), */
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.9,
                           child: Align(
@@ -276,7 +207,7 @@ class AuthPageState extends State<AuthPage> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
@@ -286,14 +217,23 @@ class AuthPageState extends State<AuthPage> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          onPressed: () => _signIn(),
+                          onPressed: () {
+                            if (_formSignInKey.currentState?.validate() ?? false) {
+                              _authService.signIn(
+                                emailController.text,
+                                passwordController.text,
+                                context: context,
+                                setLoading: setLoading,
+                              );
+                            }
+                          },
                           child: Text('Se connecter'),
                         ),
                       ],
                     ),
                   ) :
                   Form(
-                    key: _formSignUpKey,
+                    key: _formSignUpUserKey,
                     child: Column(
                       children: [
                         SizedBox(
@@ -310,6 +250,8 @@ class AuthPageState extends State<AuthPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -327,6 +269,8 @@ class AuthPageState extends State<AuthPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -347,6 +291,8 @@ class AuthPageState extends State<AuthPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -375,9 +321,11 @@ class AuthPageState extends State<AuthPage> {
                               }
                               return null;
                             },
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
@@ -387,11 +335,25 @@ class AuthPageState extends State<AuthPage> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          onPressed: () => _signUp(),
+                          onPressed: () {
+                            if (_formSignUpUserKey.currentState?.validate() ?? false) {
+                              _authService.signUpUser(
+                                newEmailController.text,
+                                newPasswordController.text,
+                                firstNameController.text,
+                                nameController.text,
+                                context: context,
+                                setLoading: setLoading,
+                              );
+                            }
+                          },
                           child: Text('Créer un compte'),
                         ),
                       ],
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 32),
                   ),
                 ],
               ),

@@ -16,7 +16,7 @@ class CustomNavBar extends StatelessWidget {
       context,
       controller: _controller,
       screens: _buildScreens(),
-      items: _navBarsItems(),
+      items: _navBarsItems(context),
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
@@ -50,26 +50,28 @@ class CustomNavBar extends StatelessWidget {
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
+  List<PersistentBottomNavBarItem> _navBarsItems(context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth < 225 ? 13 : 15;
     return [
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.home),
-        title: ("Accueil"),
-        textStyle: TextStyle(fontSize:15),
+        title: /* isSmallScreen ? null :  */("Accueil"),
+        textStyle: TextStyle(fontSize: fontSize),
         activeColorPrimary: const Color(0xFFF9BC50),
         inactiveColorPrimary: Colors.white,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.person),
-        title: ("Mon compte"),
-        textStyle: TextStyle(fontSize:15),
+        title: /* isSmallScreen ? null : */ ("Compte"),
+        textStyle: TextStyle(fontSize: fontSize),
         activeColorPrimary: const Color(0xFFF9BC50),
         inactiveColorPrimary: Colors.white,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.mail),
-        title: ("Contact"),
-        textStyle: TextStyle(fontSize:15),
+        title: /* isSmallScreen ? null : */ ("Contact"),
+        textStyle: TextStyle(fontSize: fontSize),
         activeColorPrimary: const Color(0xFFF9BC50),
         inactiveColorPrimary: Colors.white,
       ),

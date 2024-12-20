@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/model/culture_filter_model.dart';
-import 'package:octoloupe/services/database.dart';
+import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/CRUD/filters_crud.dart';
 
 class CultureService {
-  final DatabaseService databaseService = DatabaseService();
+  final FiltersCRUD filtersCRUD = FiltersCRUD();
   //CRUD SportCategories
 
   //Create CultureCategory
   Future<void> addCultureCategory(String? categoryId, String name, String imageUrl) async {
-    await databaseService.createFilter(
+    await filtersCRUD.createFilter(
       'cultures',
       'categories',
       categoryId,
@@ -21,15 +21,14 @@ class CultureService {
   //Read CultureCategories
   Future<List<CultureCategory>> getCultureCategories() async {
     try {
-      var filtersData = await databaseService.getFilters(
+      var filtersData = await filtersCRUD.getFilters(
         'cultures',
         'categories',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot['id'] ?? docSnapshot.id;
-        final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
-        debugPrint('Culture category - id: $id, name: $name, imageUrl: $imageUrl');
+        final id = docSnapshot['id'];
+        final name = docSnapshot['name'];
+        final imageUrl = docSnapshot['imageUrl'];
 
         return CultureCategory(
           id: id,
@@ -38,14 +37,13 @@ class CultureService {
         );
       }).toList();
     } catch (e) {
-      debugPrint('Error fetching culture categories: $e');
       return [];
     }
   }
 
   //Update CultureCategory
   Future<void> updateCultureCategory(String categoryId, String newName, String newImageUrl) async {
-    await databaseService.updateFilter(
+    await filtersCRUD.updateFilter(
       'cultures',
       'categories',
       categoryId,
@@ -56,7 +54,7 @@ class CultureService {
 
   //Delete CultureCategory
   Future<void> deleteCultureCategory(String categoryId) async {
-    await databaseService.deleteFilter(
+    await filtersCRUD.deleteFilter(
       'cultures',
       'categories',
       categoryId,
@@ -67,7 +65,7 @@ class CultureService {
 
   //Create CultureAge
   Future<void> addCultureAge(String? ageId, String name, String imageUrl) async {
-    await databaseService.createFilter(
+    await filtersCRUD.createFilter(
       'cultures',
       'ages',
       ageId,
@@ -79,15 +77,14 @@ class CultureService {
   //Read CultureAges
   Future<List<CultureAge>> getCultureAges() async {
     try {
-      var filtersData = await databaseService.getFilters(
+      var filtersData = await filtersCRUD.getFilters(
         'cultures',
         'ages',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot['id'] ?? docSnapshot.id;
-        final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
-        debugPrint('Culture age - id: $id, name: $name, imageUrl: $imageUrl');
+        final id = docSnapshot['id'];
+        final name = docSnapshot['name'];
+        final imageUrl = docSnapshot['imageUrl'];
 
         return CultureAge(
           id: id,
@@ -96,14 +93,13 @@ class CultureService {
         );
       }).toList();
     } catch (e) {
-      debugPrint('Error fetching culture ages: $e');
       return [];
     }
   }
 
   //Update CultureAge
   Future<void> updateCultureAge(String ageId, String newName, String newImageUrl) async {
-    await databaseService.updateFilter(
+    await filtersCRUD.updateFilter(
       'cultures',
       'ages',
       ageId,
@@ -114,7 +110,7 @@ class CultureService {
 
   //Delete CultureAge
   Future<void> deleteCultureAge(String ageId) async {
-    await databaseService.deleteFilter(
+    await filtersCRUD.deleteFilter(
       'cultures',
       'ages',
       ageId,
@@ -125,7 +121,7 @@ class CultureService {
 
   //Create CultureDay
   Future<void> addCultureDay(String? dayId, String name, String imageUrl) async {
-    await databaseService.createFilter(
+    await filtersCRUD.createFilter(
       'cultures',
       'days',
       dayId,
@@ -137,15 +133,14 @@ class CultureService {
   //Read CultureDays
   Future<List<CultureDay>> getCultureDays() async {
     try {
-      var filtersData = await databaseService.getFilters(
+      var filtersData = await filtersCRUD.getFilters(
         'cultures',
         'days',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot['id'] ?? docSnapshot.id;
-        final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
-        debugPrint('Culture day - id: $id, name: $name, imageUrl: $imageUrl');
+        final id = docSnapshot['id'];
+        final name = docSnapshot['name'];
+        final imageUrl = docSnapshot['imageUrl'];
 
         return CultureDay(
           id: id,
@@ -154,7 +149,6 @@ class CultureService {
         );
       }).toList();
     } catch (e) {
-      debugPrint('Error fetching culture days: $e');
       return [];
     }
   }
@@ -162,7 +156,7 @@ class CultureService {
 
   //Update CultureDay
   Future<void> updateCultureDay(String dayId, String newName, String newImageUrl) async {
-    await databaseService.updateFilter(
+    await filtersCRUD.updateFilter(
       'cultures',
       'days',
       dayId,
@@ -173,7 +167,7 @@ class CultureService {
 
   //Delete CultureDay
   Future<void> deleteCultureDay(String dayId) async {
-    await databaseService.deleteFilter(
+    await filtersCRUD.deleteFilter(
       'cultures',
       'days',
       dayId,
@@ -185,7 +179,7 @@ class CultureService {
 
   //Create CultureSchedules
   Future<void> addCultureSchedule(String? scheduleId, String name, String imageUrl) async {
-    await databaseService.createFilter(
+    await filtersCRUD.createFilter(
       'cultures',
       'schedules',
       scheduleId,
@@ -197,15 +191,14 @@ class CultureService {
   //Read CultureSchedules
   Future<List<CultureSchedule>> getCultureSchedules() async {
     try {
-      var filtersData = await databaseService.getFilters(
+      var filtersData = await filtersCRUD.getFilters(
         'cultures',
         'schedules',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot['id'] ?? docSnapshot.id;
-        final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
-        debugPrint('Culture schedule - id: $id, name: $name, imageUrl: $imageUrl');
+        final id = docSnapshot['id'];
+        final name = docSnapshot['name'];
+        final imageUrl = docSnapshot['imageUrl'];
 
         return CultureSchedule(
           id: id,
@@ -214,7 +207,6 @@ class CultureService {
         );
       }).toList();
     } catch (e) {
-      debugPrint('Error fetching culture schedules: $e');
       return [];
     }
   }
@@ -222,7 +214,7 @@ class CultureService {
 
   //Update CultureSchedule
   Future<void> updateCultureSchedule(String scheduleId, String newName, String newImageUrl) async {
-    await databaseService.updateFilter(
+    await filtersCRUD.updateFilter(
       'cultures',
       'schedules',
       scheduleId,
@@ -233,7 +225,7 @@ class CultureService {
 
   //Delete CultureSchedule
   Future<void> deleteCultureSchedule(String scheduleId) async {
-    await databaseService.deleteFilter(
+    await filtersCRUD.deleteFilter(
       'cultures',
       'schedules',
       scheduleId,
@@ -245,7 +237,7 @@ class CultureService {
 
   //Create CultureSectors
   Future<void> addCultureSector(String? sectorId, String name, String imageUrl) async {
-    await databaseService.createFilter(
+    await filtersCRUD.createFilter(
       'cultures',
       'sectors',
       sectorId,
@@ -257,15 +249,14 @@ class CultureService {
   //Read CultureSectors
   Future<List<CultureSector>> getCultureSectors() async {
     try {
-      var filtersData = await databaseService.getFilters(
+      var filtersData = await filtersCRUD.getFilters(
         'cultures',
         'sectors',
       );
       return filtersData.map((docSnapshot) {
-        final id = docSnapshot['id'] ?? docSnapshot.id;
-        final name = docSnapshot['name'] ?? 'Nom non disponible';
-        final imageUrl = docSnapshot['imageUrl'] ?? 'Default imageUrl path';
-        debugPrint('Culture sector - id: $id, name: $name, imageUrl: $imageUrl');
+        final id = docSnapshot['id'];
+        final name = docSnapshot['name'];
+        final imageUrl = docSnapshot['imageUrl'];
 
         return CultureSector(
           id: id,
@@ -274,14 +265,13 @@ class CultureService {
         );
       }).toList();
     } catch (e) {
-      debugPrint('Error fetching culture sectors: $e');
       return [];
     }
   }
 
   //Update SportSector
   Future<void> updateCultureSector(String sectorId, String newName, String newImageUrl) async {
-    await databaseService.updateFilter(
+    await filtersCRUD.updateFilter(
       'cultures',
       'sectors',
       sectorId,
@@ -292,7 +282,7 @@ class CultureService {
 
   //Delete SportCategory
   Future<void> deleteCultureSector(String sectorId) async {
-    await databaseService.deleteFilter(
+    await filtersCRUD.deleteFilter(
       'cultures',
       'sectors',
       sectorId,

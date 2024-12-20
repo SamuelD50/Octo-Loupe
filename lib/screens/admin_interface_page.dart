@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:octoloupe/model/sport_filter_model.dart';
-import 'package:octoloupe/model/culture_filter_model.dart';
-import 'package:octoloupe/services/sport_activity_section.dart';
-import 'package:octoloupe/services/culture_activity_section.dart';
+import 'package:octoloupe/components/snackbar.dart';
+import 'package:octoloupe/model/sport_filters_model.dart';
+import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/services/sport_service.dart';
+import 'package:octoloupe/services/culture_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -44,15 +45,16 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
   TextEditingController newNameController = TextEditingController();
   TextEditingController newImageUrlController = TextEditingController();
   
-  Future<void> createSubFilter() async {
-    setState(() {
-      isLoading = true;
-    });
-
+  Future<void> createSubFilter({required BuildContext context}) async {
+    
     String name = nameController.text.trim();
     String imageUrl = imageUrlController.text.trim();
     
     try {
+      setState(() {
+        isLoading = true;
+      });
+
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
           await SportService().addSportCategory(null, name, imageUrl);
@@ -78,12 +80,30 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await CultureService().addCultureSector(null, name, imageUrl);
         }
       }
-    } catch (e) {
-      debugPrint('Error creating sub-filter: $e');
-    } finally {
+
       setState(() {
         isLoading = false;
       });
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Filtre créé',
+          backgroundColor: Colors.green,
+        ).showSnackBar(context);
+      }
+    } catch (e) {
+      debugPrint('Error creating sub-filter: $e');
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Echec de la création du filtre',
+          backgroundColor: Colors.red,
+        ).showSnackBar(context);
+      }
     }
   }
 
@@ -135,15 +155,16 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
     }
   }
 
-  Future<void> updateSubFilter() async {
-    setState(() {
-      isLoading = true;
-    });
-
+  Future<void> updateSubFilter({required BuildContext context}) async {
+    
     String newName = newNameController.text.trim();
     String newImageUrl = newImageUrlController.text.trim();
     
     try {
+      setState(() {
+        isLoading = true;
+      });
+
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
           await SportService().updateSportCategory(selectedSubFilterId, newName, newImageUrl);
@@ -169,21 +190,39 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await CultureService().updateCultureSector(selectedSubFilterId, newName, newImageUrl);
         }
       }
-    } catch (e) {
-      debugPrint('Error updating sub-filter: $e');
-    } finally {
+
       setState(() {
         isLoading = false;
       });
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Filtre mis à jour',
+          backgroundColor: Colors.green,
+        ).showSnackBar(context);
+      }
+    } catch (e) {
+      debugPrint('Error updating sub-filter: $e');
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Echec de la mise à jour du filtre',
+          backgroundColor: Colors.red,
+        ).showSnackBar(context);
+      }
     }
   }
 
-  Future<void> deleteSubFilter() async {
-    setState(() {
-      isLoading = true;
-    });
-
+  Future<void> deleteSubFilter({required BuildContext context}) async {
     try {
+      setState(() {
+        isLoading = true;
+      });
+
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
           await SportService().deleteSportCategory(selectedSubFilterId);
@@ -209,25 +248,117 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await CultureService().deleteCultureSector(selectedSubFilterId);
         }
       }
-    } catch (e) {
-      debugPrint('Error deleting sub-filter: $e');
-    } finally {
+
       setState(() {
         isLoading = false;
       });
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Filtre supprimé',
+          backgroundColor: Colors.green,
+        ).showSnackBar(context);
+      }
+    } catch (e) {
+      debugPrint('Error deleting sub-filter: $e');
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Echec de la suppression du filtre',
+          backgroundColor: Colors.red,
+        ).showSnackBar(context);
+      }
     }
   }
 
   bool isNameDuplicated(String name) {
     return subFilters.any((subFilter) =>
       subFilter.name.toLowerCase() == name.toLowerCase() &&
-      subFilter.id != selectedSubFilterIdForEditing);
+      subFilter.id != selectedSubFilterIdForEditing,
+    );
   }
+
+  List<dynamic> sortSubFilters(List<dynamic> subFilters, String selectedFilter) {
+    switch (selectedFilter) {
+      case 'Par catégorie':
+        subFilters.sort((a,b) => a.name.compareTo(b.name));
+        break;
+
+      case 'Par âge':
+        subFilters.sort((a, b) {
+          int minAgeA = _getMinAgeFromAgeRange(a.name);
+          int minAgeB = _getMinAgeFromAgeRange(b.name);
+          return minAgeA.compareTo(minAgeB);
+        });
+        break;
+
+      case 'Par horaire':
+        subFilters.sort((a, b) {
+          int startTimeA = _getStartTimeFromSchedule(a.name);
+          int startTimeB = _getStartTimeFromSchedule(b.name);
+          return startTimeA.compareTo(startTimeB);
+        });
+        break;
+
+      case 'Par jour':
+        subFilters.sort((a, b) {
+          return _getDayIndex(a.name).compareTo(_getDayIndex(b.name));
+        });
+        break;
+
+      case 'Par secteur':
+      subFilters.sort((a, b) => a.name.compareTo(b.name));
+      break;
+
+      default:
+        subFilters.sort((a, b) => a.name.compareTo(b.name));
+    }
+
+    return subFilters;
+  }
+
+  int _getMinAgeFromAgeRange(String ageRange) {
+    RegExp regExp = RegExp(r'(\d+)(?=[\s\-])');
+    Match? match = regExp.firstMatch(ageRange);
+    if (match != null) {
+      return int.parse(match.group(1)!);
+    }
+    return 99;
+  }
+
+  int _getStartTimeFromSchedule(String schedule) {
+    RegExp regExp = RegExp(r'(\d+)h');
+    Match? match = regExp.firstMatch(schedule);
+    if (match != null) {
+      return int.parse(match.group(1)!);
+    }
+    return 99;
+  }
+
+  int _getDayIndex(String day) {
+    Map<String, int> dayOrder = {
+      'Lundi': 0,
+      'Mardi': 1,
+      'Mercredi': 2,
+      'Jeudi': 3,
+      'Vendredi': 4,
+      'Samedi': 5,
+      'Dimanche': 6,
+    };
+
+    return dayOrder[day] ?? 99;
+  }
+
 
   @override
   void initState() {
     super.initState();
     selectedFilter = "Par catégorie";
+    subFilters = [];
     imageUrlController.addListener(() {
       setState(() {
         imageUrl = imageUrlController.text;
@@ -267,12 +398,15 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Modifier l\'interface de l\'application',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Padding(
+                    padding: EdgeInsets.only(top: 32),
+                    child: Text(
+                      'Modifier l\'interface de l\'application',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -292,9 +426,12 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                         onPressed: () {
                           setState(() {
                             _currentMode = SubFilterMode.adding;
+                            selectedFilter = 'Par catégorie';
+                            subFilters = [];
+                            readSubFilters();
                           });
                         },
-                        child: Icon(Icons.add, size: 30),
+                        child: Icon(Icons.add, size: 30, color: Colors.white),
                       ),
                       SizedBox(width: 16),
                       ElevatedButton(
@@ -309,9 +446,12 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                         onPressed: () {
                           setState(() {
                             _currentMode = SubFilterMode.editing;
+                            selectedFilter = 'Par catégorie';
+                            subFilters = [];
+                            readSubFilters();
                           });
                         },
-                        child: Icon(Icons.edit, size: 30),
+                        child: Icon(Icons.edit, size: 30, color: Colors.white),
                       ),
                       SizedBox(width: 16),
                       ElevatedButton(
@@ -326,9 +466,12 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                         onPressed: () {
                           setState(() {
                             _currentMode = SubFilterMode.deleting;
+                            selectedFilter = 'Par catégorie';
+                            subFilters = [];
+                            readSubFilters();
                           });
                         },
-                        child: Icon(Icons.remove, size: 30),
+                        child: Icon(Icons.remove, size: 30, color: Colors.white),
                       ),
                     ], 
                   ),
@@ -356,8 +499,11 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             onPressed: (int section) {
               setState(() {
                 selectedSection = section;
+                selectedFilter = 'Par catégorie';
+                subFilters = [];
                 nameController.clear();
                 imageUrlController.clear();
+                readSubFilters();
               });
             },
             color: Colors.black,
@@ -387,6 +533,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             onChanged: (String? newValue) {
               setState(() {
                 selectedFilter = newValue!;
+                subFilters = [];
                 readSubFilters();
               });
             },
@@ -460,13 +607,20 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             ),
             onPressed: () {
               if (_addSubFilterKey.currentState!.validate()) {
-                createSubFilter();
-                readSubFilters();
+                createSubFilter(
+                  context: context,
+                );
+                selectedFilter = "Par catégorie";
+                subFilters = [];
                 nameController.clear();
                 imageUrlController.clear();
+                readSubFilters();
               }
             },
             child: Text('Ajouter un nouveau sous-filtre'),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 32),
           ),
         ],
       ),
@@ -484,8 +638,11 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               setState(() {
                 selectedSection = section;
                 selectedSubFilterIdForEditing = '';
+                selectedFilter = 'Par catégorie';
+                subFilters = [];
                 newNameController.clear();
                 newImageUrlController.clear();
+                readSubFilters();
               });
             },
             color: Colors.black,
@@ -518,6 +675,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                 newNameController.clear();
                 newImageUrlController.clear();
                 selectedSubFilterIdForEditing = '';
+                subFilters = [];
                 readSubFilters();
               });
             },
@@ -542,10 +700,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   selectedSubFilterId = selectedSubFilter.id;
                 }
               });
-              debugPrint('DebugPrint1 : $selectedSubFilterIdForEditing');
-              debugPrint('DebugPrint2 : $newValue');
             },
-            items: subFilters.map((subFilter) {
+            items: sortSubFilters(subFilters, selectedFilter).map((subFilter) {
               return DropdownMenuItem<String>(
                 value: subFilter.id,
                 child: Text(subFilter.name),
@@ -628,15 +784,22 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             ),
             onPressed: () {
               if (_editSubFilterKey.currentState!.validate()) {
-                updateSubFilter();
-                readSubFilters();
+                updateSubFilter(
+                  context: context,
+                );
                 selectedSubFilterIdForEditing = '';
+                selectedFilter = 'Par catégorie';
+                subFilters = [];
                 newNameController.clear();
                 newImageUrlController.clear();
+                readSubFilters();
               }
             },
             child: Text('Enregistrer les modifications'),
-          ),  
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 32),
+          ), 
         ],
       ),
     );
@@ -653,6 +816,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               setState(() {
                 selectedSection = section;
                 selectedSubFilterIdForDeleting = '';
+                selectedFilter = 'Par catégorie';
+                subFilters = [];
               });
             },
             color: Colors.black,
@@ -683,6 +848,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               setState(() {
                 selectedFilter = newValue!;
                 selectedSubFilterIdForDeleting = '';
+                subFilters = [];
                 readSubFilters();
               });
             },
@@ -708,7 +874,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               });
               debugPrint('DebugPrint 1: $selectedSubFilterId');
             },
-            items: subFilters.map((subFilter) {
+            items: sortSubFilters(subFilters, selectedFilter).map((subFilter) {
               return DropdownMenuItem<String>(
                 value: subFilter.id,
                 child: Text(subFilter.name),
@@ -744,11 +910,18 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               ),
             ),
             onPressed: () {
-              deleteSubFilter();
-              readSubFilters();
+              deleteSubFilter(
+                context: context,
+              );
               selectedSubFilterIdForDeleting = '';
+              selectedFilter = 'Par catégorie';
+              subFilters = [];
+              readSubFilters();
             },
             child: Text('Supprimer le sous-filtre'),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 32),
           ),
         ],
       ),

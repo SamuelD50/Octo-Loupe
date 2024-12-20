@@ -19,7 +19,6 @@ class CultureFilterModel {
   factory CultureFilterModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data();
     if (data == null) {
-      debugPrint('Aucune donnée trouvée pour la section Culture');
       return CultureFilterModel(
         categories: [],
         ages: [],

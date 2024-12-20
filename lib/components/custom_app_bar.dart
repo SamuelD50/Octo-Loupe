@@ -41,7 +41,10 @@ class CustomAppBarState extends State<CustomAppBar> {
           const SizedBox(width: 10),
           const Text(
             'Octo\'Loupe',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Colors.white
+
+            ),
           ),
         ],
       ),

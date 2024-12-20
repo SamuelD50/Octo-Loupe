@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../components/custom_app_bar.dart';
-import 'package:octoloupe/model/sport_filter_model.dart';
-import 'package:octoloupe/model/culture_filter_model.dart';
-import 'package:octoloupe/services/sport_activity_section.dart';
-import 'package:octoloupe/services/culture_activity_section.dart';
+import 'package:octoloupe/model/sport_filters_model.dart';
+import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/services/sport_service.dart';
+import 'package:octoloupe/services/culture_service.dart';
 
 class DaySelectionPage extends StatefulWidget {
   final List<String> selectedDays;
@@ -56,9 +56,10 @@ class DaySelectionPageState extends State<DaySelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-   /*  final days = widget.isSport ? sportDays : cultureDays; */
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth > 325 ? 20.0 : 14.0;
 
-        return Scaffold(
+    return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
         children: [
@@ -100,15 +101,25 @@ class DaySelectionPageState extends State<DaySelectionPage> {
 
                       final sportDays = snapshot.data!;
 
-                      sportDays.sort((a, b) => a.name.compareTo(b.name));
+                      List<String> daysOrder = [
+                        'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'
+                      ];
+
+                      sportDays.sort((a, b) {
+                        int indexA = daysOrder.indexOf(a.name);
+                        int indexB = daysOrder.indexOf(b.name);
+                        return indexA.compareTo(indexB);
+                      });
 
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Deux colonnes
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
+                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                          1 : MediaQuery.of(context).size.width < 600 ?
+                          2 : 3, // Deux colonnes
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
                         ),
                         itemCount: sportDays.length,
                         itemBuilder: (context, index) {
@@ -132,7 +143,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
                                 color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
                                   : [
@@ -146,13 +157,13 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               child: Card(
                                 elevation: isSelected ? 2 : 4,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
                                         sportDays[index].imageUrl,
                                         fit:BoxFit.cover,
@@ -161,14 +172,15 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                       child: Center(
                                         child: Text(
                                           dayName,
-                                          style: const TextStyle(
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 24,
+                                            fontSize: fontSize,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -201,15 +213,25 @@ class DaySelectionPageState extends State<DaySelectionPage> {
 
                       final cultureDays = snapshot.data!;
 
-                      cultureDays.sort((a, b) => a.name.compareTo(b.name));
+                      List<String> daysOrder = [
+                        'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'
+                      ];
+
+                      cultureDays.sort((a, b) {
+                        int indexA = daysOrder.indexOf(a.name);
+                        int indexB = daysOrder.indexOf(b.name);
+                        return indexA.compareTo(indexB);
+                      });
 
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Deux colonnes
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
+                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                          1 : MediaQuery.of(context).size.width < 600 ?
+                          2 : 3, // Deux colonnes
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
                         ),
                         itemCount: cultureDays.length,
                         itemBuilder: (context, index) {
@@ -233,7 +255,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
                                 color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
                                   : [
@@ -247,13 +269,13 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               child: Card(
                                 elevation: isSelected ? 2 : 4,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
                                         cultureDays[index].imageUrl,
                                         fit:BoxFit.cover,
@@ -262,14 +284,15 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                       child: Center(
                                         child: Text(
                                           dayName,
-                                          style: const TextStyle(
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 24,
+                                            fontSize: fontSize,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -284,21 +307,22 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                       );
                     },
                   ),
-                  SizedBox(width: 32),
+                  SizedBox(height: 8),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF5B59B4),
                       foregroundColor: Colors.white,
                       side: BorderSide(color: Color(0xFF5B59B4)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     onPressed: () {
                       Navigator.pop(context, selectedDays);
                     },
                     child: Text('Valider'),
-                  ), 
+                  ),
+                  SizedBox(height: 8),
                 ],
               ),
             ),

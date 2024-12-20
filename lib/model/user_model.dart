@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class UserModel {
   final String uid;
   final String email;
-  final String password;
   final String firstName;
   final String name;
   final String role;
@@ -12,7 +10,6 @@ class UserModel {
   UserModel({
     required this.uid,
     required this.email,
-    required this.password,
     required this.firstName,
     required this.name,
     required this.role,
@@ -23,11 +20,9 @@ class UserModel {
   factory UserModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
   final data = snapshot.data();
   if (data == null) {
-    debugPrint("Aucune donnée utilisateur trouvée pour l'UID ${snapshot.id}");
     return UserModel(
       uid: snapshot.id,
       email: '',
-      password: '', 
       firstName: '',
       name: '',
       role: '',
@@ -37,7 +32,6 @@ class UserModel {
   return UserModel(
     uid: snapshot.id,
     email: data['email'] ?? '',
-    password: data['password'] ?? '', 
     firstName: data['firstName'] ?? '',
     name: data['name'] ?? '',
     role: data['role'] ?? '',
@@ -48,7 +42,6 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return {
       'email': email,
-      'password': password,
       'firstName': firstName,
       'name': name,
       'role': role,
