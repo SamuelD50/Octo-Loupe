@@ -3,8 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../components/custom_app_bar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/services/sport_service.dart';
-import 'package:octoloupe/services/culture_service.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
+import 'package:octoloupe/services/culture_filter_service.dart';
 
 class DaySelectionPage extends StatefulWidget {
   final List<String> selectedDays;
@@ -30,8 +30,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
   void initState() {
     super.initState();
     selectedDays = List.from(widget.selectedDays);
-    sportDaysFunction = SportService().getSportDays();
-    cultureDaysFunction = CultureService().getCultureDays();
+    sportDaysFunction = SportFilterService().getSportDays();
+    cultureDaysFunction = CultureFilterService().getCultureDays();
   }
 
   /* final List<Map<String, String>> sportDays =[

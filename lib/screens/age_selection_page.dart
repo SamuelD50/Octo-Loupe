@@ -3,8 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../components/custom_app_bar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/services/sport_service.dart';
-import 'package:octoloupe/services/culture_service.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
+import 'package:octoloupe/services/culture_filter_service.dart';
 
 class AgeSelectionPage extends StatefulWidget {
   final List<String> selectedAges;
@@ -29,8 +29,8 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
   void initState() {
     super.initState();
     selectedAges = List.from(widget.selectedAges);
-    sportAgesFunction = SportService().getSportAges();
-    cultureAgesFunction = CultureService().getCultureAges();
+    sportAgesFunction = SportFilterService().getSportAges();
+    cultureAgesFunction = CultureFilterService().getCultureAges();
   }
 
   List<T> sortAges<T>(List<T> ages) {

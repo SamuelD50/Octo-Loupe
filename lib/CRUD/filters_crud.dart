@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/components/snackbar.dart';
 import 'dart:async';
 
 class FiltersCRUD {

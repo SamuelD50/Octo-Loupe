@@ -6,8 +6,8 @@ import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/services/sport_service.dart';
-import 'package:octoloupe/services/culture_service.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
+import 'package:octoloupe/services/culture_filter_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -57,27 +57,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
 
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          await SportService().addSportCategory(null, name, imageUrl);
+          await SportFilterService().addSportCategory(null, name, imageUrl);
         } else if (selectedFilter == 'Par âge') {
-          await SportService().addSportAge(null, name, imageUrl);
+          await SportFilterService().addSportAge(null, name, imageUrl);
         } else if (selectedFilter == 'Par jour') {
-          await SportService().addSportDay(null, name, imageUrl);
+          await SportFilterService().addSportDay(null, name, imageUrl);
         } else if (selectedFilter == 'Par horaire') {
-          await SportService().addSportSchedule(null, name, imageUrl);
+          await SportFilterService().addSportSchedule(null, name, imageUrl);
         } else if (selectedFilter == 'Par secteur') {
-          await SportService().addSportSector(null, name, imageUrl);
+          await SportFilterService().addSportSector(null, name, imageUrl);
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          await CultureService().addCultureCategory(null, name, imageUrl);
+          await CultureFilterService().addCultureCategory(null, name, imageUrl);
         } else if (selectedFilter == 'Par âge') {
-          await CultureService().addCultureAge(null, name, imageUrl);
+          await CultureFilterService().addCultureAge(null, name, imageUrl);
         } else if (selectedFilter == 'Par jour') {
-          await CultureService().addCultureDay(null, name, imageUrl);
+          await CultureFilterService().addCultureDay(null, name, imageUrl);
         } else if (selectedFilter == 'Par horaire') {
-          await CultureService().addCultureSchedule(null, name, imageUrl);
+          await CultureFilterService().addCultureSchedule(null, name, imageUrl);
         } else if (selectedFilter == 'Par secteur') {
-          await CultureService().addCultureSector(null, name, imageUrl);
+          await CultureFilterService().addCultureSector(null, name, imageUrl);
         }
       }
 
@@ -115,29 +115,29 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
     try {
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await SportService().getSportCategories();
+          subFilters = await SportFilterService().getSportCategories();
           debugPrint(subFilters.toString());
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await SportService().getSportAges();
+          subFilters = await SportFilterService().getSportAges();
           debugPrint(subFilters.toString());
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await SportService().getSportDays();
+          subFilters = await SportFilterService().getSportDays();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await SportService().getSportSchedules();
+          subFilters = await SportFilterService().getSportSchedules();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await SportService().getSportSectors();
+          subFilters = await SportFilterService().getSportSectors();
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await CultureService().getCultureCategories();
+          subFilters = await CultureFilterService().getCultureCategories();
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await CultureService().getCultureAges();
+          subFilters = await CultureFilterService().getCultureAges();
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await CultureService().getCultureDays();
+          subFilters = await CultureFilterService().getCultureDays();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await CultureService().getCultureSchedules();
+          subFilters = await CultureFilterService().getCultureSchedules();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await CultureService().getCultureSectors();
+          subFilters = await CultureFilterService().getCultureSectors();
         }
       }
 
@@ -167,27 +167,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
 
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          await SportService().updateSportCategory(selectedSubFilterId, newName, newImageUrl);
+          await SportFilterService().updateSportCategory(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par âge') {
-          await SportService().updateSportAge(selectedSubFilterId, newName, newImageUrl);
+          await SportFilterService().updateSportAge(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par jour') {
-          await SportService().updateSportDay(selectedSubFilterId, newName, newImageUrl);
+          await SportFilterService().updateSportDay(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par horaire') {
-          await SportService().updateSportSchedule(selectedSubFilterId, newName, newImageUrl);
+          await SportFilterService().updateSportSchedule(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par secteur') {
-          await SportService().updateSportSector(selectedSubFilterId, newName, newImageUrl);
+          await SportFilterService().updateSportSector(selectedSubFilterId, newName, newImageUrl);
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          await CultureService().updateCultureCategory(selectedSubFilterId, newName, newImageUrl);
+          await CultureFilterService().updateCultureCategory(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par âge') {
-          await CultureService().updateCultureAge(selectedSubFilterId, newName, newImageUrl);
+          await CultureFilterService().updateCultureAge(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par jour') {
-          await CultureService().updateCultureDay(selectedSubFilterId, newName, newImageUrl);
+          await CultureFilterService().updateCultureDay(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par horaire') {
-          await CultureService().updateCultureSchedule(selectedSubFilterId, newName, newImageUrl);
+          await CultureFilterService().updateCultureSchedule(selectedSubFilterId, newName, newImageUrl);
         } else if (selectedFilter == 'Par secteur') {
-          await CultureService().updateCultureSector(selectedSubFilterId, newName, newImageUrl);
+          await CultureFilterService().updateCultureSector(selectedSubFilterId, newName, newImageUrl);
         }
       }
 
@@ -225,27 +225,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
 
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          await SportService().deleteSportCategory(selectedSubFilterId);
+          await SportFilterService().deleteSportCategory(selectedSubFilterId);
         } else if (selectedFilter == 'Par âge') {
-          await SportService().deleteSportAge(selectedSubFilterId);
+          await SportFilterService().deleteSportAge(selectedSubFilterId);
         } else if (selectedFilter == 'Par jour') {
-          await SportService().deleteSportDay(selectedSubFilterId);
+          await SportFilterService().deleteSportDay(selectedSubFilterId);
         } else if (selectedFilter == 'Par horaire') {
-          await SportService().deleteSportSchedule(selectedSubFilterId);
+          await SportFilterService().deleteSportSchedule(selectedSubFilterId);
         } else if (selectedFilter == 'Par secteur') {
-          await SportService().deleteSportSector(selectedSubFilterId);
+          await SportFilterService().deleteSportSector(selectedSubFilterId);
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          await CultureService().deleteCultureCategory(selectedSubFilterId);
+          await CultureFilterService().deleteCultureCategory(selectedSubFilterId);
         } else if (selectedFilter == 'Par âge') {
-          await CultureService().deleteCultureAge(selectedSubFilterId);
+          await CultureFilterService().deleteCultureAge(selectedSubFilterId);
         } else if (selectedFilter == 'Par jour') {
-          await CultureService().deleteCultureDay(selectedSubFilterId);
+          await CultureFilterService().deleteCultureDay(selectedSubFilterId);
         } else if (selectedFilter == 'Par horaire') {
-          await CultureService().deleteCultureSchedule(selectedSubFilterId);
+          await CultureFilterService().deleteCultureSchedule(selectedSubFilterId);
         } else if (selectedFilter == 'Par secteur') {
-          await CultureService().deleteCultureSector(selectedSubFilterId);
+          await CultureFilterService().deleteCultureSector(selectedSubFilterId);
         }
       }
 
@@ -401,7 +401,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   Padding(
                     padding: EdgeInsets.only(top: 32),
                     child: Text(
-                      'Modifier l\'interface de l\'application',
+                      'Gérer l\'interface de l\'application',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -617,7 +617,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                 readSubFilters();
               }
             },
-            child: Text('Ajouter un nouveau sous-filtre'),
+            child: Text('Ajouter le sous-filtre'),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 32),
@@ -795,7 +795,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                 readSubFilters();
               }
             },
-            child: Text('Enregistrer les modifications'),
+            child: Text('Modifier le sous-filtre'),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 32),

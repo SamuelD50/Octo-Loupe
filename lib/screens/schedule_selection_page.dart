@@ -3,8 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../components/custom_app_bar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/services/sport_service.dart';
-import 'package:octoloupe/services/culture_service.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
+import 'package:octoloupe/services/culture_filter_service.dart';
 
 class ScheduleSelectionPage extends StatefulWidget {
   final List<String> selectedSchedules;
@@ -29,8 +29,8 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
   void initState() {
     super.initState();
     selectedSchedules = List.from(widget.selectedSchedules);
-    sportSchedulesFunction = SportService().getSportSchedules();
-    cultureSchedulesFunction = CultureService().getCultureSchedules();
+    sportSchedulesFunction = SportFilterService().getSportSchedules();
+    cultureSchedulesFunction = CultureFilterService().getCultureSchedules();
   }
 
   List<T> sortSchedules<T>(List<T> schedules) {

@@ -3,8 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../components/custom_app_bar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/services/sport_service.dart';
-import 'package:octoloupe/services/culture_service.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
+import 'package:octoloupe/services/culture_filter_service.dart';
 
 class SectorSelectionPage extends StatefulWidget {
   final List<String> selectedSectors;
@@ -29,8 +29,8 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
   void initState() {
     super.initState();
     selectedSectors = List.from(widget.selectedSectors);
-    sportSectorsFunction = SportService().getSportSectors();
-    cultureSectorsFunction = CultureService().getCultureSectors();
+    sportSectorsFunction = SportFilterService().getSportSectors();
+    cultureSectorsFunction = CultureFilterService().getCultureSectors();
   }
 
 /*   final List<Map<String, String>> sportSectors = [

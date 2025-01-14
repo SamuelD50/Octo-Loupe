@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/screens/admin_activity_page.dart';
 import 'package:octoloupe/screens/admin_add_admin_page.dart';
 import 'package:octoloupe/screens/admin_interface_page.dart';
 import 'package:octoloupe/screens/auth_page.dart';
@@ -67,8 +68,29 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                             MaterialPageRoute(builder: (context) => AdminInterfacePage()),
                           );
                         },
-                        child: Text('Modifier l\'interface de l\'application'),
+                        child: Text('Gérer l\'interface de l\'application'),
                       ),
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5B59B4),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Color(0xFF5B59B4)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdminActivityPage()),
+                        );
+                      },
+                      child: Text('Gérer les activités de l\'application'),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -90,28 +112,6 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           MaterialPageRoute(builder: (context) => ModifierInterfacePage()),
                         ); */
                       },
-                      child: Text('Ajouter ou modifier une activité'),
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4), // Fill color
-                        foregroundColor: Colors.white, // Text color
-                        side: BorderSide(color: Color(0xFF5B59B4)), // Border color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0), // Border radius
-                        ),
-                      ),
-                      onPressed: () {
-                        // Naviguer vers une autre page ici
-                        /* Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ModifierInterfacePage()),
-                        ); */
-                      },
                       child: Text('Mon profil utilisateur'),
                     ),
                   ),
@@ -120,11 +120,11 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4), // Fill color
-                        foregroundColor: Colors.white, // Text color
-                        side: BorderSide(color: Color(0xFF5B59B4)), // Border color
+                        backgroundColor: Color(0xFF5B59B4),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Color(0xFF5B59B4)),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0), // Border radius
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
                       onPressed: () {
@@ -141,11 +141,11 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4), // Fill color
-                        foregroundColor: Colors.white, // Text color
-                        side: BorderSide(color: Color(0xFF5B59B4)), // Border color
+                        backgroundColor: Color(0xFF5B59B4),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Color(0xFF5B59B4)),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0), // Border radius
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
                       onPressed: () {
@@ -162,11 +162,11 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, // Fill color
-                        foregroundColor: Colors.white, // Text color
-                        side: BorderSide(color: Colors.red), // Border color
+                        backgroundColor: Colors.red, 
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Colors.red),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0), // Border radius
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
                       onPressed: () {

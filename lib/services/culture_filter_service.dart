@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/CRUD/filters_crud.dart';
 
-class CultureService {
+class CultureFilterService {
   final FiltersCRUD filtersCRUD = FiltersCRUD();
   //CRUD SportCategories
 

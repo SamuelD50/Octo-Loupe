@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:octoloupe/model/activity_model.dart';
@@ -26,7 +26,7 @@ class ActivityPageState extends State<ActivityPage> {
 
     if(response.statusCode == 200) {
       List<dynamic> jsonData = jsonDecode(response.body);
-      activities = jsonData.map((activity) => ActivityModel.fromJson(activity)).toList();
+      activities = jsonData.map((activity) => ActivityModel.fromMap(activity)).toList();
       setState(() {});
     } else {
       throw Exception('Failed to load activities');
@@ -55,7 +55,7 @@ class ActivityPageState extends State<ActivityPage> {
       ),
     );
   }
-}
+} */
 
 
 
