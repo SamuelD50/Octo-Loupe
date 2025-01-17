@@ -8,7 +8,11 @@ class CultureFilterService {
   //CRUD SportCategories
 
   //Create CultureCategory
-  Future<void> addCultureCategory(String? categoryId, String name, String imageUrl) async {
+  Future<void> addCultureCategory(
+    String? categoryId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'cultures',
       'categories',
@@ -42,7 +46,11 @@ class CultureFilterService {
   }
 
   //Update CultureCategory
-  Future<void> updateCultureCategory(String categoryId, String newName, String newImageUrl) async {
+  Future<void> updateCultureCategory(
+    String categoryId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'cultures',
       'categories',
@@ -53,7 +61,9 @@ class CultureFilterService {
   }
 
   //Delete CultureCategory
-  Future<void> deleteCultureCategory(String categoryId) async {
+  Future<void> deleteCultureCategory(
+    String categoryId
+  ) async {
     await filtersCRUD.deleteFilter(
       'cultures',
       'categories',
@@ -64,7 +74,11 @@ class CultureFilterService {
   //CRUD CultureAges
 
   //Create CultureAge
-  Future<void> addCultureAge(String? ageId, String name, String imageUrl) async {
+  Future<void> addCultureAge(
+    String? ageId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'cultures',
       'ages',
@@ -98,7 +112,11 @@ class CultureFilterService {
   }
 
   //Update CultureAge
-  Future<void> updateCultureAge(String ageId, String newName, String newImageUrl) async {
+  Future<void> updateCultureAge(
+    String ageId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'cultures',
       'ages',
@@ -109,7 +127,9 @@ class CultureFilterService {
   }
 
   //Delete CultureAge
-  Future<void> deleteCultureAge(String ageId) async {
+  Future<void> deleteCultureAge(
+    String ageId
+  ) async {
     await filtersCRUD.deleteFilter(
       'cultures',
       'ages',
@@ -120,7 +140,11 @@ class CultureFilterService {
   //CRUD CultureDays
 
   //Create CultureDay
-  Future<void> addCultureDay(String? dayId, String name, String imageUrl) async {
+  Future<void> addCultureDay(
+    String? dayId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'cultures',
       'days',
@@ -155,7 +179,11 @@ class CultureFilterService {
 
 
   //Update CultureDay
-  Future<void> updateCultureDay(String dayId, String newName, String newImageUrl) async {
+  Future<void> updateCultureDay(
+    String dayId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'cultures',
       'days',
@@ -166,7 +194,9 @@ class CultureFilterService {
   }
 
   //Delete CultureDay
-  Future<void> deleteCultureDay(String dayId) async {
+  Future<void> deleteCultureDay(
+    String dayId
+  ) async {
     await filtersCRUD.deleteFilter(
       'cultures',
       'days',
@@ -178,7 +208,11 @@ class CultureFilterService {
   //CRUD CultureSchedules
 
   //Create CultureSchedules
-  Future<void> addCultureSchedule(String? scheduleId, String name, String imageUrl) async {
+  Future<void> addCultureSchedule(
+    String? scheduleId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'cultures',
       'schedules',
@@ -213,7 +247,11 @@ class CultureFilterService {
 
 
   //Update CultureSchedule
-  Future<void> updateCultureSchedule(String scheduleId, String newName, String newImageUrl) async {
+  Future<void> updateCultureSchedule(
+    String scheduleId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'cultures',
       'schedules',
@@ -224,7 +262,9 @@ class CultureFilterService {
   }
 
   //Delete CultureSchedule
-  Future<void> deleteCultureSchedule(String scheduleId) async {
+  Future<void> deleteCultureSchedule(
+    String scheduleId
+  ) async {
     await filtersCRUD.deleteFilter(
       'cultures',
       'schedules',
@@ -236,7 +276,11 @@ class CultureFilterService {
   //CRUD CultureSectors
 
   //Create CultureSectors
-  Future<void> addCultureSector(String? sectorId, String name, String imageUrl) async {
+  Future<void> addCultureSector(
+    String? sectorId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'cultures',
       'sectors',
@@ -270,7 +314,11 @@ class CultureFilterService {
   }
 
   //Update SportSector
-  Future<void> updateCultureSector(String sectorId, String newName, String newImageUrl) async {
+  Future<void> updateCultureSector(
+    String sectorId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'cultures',
       'sectors',
@@ -281,7 +329,9 @@ class CultureFilterService {
   }
 
   //Delete SportCategory
-  Future<void> deleteCultureSector(String sectorId) async {
+  Future<void> deleteCultureSector(
+    String sectorId
+  ) async {
     await filtersCRUD.deleteFilter(
       'cultures',
       'sectors',

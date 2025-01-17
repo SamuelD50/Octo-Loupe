@@ -43,14 +43,17 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
       return int.tryParse(startAge[0].split(' ')[0]);
     }
 
-    ages.sort((a, b) {
-      String nameA = a is SportAge ? a.name : (a is CultureAge ? a.name : '');
-      String nameB = b is SportAge ? b.name : (b is CultureAge ? b.name : '');
-      int? minAgeA = getMinAge(nameA);
-      int? minAgeB = getMinAge(nameB);
-      if (minAgeA == null && minAgeB != null) return 1;
-      if (minAgeB == null && minAgeA != null) return -1;
-      return (minAgeA ?? 0).compareTo(minAgeB ?? 0);
+    ages.sort(
+      (a, b) {
+        String nameA = a is SportAge ?
+          a.name : (a is CultureAge ? a.name : '');
+        String nameB = b is SportAge ?
+          b.name : (b is CultureAge ? b.name : '');
+        int? minAgeA = getMinAge(nameA);
+        int? minAgeB = getMinAge(nameB);
+        if (minAgeA == null && minAgeB != null) return 1;
+        if (minAgeB == null && minAgeA != null) return -1;
+        return (minAgeA ?? 0).compareTo(minAgeB ?? 0);
     });
 
     return ages;
@@ -71,7 +74,9 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
   ]; */
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth > 325 ? 20.0 : 14.0;
     
@@ -110,9 +115,13 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucun âge trouvé'));
+                        return const Center(
+                          child: Text('Aucun âge trouvé')
+                        );
                       }
 
                       final sportAges = snapshot.data!;
@@ -214,9 +223,13 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucune âge trouvé'));
+                        return const Center(
+                          child: Text('Aucune âge trouvé')
+                        );
                       }
 
                       final cultureAges = snapshot.data!;

@@ -7,8 +7,11 @@ import 'package:octoloupe/services/culture_filter_service.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:octoloupe/CRUD/activities_crud.dart';
 import 'package:octoloupe/model/activity_model.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
+import 'package:octoloupe/services/culture_filter_service.dart';
+import 'package:octoloupe/services/culture_activity_service.dart';
+import 'package:octoloupe/services/sport_activity_service.dart';
 
 class AdminActivityPage extends StatefulWidget {
   const AdminActivityPage({super.key});
@@ -24,43 +27,157 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   final _addActivityKey = GlobalKey<FormState>();
   final _editActivityKey = GlobalKey<FormState>();
   final _deleteActivityKey = GlobalKey<FormState>();
+  String activityId = '';
   int selectedSection = 0;
   String selectedFilter = '';
   List<dynamic> subFilters = [];
   List<dynamic> selectedSubFilters = [];
+  bool isLoading = false;
+  bool isAdding = false;
+  bool isEditing = false;
+  bool isDeleting = false;
+  SportActivityService sportActivityService = SportActivityService();
+  CultureActivityService cultureActivityService = CultureActivityService();
+
+  TextEditingController disciplineController = TextEditingController();
+  TextEditingController informationController = TextEditingController();
+  TextEditingController imageUrlController = TextEditingController();
+  TextEditingController structureNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController webSiteController = TextEditingController();
+  TextEditingController titleAddressController = TextEditingController();
+  TextEditingController streetAddressController = TextEditingController();
+  TextEditingController postalCodeController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController latitudeController = TextEditingController();
+  TextEditingController longitudeController = TextEditingController();
+  TextEditingController dayController = TextEditingController();
+  TextEditingController startHourController = TextEditingController();
+  TextEditingController endHourController = TextEditingController();
+  TextEditingController profileController = TextEditingController();
+  TextEditingController pricingController = TextEditingController();
+
   List<Map<String, String>> selectedSubFiltersByCategories = [];
   List<Map<String, String>> selectedSubFiltersByAges = [];
   List<Map<String, String>> selectedSubFiltersByDays = [];
   List<Map<String, String>> selectedSubFiltersBySchedules = [];
   List<Map<String, String>> selectedSubFiltersBySectors = [];
-  bool isLoading = false;
-  bool isAdding = false;
-  bool isEditing = false;
-  bool isDeleting = false;
 
-  TextEditingController disciplineController = TextEditingController();
-  TextEditingController startHourController = TextEditingController();
-  TextEditingController endHourController = TextEditingController();
 
-  Future<void> createNewActivity({required BuildContext context}) async {
+  Future<void> createNewActivity({
+    required BuildContext context
+  }) async {
     String discipline = disciplineController.text.trim();
+    String information = informationController.text.trim();
+    String imageUrl = imageUrlController.text.trim();
+    String structureName = structureNameController.text.trim();
+    String email = emailController.text.trim();
+    String phoneNumber = phoneNumberController.text.trim();
+    String webSite = webSiteController.text.trim();
+    String titleAddress = titleAddressController.text.trim();
+    String streetAddress = streetAddressController.text.trim();
+    int postalCode = int.tryParse(postalCodeController.text.trim()) ?? 50130;
+    String city = cityController.text.trim();
+    double latitude = double.parse(latitudeController.text.trim());
+    double longitude = double.parse(longitudeController.text.trim());
+    String day = dayController.text.trim();
     String startHour = startHourController.text.trim();
     String endHour = endHourController.text.trim();
+    String profile = profileController.text.trim();
+    String pricing = pricingController.text.trim();
+    List<Map<String, String>> categoriesId = selectedSubFiltersByCategories.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> agesId = selectedSubFiltersByAges.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> daysId = selectedSubFiltersByDays.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> schedulesId = selectedSubFiltersBySchedules.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> sectorsId = selectedSubFiltersBySectors.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
 
     try {
       setState(() {
         isLoading = true;
       });
 
-      await ActivitiesCRUD.createActivity(
-        discipline: discipline,
-        categories: selectedSubFiltersByCategories,
-        ages: selectedSubFiltersByAges,
-        days: selectedSubFiltersByDays,
-        schedules: selectedSubFiltersBySchedules,
-        sectors: selectedSubFiltersBySectors,
-      );
-
+      if (selectedSection == 0) {
+        await sportActivityService.addSportActivity(
+          null,
+          discipline,
+          information,
+          imageUrl,
+          structureName,
+          email,
+          phoneNumber,
+          webSite,
+          titleAddress,
+          streetAddress,
+          postalCode,
+          city,
+          latitude,
+          longitude,
+          day,
+          startHour,
+          endHour,
+          profile,
+          pricing,
+          selectedSubFiltersByCategories,
+          selectedSubFiltersByAges,
+          selectedSubFiltersByDays,
+          selectedSubFiltersBySchedules,
+          selectedSubFiltersBySectors,
+        );
+      } else {
+        await cultureActivityService.addCultureActivity(
+          null,
+          discipline,
+          information,
+          imageUrl,
+          structureName,
+          email,
+          phoneNumber,
+          webSite,
+          titleAddress,
+          streetAddress,
+          postalCode,
+          city,
+          latitude,
+          longitude,
+          day,
+          startHour,
+          endHour,
+          profile,
+          pricing,
+          selectedSubFiltersByCategories,
+          selectedSubFiltersByAges,
+          selectedSubFiltersByDays,
+          selectedSubFiltersBySchedules,
+          selectedSubFiltersBySectors,
+        );
+      }
+    
       setState(() {
         isLoading = false;
       });
@@ -93,38 +210,157 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         isLoading = true;
       });
 
-      await ActivitiesCRUD.getActivities(
-        
-      );
-
-      setState(() {
-        isLoading = false;
-      });
+      if (selectedSection == 0) {
+        await sportActivityService.getSportActivities();
+      } else {
+        await cultureActivityService.getCultureActivities();
+      }
     } catch (e) {
       debugPrint('Error fetching activity: $e');
-
+    } finally {
       setState(() {
         isLoading = false;
       });
     }
   }
 
-  Future<void> updateActivity({required BuildContext context}) async {
-    String discipline = disciplineController.text.trim();
+  TextEditingController newDisciplineController = TextEditingController();
+  TextEditingController newInformationController = TextEditingController();
+  TextEditingController newImageUrlController = TextEditingController();
+  TextEditingController newStructureNameController = TextEditingController();
+  TextEditingController newEmailController = TextEditingController();
+  TextEditingController newPhoneNumberController = TextEditingController();
+  TextEditingController newWebSiteController = TextEditingController();
+  TextEditingController newTitleAddressController = TextEditingController();
+  TextEditingController newStreetAddressController = TextEditingController();
+  TextEditingController newPostalCodeController = TextEditingController();
+  TextEditingController newCityController = TextEditingController();
+  TextEditingController newLatitudeController = TextEditingController();
+  TextEditingController newLongitudeController = TextEditingController();
+  TextEditingController newDayController = TextEditingController();
+  TextEditingController newStartHourController = TextEditingController();
+  TextEditingController newEndHourController = TextEditingController();
+  TextEditingController newProfileController = TextEditingController();
+  TextEditingController newPricingController = TextEditingController();
+
+  List<Map<String, String>> newSelectedSubFiltersByCategories = [];
+  List<Map<String, String>> newSelectedSubFiltersByAges = [];
+  List<Map<String, String>> newSelectedSubFiltersByDays = [];
+  List<Map<String, String>> newSelectedSubFiltersBySchedules = [];
+  List<Map<String, String>> newSelectedSubFiltersBySectors = [];
+
+  Future<void> updateActivity({
+    required BuildContext context
+  }) async {
+    String newDiscipline = newDisciplineController.text.trim();
+    String newInformation = newInformationController.text.trim();
+    String newImageUrl = newImageUrlController.text.trim();
+    String newStructureName = newStructureNameController.text.trim();
+    String newEmail = newEmailController.text.trim();
+    String newPhoneNumber = newPhoneNumberController.text.trim();
+    String newWebSite = newWebSiteController.text.trim();
+    String newTitleAddress = newTitleAddressController.text.trim();
+    String newStreetAddress = newStreetAddressController.text.trim();
+    int newPostalCode = int.tryParse(newPostalCodeController.text.trim()) ?? 50130;
+    String newCity = newCityController.text.trim();
+    double newLatitude = double.parse(newLatitudeController.text.trim());
+    double newLongitude = double.parse(newLongitudeController.text.trim());
+    String newDay = newDayController.text.trim();
+    String newStartHour = newStartHourController.text.trim();
+    String newEndHour = newEndHourController.text.trim();
+    String newProfile = newProfileController.text.trim();
+    String newPricing = newPricingController.text.trim();
+    List<Map<String, String>> newCategoriesId = newSelectedSubFiltersByCategories.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> newAgesId = newSelectedSubFiltersByAges.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> newDaysId = newSelectedSubFiltersByDays.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> newSchedulesId = newSelectedSubFiltersBySchedules.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
+    List<Map<String, String>> newSectorsId = newSelectedSubFiltersBySectors.map((item) {
+      return {
+        'id': item['id'] ?? '',
+        'name': item['name'] ?? '',
+      };
+    }).toList();
 
     try {
       setState(() {
         isLoading = true;
       });
 
-      await ActivitiesCRUD.updateActivity(
-        discipline: discipline,
-        categories: selectedSubFiltersByCategories,
-        ages: selectedSubFiltersByAges,
-        days: selectedSubFiltersByDays,
-        schedules: selectedSubFiltersBySchedules,
-        sectors: selectedSubFiltersBySectors,
-      );
+      if (selectedSection == 0) {
+        await sportActivityService.updateSportActivity(
+          activityId,
+          newDiscipline,
+          newInformation,
+          newImageUrl,
+          newStructureName,
+          newEmail,
+          newPhoneNumber,
+          newWebSite,
+          newTitleAddress,
+          newStreetAddress,
+          newPostalCode,
+          newCity,
+          newLatitude,
+          newLongitude,
+          newDay,
+          newStartHour,
+          newEndHour,
+          newProfile,
+          newPricing,
+          newCategoriesId,
+          newAgesId,
+          newDaysId,
+          newSchedulesId,
+          newSectorsId,
+        );
+      } else {
+        await cultureActivityService.updateCultureActivity(
+          activityId,
+          newDiscipline,
+          newInformation,
+          newImageUrl,
+          newStructureName,
+          newEmail,
+          newPhoneNumber,
+          newWebSite,
+          newTitleAddress,
+          newStreetAddress,
+          newPostalCode,
+          newCity,
+          newLatitude,
+          newLongitude,
+          newDay,
+          newStartHour,
+          newEndHour,
+          newProfile,
+          newPricing,
+          newCategoriesId,
+          newAgesId,
+          newDaysId,
+          newSchedulesId,
+          newSectorsId,
+        );
+      }
 
       setState(() {
         isLoading = false;
@@ -152,13 +388,23 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     }
   }
 
-  Future<void> deleteActivity({required BuildContext context}) async {
+  Future<void> deleteActivity({
+    required BuildContext context
+  }) async {
     try {
       setState(() {
         isLoading = true;
       });
 
-      await ActivitiesCRUD.deleteActivity();
+      if (selectedSection == 0) {
+        await sportActivityService.deleteSportActivity(
+          activityId,
+        );
+      } else {
+        await cultureActivityService.deleteCultureActivity(
+          activityId,
+        );
+      }
 
       setState(() {
         isLoading = false;
@@ -194,31 +440,33 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     try {
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await SportService().getSportCategories();
+          subFilters = await SportFilterService().getSportCategories();
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await SportService().getSportAges();
+          subFilters = await SportFilterService().getSportAges();
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await SportService().getSportDays();
+          subFilters = await SportFilterService().getSportDays();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await SportService().getSportSchedules();
+          subFilters = await SportFilterService().getSportSchedules();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await SportService().getSportSectors();
+          subFilters = await SportFilterService().getSportSectors();
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await CultureService().getCultureCategories();
+          subFilters = await CultureFilterService().getCultureCategories();
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await CultureService().getCultureAges();
+          subFilters = await CultureFilterService().getCultureAges();
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await CultureService().getCultureDays();
+          subFilters = await CultureFilterService().getCultureDays();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await CultureService().getCultureSchedules();
+          subFilters = await CultureFilterService().getCultureSchedules();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await CultureService().getCultureSectors();
+          subFilters = await CultureFilterService().getCultureSectors();
         }
       }
 
-      if (!subFilters.any((subFilter) => subFilter.id == selectedSubFilters)) {
+      if (!subFilters.any(
+        (subFilter) => subFilter.id == selectedSubFilters)
+      ) {
         setState(() {
           selectedSubFilters = [];
         });
@@ -234,46 +482,63 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     return subFilters;
   }
 
-  List<dynamic> sortSubFilters(List<dynamic> subFilters, String selectedFilter) {
+  List<dynamic> sortSubFilters(
+    List<dynamic> subFilters,
+    String selectedFilter
+  ) {
     switch (selectedFilter) {
       case 'Par catégorie':
-        subFilters.sort((a,b) => a.name.compareTo(b.name));
+        subFilters.sort(
+          (a,b) => a.name.compareTo(b.name)
+        );
         break;
 
       case 'Par âge':
-        subFilters.sort((a, b) {
-          int minAgeA = _getMinAgeFromAgeRange(a.name);
-          int minAgeB = _getMinAgeFromAgeRange(b.name);
-          return minAgeA.compareTo(minAgeB);
-        });
+        subFilters.sort(
+          (a, b) {
+            int minAgeA = _getMinAgeFromAgeRange(a.name);
+            int minAgeB = _getMinAgeFromAgeRange(b.name);
+            return minAgeA.compareTo(minAgeB);
+          }
+        );
         break;
 
       case 'Par horaire':
-        subFilters.sort((a, b) {
-          int startTimeA = _getStartTimeFromSchedule(a.name);
-          int startTimeB = _getStartTimeFromSchedule(b.name);
-          return startTimeA.compareTo(startTimeB);
-        });
+        subFilters.sort(
+          (a, b) {
+            int startTimeA = _getStartTimeFromSchedule(a.name);
+            int startTimeB = _getStartTimeFromSchedule(b.name);
+            return startTimeA.compareTo(startTimeB);
+          }
+        );
         break;
 
       case 'Par jour':
-        subFilters.sort((a, b) {
-          return _getDayIndex(a.name).compareTo(_getDayIndex(b.name));
-        });
+        subFilters.sort(
+          (a, b) {
+            return _getDayIndex(a.name).compareTo(_getDayIndex(b.name));
+          }
+        );
         break;
 
       case 'Par secteur':
-      subFilters.sort((a, b) => a.name.compareTo(b.name));
+      subFilters.sort(
+        (a, b) => a.name.compareTo(b.name)
+      );
       break;
 
       default:
-        subFilters.sort((a, b) => a.name.compareTo(b.name));
+        subFilters.sort(
+          (a, b) => a.name.compareTo(b.name)
+        );
     }
 
     return subFilters;
   }
 
-  int _getMinAgeFromAgeRange(String ageRange) {
+  int _getMinAgeFromAgeRange(
+    String ageRange
+  ) {
     RegExp regExp = RegExp(r'(\d+)(?=[\s\-])');
     Match? match = regExp.firstMatch(ageRange);
     if (match != null) {
@@ -282,7 +547,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     return 99;
   }
 
-  int _getStartTimeFromSchedule(String schedule) {
+  int _getStartTimeFromSchedule(
+    String schedule
+  ) {
     RegExp regExp = RegExp(r'(\d+)h');
     Match? match = regExp.firstMatch(schedule);
     if (match != null) {
@@ -313,7 +580,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return isLoading ? 
       Scaffold(
         appBar: const CustomAppBar(),
@@ -396,6 +665,29 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         onPressed: () {
                           setState(() {
                             _currentMode = ActivityMode.adding;
+                            disciplineController.clear();
+                            informationController.clear();
+                            imageUrlController.clear();
+                            structureNameController.clear();
+                            emailController.clear();
+                            phoneNumberController.clear();
+                            webSiteController.clear();
+                            titleAddressController.clear();
+                            streetAddressController.clear();
+                            postalCodeController.clear();
+                            cityController.clear();
+                            latitudeController.clear();
+                            longitudeController.clear();
+                            dayController.clear();
+                            startHourController.clear();
+                            endHourController.clear();
+                            profileController.clear();
+                            pricingController.clear();
+                            selectedSubFiltersByCategories.clear();
+                            selectedSubFiltersByAges.clear();
+                            selectedSubFiltersByDays.clear();
+                            selectedSubFiltersBySchedules.clear();
+                            selectedSubFiltersBySectors.clear();
                             readSubFilters();
                           });
                         },
@@ -453,7 +745,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     );
   }
 
-  Widget _buildAddActivity(BuildContext context) {
+  Widget _buildAddActivity(
+    BuildContext context
+  ) {
     return Form(
       key: _addActivityKey,
       child: Column(
@@ -463,11 +757,29 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             onPressed: (int section) {
               setState(() {
                 selectedSection = section;
-                selectedSubFiltersByCategories = [];
-                selectedSubFiltersByAges = [];
-                selectedSubFiltersByDays = [];
-                selectedSubFiltersBySchedules = [];
-                selectedSubFiltersBySectors = [];
+                disciplineController.clear();
+                informationController.clear();
+                imageUrlController.clear();
+                structureNameController.clear();
+                emailController.clear();
+                phoneNumberController.clear();
+                webSiteController.clear();
+                titleAddressController.clear();
+                streetAddressController.clear();
+                postalCodeController.clear();
+                cityController.clear();
+                latitudeController.clear();
+                longitudeController.clear();
+                dayController.clear();
+                startHourController.clear();
+                endHourController.clear();
+                profileController.clear();
+                pricingController.clear();
+                selectedSubFiltersByCategories.clear();
+                selectedSubFiltersByAges.clear();
+                selectedSubFiltersByDays.clear();
+                selectedSubFiltersBySchedules.clear();
+                selectedSubFiltersBySectors.clear();
                 readSubFilters();
               });
             },
@@ -502,50 +814,73 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 readSubFilters();
               });
             },
-            items: ['Par catégorie', 'Par âge', 'Par jour', 'Par horaire', 'Par secteur']
-              .map((String filter) {
-                return DropdownMenuItem<String>(
-                  value: filter,
-                  child: Text(filter),
-                );
-              }).toList(),
+            items: [
+              'Par catégorie',
+              'Par âge',
+              'Par jour',
+              'Par horaire',
+              'Par secteur'
+            ]
+            .map((String filter) {
+              return DropdownMenuItem<String>(
+                value: filter,
+                child: Text(filter),
+              );
+            }).toList(),
           ),
           const SizedBox(height: 16),
           DropdownButton<String>(
             value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters[0],
             onChanged: (String? newValue) {
               setState(() {
-                var selectedSubFilter = subFilters.firstWhere((item) => item.id == newValue);
-                var subFilterMap = {'id': selectedSubFilter.id.toString(), 'name': selectedSubFilter.name.toString()};
+                var selectedSubFilter = subFilters.firstWhere(
+                  (item) => item.id == newValue
+                );
+                var subFilterMap = {
+                  'id': selectedSubFilter.id.toString(),
+                  'name': selectedSubFilter.name.toString()
+                };
 
                 if (selectedFilter == 'Par catégorie') {
-                  if (!selectedSubFiltersByCategories.any((item) => item['id'] == newValue)) {
+                  if (!selectedSubFiltersByCategories.any(
+                    (item) => item['id'] == newValue)
+                  ) {
                     selectedSubFiltersByCategories.add(subFilterMap);
                   }
                 }
                 if (selectedFilter == 'Par âge') {
-                  if (!selectedSubFiltersByAges.any((item) => item['id'] == newValue)) {
+                  if (!selectedSubFiltersByAges.any(
+                    (item) => item['id'] == newValue)
+                  ) {
                     selectedSubFiltersByAges.add(subFilterMap);
                   }
                 }
                 if (selectedFilter == 'Par jour') {
-                  if (!selectedSubFiltersByDays.any((item) => item['id'] == newValue)) {
+                  if (!selectedSubFiltersByDays.any(
+                    (item) => item['id'] == newValue)
+                  ) {
                     selectedSubFiltersByDays.add(subFilterMap);
                   }
                 }
                 if (selectedFilter == 'Par horaire') {
-                  if (!selectedSubFiltersBySchedules.any((item) => item['id'] == newValue)) {
+                  if (!selectedSubFiltersBySchedules.any(
+                    (item) => item['id'] == newValue)
+                  ) {
                     selectedSubFiltersBySchedules.add(subFilterMap);
                   }
                 }
                 if (selectedFilter == 'Par secteur') {
-                  if (!selectedSubFiltersBySectors.any((item) => item['id'] == newValue)) {
+                  if (!selectedSubFiltersBySectors.any(
+                    (item) => item['id'] == newValue)
+                  ) {
                     selectedSubFiltersBySectors.add(subFilterMap);
                   }
                 }
               });
             },
-            items: sortSubFilters(subFilters, selectedFilter).map((subFilter) {
+            items: sortSubFilters(
+              subFilters, selectedFilter
+            ).map((subFilter) {
               return DropdownMenuItem<String>(
                 value: subFilter.id,
                 child: Text(subFilter.name),
@@ -569,7 +904,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 deleteIcon: Icon(Icons.close),
                 onDeleted: () {
                   setState(() {
-                    selectedSubFiltersByCategories.removeWhere((item) => item['id'] == subFilter['id']);
+                    selectedSubFiltersByCategories.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
                   });
                 },
               );
@@ -585,12 +922,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersByAges.map((subFilter) {
+              debugPrint('selectedSubFiltersByAges 1: $selectedSubFiltersByAges');
               return Chip(
                 label: Text(subFilter['name']!),
                 deleteIcon: Icon(Icons.close),
                 onDeleted: () {
                   setState(() {
-                    selectedSubFiltersByAges.removeWhere((item) => item['id'] == subFilter['id']);
+                    selectedSubFiltersByAges.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
                   });
                 },
               );
@@ -606,12 +946,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersByDays.map((subFilter) {
+              debugPrint('selectedSubFiltersByDays 1: $selectedSubFiltersByDays');
               return Chip(
                 label: Text(subFilter['name']!),
                 deleteIcon: Icon(Icons.close),
                 onDeleted: () {
                   setState(() {
-                    selectedSubFiltersByDays.removeWhere((item) => item['id'] == subFilter['id']);
+                    selectedSubFiltersByDays.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
                   });
                 },
               );
@@ -627,12 +970,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersBySchedules.map((subFilter) {
+              debugPrint('selectedSubFiltersBySchedules 1: $selectedSubFiltersBySchedules');
               return Chip(
                 label: Text(subFilter['name']!),
                 deleteIcon: Icon(Icons.close),
                 onDeleted: () {
                   setState(() {
-                    selectedSubFiltersBySchedules.removeWhere((item) => item['id'] == subFilter['id']);
+                    selectedSubFiltersBySchedules.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
                   });
                 },
               );
@@ -648,60 +994,422 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersBySectors.map((subFilter) {
+              debugPrint('selectedSubFiltersBySectors 1: $selectedSubFiltersBySectors');
               return Chip(
                 label: Text(subFilter['name']!),
                 deleteIcon: Icon(Icons.close),
                 onDeleted: () {
                   setState(() {
-                    selectedSubFiltersBySectors.removeWhere((item) => item['id'] == subFilter['id']);
+                    selectedSubFiltersBySectors.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
                   });
                 },
               );
             }).toList(),
           ),
           const SizedBox(height: 16),
-          TextFormField(
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: TextFormField(
             controller: disciplineController,
-            decoration: const InputDecoration(
-              labelText: 'Discipline',
-              border: OutlineInputBorder(),
+              decoration: const InputDecoration(
+                labelText: 'Discipline',
+                hintText: 'Ex: Course à pied',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer un nom de discipline';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un nom de discipline';
-              }
-              return null;
-            },
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            controller: startHourController,
-            decoration: const InputDecoration(
-              labelText: 'Horaire de début',
-              border: OutlineInputBorder(),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: TextFormField(
+              controller: informationController,
+              decoration: const InputDecoration(
+                labelText: 'Information',
+                hintText: 'Ex: Amenez votre bouteille d\'eau',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer une information';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un horaire de début';
-              }
-              return null;
-            },
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            controller: endHourController,
-            decoration: const InputDecoration(
-              labelText: 'Horaire de fin',
-              border: OutlineInputBorder(),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: TextFormField(
+              controller: imageUrlController,
+              decoration: const InputDecoration(
+                labelText: 'Image Url',
+                hintText: 'Ex: https://www.example.com/image.jpg',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer une image url';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un horaire de fin';
-              }
-              return null;
-            },
           ),
+          const SizedBox(height: 16),
+          ExpansionTile(
+            title: Text(
+              'Contact',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: structureNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nom de la structure organisatrice',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un nom de structure';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Ex: abc@exemple.com',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un email';
+                    }
 
+                    final regex = RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+                    );
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un email valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: phoneNumberController,
+                  decoration: const InputDecoration(
+                    labelText: 'Numéro de téléphone',
+                    hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un numéro de téléphone';
+                    }
+
+                    final regex = RegExp(
+                      r'^(\+33\s\d{1}\s\d{2}\s\d{2}\s\d{2}\s\d{2}|\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2})$'
+                    );
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un numéro de téléphone valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: webSiteController,
+                  decoration: const InputDecoration(
+                    labelText: 'Site internet',
+                    hintText: 'Ex: https://www.example.com',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un site internet';
+                    }
+
+                    final regex = RegExp(
+                      r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\:[0-9]{1,5})?(\/.*)?$'
+                    );
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un site internet valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          ExpansionTile(
+            title: Text(
+              'Lieu',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: titleAddressController,
+                  decoration: const InputDecoration(
+                    labelText: 'Intitulé d\'adresse',
+                    hintText: 'Ex: Stade Maurice Postaire',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un intitulé d\'adresse';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: streetAddressController,
+                  decoration: const InputDecoration(
+                    labelText: 'N° et/ou nom de rue',
+                    hintText: 'Ex: 18 rue Pierre de Coubertin',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un N° et/ou nom de rue';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: postalCodeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Code postal',
+                    hintText: 'Ex: 50100',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un code postal';
+                    }
+                    final regex = RegExp(r'^\d{2}\s?\d{3}$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un code postal valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: cityController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ville',
+                    hintText: 'Ex: Cherbourg-en-Cotentin',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une ville';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: latitudeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Latitude Google Maps',
+                    hintText: 'Ex: 49.64358701909363',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une latitude';
+                    }
+                    final regex = RegExp(r'^-?\d{1,2}(\.\d+)?$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer une latitude valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: longitudeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Longitude Google Maps',
+                    hintText: 'Ex: -1.638480195782405',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une longitude';
+                    }
+                    final regex = RegExp(r'^-?(\d{1,3}(\.\d+)?|\.\d+)$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer une longitude valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          ExpansionTile(
+            title: Text(
+              'Horaires',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: dayController,
+                  decoration: const InputDecoration(
+                    labelText: 'Jour',
+                    hintText: 'Ex: Mercredi',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un jour';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                controller: startHourController,
+                  decoration: const InputDecoration(
+                    labelText: 'Horaire de début',
+                    hintText: 'Ex: 10h, 10h30',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un horaire de début';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: endHourController,
+                  decoration: const InputDecoration(
+                    labelText: 'Horaire de fin',
+                    hintText: 'Ex: 11h, 11h30',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un horaire de fin';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          ExpansionTile(
+            title: Text(
+              'Tarifs et profils',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: profileController,
+                  decoration: const InputDecoration(
+                    labelText: 'Profil',
+                    hintText: 'Ex: Débutants',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un profil';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: pricingController,
+                  decoration: const InputDecoration(
+                    labelText: 'Prix',
+                    hintText: 'Ex: 10€, 10€50',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un prix';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF5B59B4),
@@ -717,6 +1425,28 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   context: context,
                 );
                 disciplineController.clear();
+                informationController.clear();
+                imageUrlController.clear();
+                structureNameController.clear();
+                emailController.clear();
+                phoneNumberController.clear();
+                webSiteController.clear();
+                titleAddressController.clear();
+                streetAddressController.clear();
+                postalCodeController.clear();
+                cityController.clear();
+                latitudeController.clear();
+                longitudeController.clear();
+                dayController.clear();
+                startHourController.clear();
+                endHourController.clear();
+                profileController.clear();
+                pricingController.clear();
+                selectedSubFiltersByCategories.clear();
+                selectedSubFiltersByAges.clear();
+                selectedSubFiltersByDays.clear();
+                selectedSubFiltersBySchedules.clear();
+                selectedSubFiltersBySectors.clear();
               }
             },
             child: Text('Ajouter l\'activité'),
@@ -730,7 +1460,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   }
 
 
-  Widget _buildEditActivity(BuildContext context) {
+  Widget _buildEditActivity(
+    BuildContext context
+  ) {
     return Form(
       key: _editActivityKey,
       child: Column(
@@ -774,20 +1506,28 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 readSubFilters();
               });
             },
-            items: ['Par catégorie', 'Par âge', 'Par jour', 'Par horaire', 'Par secteur']
-              .map((String filter) {
-                return DropdownMenuItem<String>(
-                  value: filter,
-                  child: Text(filter),
-                );
-              }).toList(),
+            items: [
+              'Par catégorie',
+              'Par âge',
+              'Par jour',
+              'Par horaire',
+              'Par secteur'
+            ]
+            .map((String filter) {
+              return DropdownMenuItem<String>(
+                value: filter,
+                child: Text(filter),
+              );
+            }).toList(),
           ),
           const SizedBox(height: 16),
           DropdownButton<String>(
             value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters,
             onChanged: (String? newValue) {
               setState(() {
-                var selectedSubFilters = subFilters.firstWhere((subFilter) => subFilter.id == newValue);
+                var selectedSubFilters = subFilters.firstWhere(
+                  (subFilter) => subFilter.id == newValue
+                );
                 selectedSubFilters = [newValue!];
                 if (selectedSubFilters.contains(newValue)) {
                   selectedSubFilters.remove(newValue);
@@ -796,7 +1536,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 }
               });
             },
-            items: sortSubFilters(subFilters, selectedFilter).map((subFilter) {
+            items: sortSubFilters(
+              subFilters, selectedFilter
+            ).map((subFilter) {
               return DropdownMenuItem<String>(
                 value: subFilter.id,
                 child: Text(subFilter.name),
@@ -829,7 +1571,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     );
   }
 
-  Widget _buildDeleteActivity(BuildContext context) {
+  Widget _buildDeleteActivity(
+    BuildContext context
+  ) {
     return Form(
       key: _deleteActivityKey,
       child: Column(

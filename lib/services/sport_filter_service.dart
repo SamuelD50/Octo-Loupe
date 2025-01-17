@@ -8,7 +8,11 @@ class SportFilterService {
   //CRUD SportCategories
 
   //Create SportCategory
-  Future<void> addSportCategory(String? categoryId, String name, String imageUrl) async {
+  Future<void> addSportCategory(
+    String? categoryId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'sports',
       'categories',
@@ -42,7 +46,11 @@ class SportFilterService {
   }
 
   //Update SportCategory
-  Future<void> updateSportCategory(String categoryId, String newName, String newImageUrl) async {
+  Future<void> updateSportCategory(
+    String categoryId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'sports',
       'categories',
@@ -53,7 +61,9 @@ class SportFilterService {
   }
 
   //Delete SportCategory
-  Future<void> deleteSportCategory(String categoryId) async {
+  Future<void> deleteSportCategory(
+    String categoryId
+  ) async {
     await filtersCRUD.deleteFilter(
       'sports',
       'categories',
@@ -64,7 +74,11 @@ class SportFilterService {
   //CRUD SportAges
 
   //Create SportAge
-  Future<void> addSportAge(String? ageId, String name, String imageUrl) async {
+  Future<void> addSportAge(
+    String? ageId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'sports',
       'ages',
@@ -99,7 +113,11 @@ class SportFilterService {
   }
 
   //Update SportAge
-  Future<void> updateSportAge(String ageId, String newName, String newImageUrl) async {
+  Future<void> updateSportAge(
+    String ageId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'sports',
       'ages',
@@ -110,7 +128,9 @@ class SportFilterService {
   }
 
   //Delete SportAge
-  Future<void> deleteSportAge(String ageId) async {
+  Future<void> deleteSportAge(
+    String ageId
+  ) async {
     await filtersCRUD.deleteFilter(
       'sports',
       'ages',
@@ -121,7 +141,11 @@ class SportFilterService {
   //CRUD SportDays
 
   //Create SportDay
-  Future<void> addSportDay(String? dayId, String name, String imageUrl) async {
+  Future<void> addSportDay(
+    String? dayId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'sports',
       'days',
@@ -157,7 +181,11 @@ class SportFilterService {
 
 
   //Update SportDay
-  Future<void> updateSportDay(String dayId, String newName, String newImageUrl) async {
+  Future<void> updateSportDay(
+    String dayId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'sports',
       'days',
@@ -168,7 +196,9 @@ class SportFilterService {
   }
 
   //Delete SportDay
-  Future<void> deleteSportDay(String dayId) async {
+  Future<void> deleteSportDay(
+    String dayId
+  ) async {
     await filtersCRUD.deleteFilter(
       'sports',
       'days',
@@ -180,7 +210,11 @@ class SportFilterService {
   //CRUD SportSchedules
 
   //Create SportSchedules
-  Future<void> addSportSchedule(String? scheduleId, String name, String imageUrl) async {
+  Future<void> addSportSchedule(
+    String? scheduleId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'sports',
       'schedules',
@@ -214,7 +248,11 @@ class SportFilterService {
   }
 
   //Update SportSchedule
-  Future<void> updateSportSchedule(String scheduleId, String newName, String newImageUrl) async {
+  Future<void> updateSportSchedule(
+    String scheduleId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'sports',
       'schedules',
@@ -225,7 +263,9 @@ class SportFilterService {
   }
 
   //Delete SportSchedule
-  Future<void> deleteSportSchedule(String scheduleId) async {
+  Future<void> deleteSportSchedule(
+    String scheduleId
+  ) async {
     await filtersCRUD.deleteFilter(
       'sports',
       'schedules',
@@ -237,7 +277,11 @@ class SportFilterService {
   //CRUD SportSectors
 
   //Create SportSectors
-  Future<void> addSportSector(String? sectorId, String name, String imageUrl) async {
+  Future<void> addSportSector(
+    String? sectorId,
+    String name,
+    String imageUrl
+  ) async {
     await filtersCRUD.createFilter(
       'sports',
       'sectors',
@@ -271,7 +315,11 @@ class SportFilterService {
   }
 
   //Update SportSector
-  Future<void> updateSportSector(String sectorId, String newName, String newImageUrl) async {
+  Future<void> updateSportSector(
+    String sectorId,
+    String newName,
+    String newImageUrl
+  ) async {
     await filtersCRUD.updateFilter(
       'sports',
       'sectors',
@@ -282,7 +330,9 @@ class SportFilterService {
   }
 
   //Delete SportSector
-  Future<void> deleteSportSector(String sectorId) async {
+  Future<void> deleteSportSector(
+    String sectorId
+  ) async {
     await filtersCRUD.deleteFilter(
       'sports',
       'sectors',

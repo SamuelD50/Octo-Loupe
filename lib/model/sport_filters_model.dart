@@ -16,7 +16,9 @@ class SportFilterModel {
     required this.sectors,
   });
 
-  factory SportFilterModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+  factory SportFilterModel.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot
+  ) {
     final data = snapshot.data();
     if (data == null) {
       debugPrint('Aucune donnée trouvée pour la section Sport');
@@ -31,30 +33,55 @@ class SportFilterModel {
 
     return SportFilterModel(
       categories: (data['categories'] as List? ?? [])
-        .map((e) => SportCategory.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => SportCategory.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
       ages: (data['ages'] as List? ?? [])
-        .map((e) => SportAge.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => SportAge.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
       days: (data['days'] as List? ?? [])
-        .map((e) => SportDay.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => SportDay.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
       schedules: (data['schedules'] as List? ?? [])
-        .map((e) => SportSchedule.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => SportSchedule.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
       sectors: (data['sectors'] as List? ?? [])
-        .map((e) => SportSector.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => SportSector.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'categories': categories.map((e) => e.toMap()).toList(),
-      'ages': ages.map((e) => e.toMap()).toList(),
-      'days': days.map((e) => e.toMap()).toList(),
-      'schedules': schedules.map((e) => e.toMap()).toList(),
-      'sectors': sectors.map((e) => e.toMap()).toList(),
+      'categories': categories.map(
+        (e) => e.toMap()
+      ).toList(),
+      'ages': ages.map(
+        (e) => e.toMap()
+      ).toList(),
+      'days': days.map(
+        (e) => e.toMap()
+      ).toList(),
+      'schedules': schedules.map(
+        (e) => e.toMap()
+      ).toList(),
+      'sectors': sectors.map(
+        (e) => e.toMap()
+      ).toList(),
     };
   }
 }
@@ -70,7 +97,10 @@ class SportCategory {
     required this.imageUrl,
   });
 
-  factory SportCategory.fromMap(Map<String, dynamic> map, {String? id}) {
+  factory SportCategory.fromMap(
+    Map<String, dynamic> map, {
+      String? id
+    }) {
     return SportCategory(
       id: id,
       name: map['name'] ?? '',
@@ -97,7 +127,10 @@ class SportAge {
     required this.imageUrl,
   });
 
-  factory SportAge.fromMap(Map<String, dynamic> map, {String? id}) {
+  factory SportAge.fromMap(
+    Map<String, dynamic> map, {
+      String? id
+    }) {
     return SportAge(
       id: id,
       name: map['name'] ?? '',
@@ -124,7 +157,10 @@ class SportDay {
     required this.imageUrl,
   });
 
-  factory SportDay.fromMap(Map<String, dynamic> map, {String? id}) {
+  factory SportDay.fromMap(
+    Map<String, dynamic> map, {
+      String? id
+    }) {
     return SportDay(
       id: id,
       name: map['name'] ?? '',
@@ -151,7 +187,10 @@ class SportSchedule {
     required this.imageUrl,
   });
 
-  factory SportSchedule.fromMap(Map<String, dynamic> map, {String? id}) {
+  factory SportSchedule.fromMap(
+    Map<String, dynamic> map, {
+      String? id
+    }) {
     return SportSchedule(
       id: id,
       name: map['name'] ?? '',
@@ -178,7 +217,10 @@ class SportSector {
     required this.imageUrl,
   });
 
-  factory SportSector.fromMap(Map<String, dynamic> map, {String? id}) {
+  factory SportSector.fromMap(
+    Map<String, dynamic> map, {
+      String? id
+    }) {
     return SportSector(
       id: map['id'] ?? '',
       name: map['name'] ?? '',

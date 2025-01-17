@@ -1,7 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
-
 import 'package:octoloupe/screens/auth_page.dart';
 import 'package:octoloupe/screens/contact_page.dart';
 import 'package:octoloupe/screens/home_page.dart';
@@ -12,16 +11,22 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
   
-  runApp(const MyApp());
+  runApp(
+    const MyApp()
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
@@ -41,7 +46,9 @@ class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Container(),

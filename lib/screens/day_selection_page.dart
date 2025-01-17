@@ -55,7 +55,9 @@ class DaySelectionPageState extends State<DaySelectionPage> {
   ]; */
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth > 325 ? 20.0 : 14.0;
 
@@ -94,15 +96,25 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucun jour trouvé'));
+                        return const Center(
+                          child: Text('Aucun jour trouvé')
+                        );
                       }
 
                       final sportDays = snapshot.data!;
 
                       List<String> daysOrder = [
-                        'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'
+                        'Lundi',
+                        'Mardi',
+                        'Mercredi',
+                        'Jeudi',
+                        'Vendredi',
+                        'Samedi',
+                        'Dimanche'
                       ];
 
                       sportDays.sort((a, b) {
@@ -142,7 +154,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                color: isSelected ?
+                                  Colors.blueAccent : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
@@ -206,22 +219,34 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucune jour trouvé'));
+                        return const Center(
+                          child: Text('Aucune jour trouvé')
+                        );
                       }
 
                       final cultureDays = snapshot.data!;
 
                       List<String> daysOrder = [
-                        'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'
+                        'Lundi',
+                        'Mardi',
+                        'Mercredi',
+                        'Jeudi',
+                        'Vendredi',
+                        'Samedi',
+                        'Dimanche'
                       ];
 
-                      cultureDays.sort((a, b) {
-                        int indexA = daysOrder.indexOf(a.name);
-                        int indexB = daysOrder.indexOf(b.name);
-                        return indexA.compareTo(indexB);
-                      });
+                      cultureDays.sort(
+                        (a, b) {
+                          int indexA = daysOrder.indexOf(a.name);
+                          int indexB = daysOrder.indexOf(b.name);
+                          return indexA.compareTo(indexB);
+                        }
+                      );
 
                       return GridView.builder(
                         shrinkWrap: true,
@@ -254,7 +279,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                color: isSelected ?
+                                  Colors.blueAccent : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
@@ -267,7 +293,8 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     ],
                               ),
                               child: Card(
-                                elevation: isSelected ? 2 : 4,
+                                elevation: isSelected ?
+                                  2 : 4,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),

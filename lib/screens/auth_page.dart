@@ -49,7 +49,9 @@ class AuthPageState extends State<AuthPage> {
   void _resetPassword() {
     Navigator.pushReplacement(
       context, 
-      MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+      MaterialPageRoute(
+        builder: (context) => ResetPasswordPage()
+      ),
     );
   }
 
@@ -152,13 +154,16 @@ class AuthPageState extends State<AuthPage> {
                             controller: emailController,
                             decoration: const InputDecoration(
                               labelText: 'E-mail',
+                              hintText: 'Ex: abc@exemple.com',
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre e-mail';
+                                return 'Veuillez entrer un email';
                               }
-                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                              if (!RegExp(
+                                r'^[^@]+@[^@]+\.[^@]+'
+                              ).hasMatch(value)) {
                                 return 'Veuillez entrer un e-mail valide';
                               }
                               return null;
@@ -187,7 +192,7 @@ class AuthPageState extends State<AuthPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre mot de passe';
+                                return 'Veuillez entrer un mot de passe';
                               }
                               return null;
                             },
@@ -246,7 +251,7 @@ class AuthPageState extends State<AuthPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre prénom';
+                                return 'Veuillez entrer un prénom';
                               }
                               return null;
                             },
@@ -265,7 +270,7 @@ class AuthPageState extends State<AuthPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre nom';
+                                return 'Veuillez entrer un nom';
                               }
                               return null;
                             },
@@ -280,14 +285,17 @@ class AuthPageState extends State<AuthPage> {
                             controller: newEmailController,
                             decoration: const InputDecoration(
                               labelText: 'E-mail',
+                              hintText: 'Ex: abc@exemple.com',
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Veuillez entrer votre e-mail';
                               }
-                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                                return 'Veuillez entrer un e-mail valide';
+                              if (!RegExp(
+                                r'^[^@]+@[^@]+\.[^@]+'
+                              ).hasMatch(value)) {
+                                return 'Veuillez entrer un email valide';
                               }
                               return null;
                             },
@@ -317,7 +325,7 @@ class AuthPageState extends State<AuthPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre mot de passe';
+                                return 'Veuillez entrer un mot de passe';
                               }
                               return null;
                             },

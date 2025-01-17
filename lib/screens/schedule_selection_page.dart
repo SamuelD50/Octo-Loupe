@@ -33,15 +33,25 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
     cultureSchedulesFunction = CultureFilterService().getCultureSchedules();
   }
 
-  List<T> sortSchedules<T>(List<T> schedules) {
+  List<T> sortSchedules<T>(
+    List<T> schedules
+  ) {
     int getStartTime(String timeRange) {
-      int startHour = int.parse(timeRange.split('-')[0].split('h')[0]);
+      int startHour = int.parse(
+        timeRange.split('-')[0].split('h')[0]
+      );
       return startHour;
     }
 
     schedules.sort((a, b) {
-      String nameA = a is SportSchedule ? a.name : (a is CultureSchedule ? a.name : '');
-      String nameB = b is SportSchedule ? b.name : (b is CultureSchedule ? b.name : '');
+      String nameA = a is SportSchedule ?
+        a.name : (a is CultureSchedule ?
+          a.name : ''
+        );
+      String nameB = b is SportSchedule ?
+        b.name : (b is CultureSchedule ?
+          b.name : ''
+        );
 
       int startTimeA = getStartTime(nameA);
       int startTimeB = getStartTime(nameB);
@@ -65,9 +75,12 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
   ]; */
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth > 325 ? 20.0 : 14.0;
+    double fontSize = screenWidth > 325 ?
+      20.0 : 14.0;
 
     return Scaffold(
       appBar: const CustomAppBar(),
@@ -104,9 +117,13 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucun horaire trouvé'));
+                        return const Center(
+                          child: Text('Aucun horaire trouvé')
+                        );
                       }
 
                       final sportSchedules = snapshot.data!;
@@ -118,8 +135,8 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                          1 : MediaQuery.of(context).size.width < 600 ?
-                          2 : 3, // Deux colonnes
+                            1 : MediaQuery.of(context).size.width < 600 ?
+                              2 : 3, // Deux colonnes
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                         ),
@@ -144,7 +161,8 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                color: isSelected ?
+                                  Colors.blueAccent : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
@@ -208,9 +226,13 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucun horaire trouvé'));
+                        return const Center(
+                          child: Text('Aucun horaire trouvé')
+                        );
                       }
 
                       final cultureSchedules = snapshot.data!;
@@ -222,8 +244,8 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                          1 : MediaQuery.of(context).size.width < 600 ?
-                          2 : 3, // Deux colonnes
+                            1 : MediaQuery.of(context).size.width < 600 ?
+                              2 : 3, // Deux colonnes
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                         ),
@@ -248,7 +270,8 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                color: isSelected ?
+                                  Colors.blueAccent : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
@@ -261,7 +284,8 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     ],
                               ),
                               child: Card(
-                                elevation: isSelected ? 2 : 4,
+                                elevation: isSelected ?
+                                  2 : 4,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -312,7 +336,10 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pop(context, selectedSchedules);
+                      Navigator.pop(
+                        context,
+                        selectedSchedules
+                      );
                     },
                     child: Text('Valider'),
                   ),

@@ -4,12 +4,42 @@ import 'package:octoloupe/model/activity_model.dart';
 class CultureActivityService {
   final ActivitiesCRUD activitiesCRUD = ActivitiesCRUD();
 
-  Future<void> addCultureActivity(String section, String? activityId, String discipline, String information, String titleAddress, String streetAddress, String postalCode, String city, double latitude, double longitude, String day, String startHour, String endHour, String profile, String pricing, List<String> categoriesId, List<String> agesId, List<String> daysId, List<String> schedulesId, List<String> sectorsId) async {
+  Future<void> addCultureActivity(
+    String? activityId,
+    String discipline,
+    String information,
+    String imageUrl,
+    String structureName,
+    String email,
+    String phoneNumber,
+    String webSite,
+    String titleAddress,
+    String streetAddress,
+    int postalCode,
+    String city,
+    double latitude,
+    double longitude,
+    String day,
+    String startHour,
+    String endHour,
+    String profile,
+    String pricing,
+    List<Map<String, String>> categoriesId,
+    List<Map<String, String>> agesId,
+    List<Map<String, String>> daysId,
+    List<Map<String, String>> schedulesId,
+    List<Map<String, String>> sectorsId,
+  ) async {
     await activitiesCRUD.createActivity(
       'cultures',
       activityId,
       discipline,
       information,
+      imageUrl,
+      structureName,
+      email,
+      phoneNumber,
+      webSite,
       titleAddress,
       streetAddress,
       postalCode,
@@ -29,7 +59,7 @@ class CultureActivityService {
     );
   }
 
-  Future<List<ActivityModel>> getCultureActivities(String section) async {
+  Future<List<ActivityModel>> getCultureActivities() async {
     try {
       var activitiesData = await activitiesCRUD.getActivities(
         'cultures'
@@ -38,6 +68,11 @@ class CultureActivityService {
         final activityId = docSnapshot.id;
         final discipline = docSnapshot['discipline'];
         final information = docSnapshot['information'];
+        final imageUrl = docSnapshot['imageUrl'];
+        final structureName = docSnapshot['contact']['structureName'];
+        final email = docSnapshot['contact']['email'];
+        final phoneNumber = docSnapshot['contact']['phoneNumber'];
+        final webSite = docSnapshot['contact']['webSite'];
         final titleAddress = docSnapshot['place']['titleAddress'];
         final streetAddress = docSnapshot['place']['streetAddress'];
         final postalCode = docSnapshot['place']['postalCode'];
@@ -59,6 +94,13 @@ class CultureActivityService {
           activityId: activityId,
           discipline: discipline,
           information: information,
+          imageUrl: imageUrl,
+          contact: Contact(
+            structureName: structureName,
+            email: email,
+            phoneNumber: phoneNumber,
+            webSite: webSite,
+          ),
           place: Place(
             titleAddress: titleAddress,
             streetAddress: streetAddress,
@@ -84,15 +126,13 @@ class CultureActivityService {
               pricing: pricing,
             ),
           ],
-          filters: [
-            Filters(
-              categoriesId: categoriesId,
-              agesId: agesId,
-              daysId: daysId,
-              schedulesId: schedulesId,
-              sectorsId: sectorsId,
-            )
-          ],
+          filters: Filters(
+            categoriesId: categoriesId,
+            agesId: agesId,
+            daysId: daysId,
+            schedulesId: schedulesId,
+            sectorsId: sectorsId,
+          ),
         );
       }).toList();
     } catch (e) {
@@ -100,13 +140,42 @@ class CultureActivityService {
     }
   }
 
-  Future<void> updateCultureActivity(String activityId, String newDiscipline,
-    String newInformation, String newTitleAddress, String newStreetAddress, String newPostalCode, String newCity, double newLatitude, double newLongitude, String newDay, String newStartHour, String newEndHour, String newProfile, String newPricing, List<String> categoriesId, List<String> agesId, List<String> daysId, List<String> schedulesId, List<String> sectorsId) async {
+  Future<void> updateCultureActivity(
+    String activityId,
+    String newDiscipline,
+    String newInformation,
+    String newImageUrl,
+    String newStructureName,
+    String newEmail,
+    String newPhoneNumber,
+    String newWebSite,
+    String newTitleAddress,
+    String newStreetAddress,
+    int newPostalCode,
+    String newCity,
+    double newLatitude,
+    double newLongitude,
+    String newDay,
+    String newStartHour,
+    String newEndHour,
+    String newProfile,
+    String newPricing,
+    List<Map<String, String>> newCategoriesId,
+    List<Map<String, String>> newAgesId,
+    List<Map<String, String>> newDaysId,
+    List<Map<String, String>> newSchedulesId,
+    List<Map<String, String>> newSectorsId
+  ) async {
     await activitiesCRUD.createActivity(
       'cultures',
       activityId,
       newDiscipline,
       newInformation,
+      newStructureName,
+      newImageUrl,
+      newEmail,
+      newPhoneNumber,
+      newWebSite,
       newTitleAddress,
       newStreetAddress,
       newPostalCode,
@@ -118,15 +187,17 @@ class CultureActivityService {
       newEndHour,
       newProfile,
       newPricing,
-      categoriesId,
-      agesId,
-      daysId,
-      schedulesId,
-      sectorsId,
+      newCategoriesId,
+      newAgesId,
+      newDaysId,
+      newSchedulesId,
+      newSectorsId,
     );
   }
 
-  Future<void> deleteCultureActivity(String activityId) async {
+  Future<void> deleteCultureActivity(
+    String activityId
+  ) async {
     await activitiesCRUD.deleteActivity(
       'cultures',
       activityId,

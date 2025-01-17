@@ -41,8 +41,18 @@ class ContactPageState extends State<ContactPage> {
 
   //
 
-  Future<void> sendEmail(String title, String firstName, String name, String email, String subject, String body) async {
-    final smtpServer = gmailSaslXoauth2(dotenv.env['EMAIL'] ?? '', dotenv.env['PASSWORD'] ?? '');
+  Future<void> sendEmail(
+    String title,
+    String firstName,
+    String name,
+    String email,
+    String subject,
+    String body
+  ) async {
+    final smtpServer = gmailSaslXoauth2(
+      dotenv.env['EMAIL'] ?? '',
+      dotenv.env['PASSWORD'] ?? ''
+    );
     final message = Message()
       ..from = Address(dotenv.env['EMAIL']!, 'Application Info Service')
       ..recipients.add('samuel-50100@hotmail.fr')
@@ -62,7 +72,9 @@ class ContactPageState extends State<ContactPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
@@ -130,7 +142,8 @@ class ContactPageState extends State<ContactPage> {
                           border: OutlineInputBorder(),
                           isDense: true,
                         ),
-                        validator: (value) => (value == null) ? 'Veuillez choisir un titre' : null,
+                        validator: (value) => (value == null) ?
+                          'Veuillez choisir un titre' : null,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -142,7 +155,8 @@ class ContactPageState extends State<ContactPage> {
                           labelText: 'Prénom',
                           border: OutlineInputBorder(),
                         ),
-                        validator: (value) => (value == null || value.isEmpty) ? 'Veuillez entrer un prénom' : null,
+                        validator: (value) => (value == null || value.isEmpty) ?
+                          'Veuillez entrer un prénom' : null,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
                       ),
@@ -156,7 +170,8 @@ class ContactPageState extends State<ContactPage> {
                           labelText: 'Nom',
                           border: OutlineInputBorder(),
                         ),
-                        validator: (value) => (value == null || value.isEmpty) ? 'Veuillez entrer un nom' : null,
+                        validator: (value) => (value == null || value.isEmpty) ?
+                          'Veuillez entrer un nom' : null,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
                       ),
@@ -168,15 +183,18 @@ class ContactPageState extends State<ContactPage> {
                         controller: _emailController,
                         decoration: const InputDecoration(
                           labelText: 'Email',
+                          hintText: 'Ex: abc@exemple.com',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un mail';
+                            return 'Veuillez entrer un email';
                           }
-                          final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                          final emailRegex = RegExp(
+                            r'^[^@]+@[^@]+\.[^@]+'
+                          );
                           if (!emailRegex.hasMatch(value)) {
-                            return 'Veuillez entrer une adresse e-mail valide';
+                            return 'Veuillez entrer un email valide';
                           }
                           return null;
                         },
@@ -191,6 +209,7 @@ class ContactPageState extends State<ContactPage> {
                         controller: _subjectController,
                         decoration: const InputDecoration(
                           labelText: 'Objet',
+                          hintText: 'Ex: Modification du lieu d\'activité',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -210,6 +229,7 @@ class ContactPageState extends State<ContactPage> {
                         controller: _messageController,
                         decoration: const InputDecoration(
                           labelText: 'Message',
+                          hintText: 'Ex: Bonjour, le lieu de l\'activité a changé...',
                           border: OutlineInputBorder(),
                         ),
                         maxLines: null,
@@ -242,7 +262,14 @@ class ContactPageState extends State<ContactPage> {
                           String subject = _subjectController.text;
                           String message = _messageController.text;
 
-                          sendEmail(title, firstName, name, email, subject, message);
+                          sendEmail(
+                            title,
+                            firstName,
+                            name,
+                            email,
+                            subject,
+                            message
+                          );
                         }
                       },
                       child: Text('Envoyer'),

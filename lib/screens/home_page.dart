@@ -22,11 +22,11 @@ class HomePageState extends State<HomePage> {
   void _resetFilters() {
     setState(() {
       if (_selectedSection == 0) {
-      selectedCategoriesSport = [];
-      selectedAgesSport = [];
-      selectedDaysSport = [];
-      selectedSchedulesSport = [];
-      selectedSectorsSport = [];
+        selectedCategoriesSport = [];
+        selectedAgesSport = [];
+        selectedDaysSport = [];
+        selectedSchedulesSport = [];
+        selectedSectorsSport = [];
       } else {
         selectedCategoriesCulture = [];
         selectedAgesCulture = [];
@@ -50,7 +50,9 @@ class HomePageState extends State<HomePage> {
  List <String> selectedSectorsCulture = []; 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
@@ -92,7 +94,8 @@ class HomePageState extends State<HomePage> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Je recherche ...',
+                        labelText: 'Je recherche ...',
+                        hintText: 'Ex: Running, Peinture, ...',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.search),
                       ),
@@ -155,10 +158,14 @@ class HomePageState extends State<HomePage> {
                             () async {
                               final List<String>? categories = await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => CategorySelectionPage(
-                                  selectedCategories: _selectedSection == 0 ? selectedCategoriesSport : selectedCategoriesCulture,
-                                  isSport: _selectedSection == 0,
-                                )),
+                                MaterialPageRoute(
+                                  builder: 
+                                  (context) => CategorySelectionPage(
+                                    selectedCategories: _selectedSection == 0 ?
+                                      selectedCategoriesSport : selectedCategoriesCulture,
+                                    isSport: _selectedSection == 0,
+                                  )
+                                ),
                               );
                               if (categories != null) {
                                 setState(() {
@@ -182,10 +189,13 @@ class HomePageState extends State<HomePage> {
                             () async {
                               final List<String>? ages = await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => AgeSelectionPage(
-                                  selectedAges: _selectedSection == 0 ? selectedAgesSport : selectedAgesCulture,
-                                  isSport: _selectedSection == 0,
-                                )),
+                                MaterialPageRoute(
+                                  builder: (context) => AgeSelectionPage(
+                                    selectedAges: _selectedSection == 0 ?
+                                      selectedAgesSport : selectedAgesCulture,
+                                    isSport: _selectedSection == 0,
+                                  )
+                                ),
                               );
                               if (ages != null) {
                                 setState(() {
@@ -209,10 +219,13 @@ class HomePageState extends State<HomePage> {
                             () async {
                               final List<String>? days = await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => DaySelectionPage(
-                                  selectedDays: _selectedSection == 0 ? selectedDaysSport : selectedDaysCulture,
+                                MaterialPageRoute(
+                                  builder: (context) => DaySelectionPage(
+                                    selectedDays: _selectedSection == 0 ?
+                                      selectedDaysSport : selectedDaysCulture,
                                   isSport: _selectedSection == 0,
-                                )),
+                                  )
+                                ),
                               );
                               if (days != null) {
                                 setState(() {
@@ -236,10 +249,13 @@ class HomePageState extends State<HomePage> {
                             () async {
                               final List<String>? schedules = await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => ScheduleSelectionPage(
-                                  selectedSchedules: _selectedSection == 0 ? selectedSchedulesSport : selectedSchedulesCulture,
-                                  isSport: _selectedSection == 0,
-                                )),
+                                MaterialPageRoute(
+                                  builder: (context) => ScheduleSelectionPage(
+                                    selectedSchedules: _selectedSection == 0 ?
+                                      selectedSchedulesSport : selectedSchedulesCulture,
+                                    isSport: _selectedSection == 0,
+                                  )
+                                ),
                               );
                               if (schedules != null) {
                                 setState(() {
@@ -263,10 +279,13 @@ class HomePageState extends State<HomePage> {
                             () async {
                               final List<String>? sectors = await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => SectorSelectionPage(
-                                  selectedSectors: _selectedSection == 0 ? selectedSectorsSport : selectedSectorsCulture,
-                                  isSport: _selectedSection == 0,
-                                )),
+                                MaterialPageRoute(
+                                  builder: (context) => SectorSelectionPage(
+                                    selectedSectors: _selectedSection == 0 ?
+                                      selectedSectorsSport : selectedSectorsCulture,
+                                    isSport: _selectedSection == 0,
+                                  )
+                                ),
                               );
                               if (sectors != null) {
                                 setState(() {
@@ -520,7 +539,6 @@ class HomePageState extends State<HomePage> {
                               ),
                               onPressed: () {
                                 debugPrint("Bouton rechercher");
-                                log('Rechercher', level: 0);
                               },
                               child: Text('Rechercher'),
                             ),
@@ -559,13 +577,20 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCriteriaTile(BuildContext context, IconData icon, String label, Future<void> Function() pageBuilder, {required bool isSport}) {
+  Widget _buildCriteriaTile(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Future<void> Function() pageBuilder,
+    {required bool isSport}
+  ) {
     return GestureDetector(
       onTap: pageBuilder,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
-          mainAxisAlignment: isSport ? MainAxisAlignment.start : MainAxisAlignment.end,
+          mainAxisAlignment: isSport ?
+            MainAxisAlignment.start : MainAxisAlignment.end,
           children: [
             if (isSport) ...[
               Container(
@@ -574,13 +599,19 @@ class HomePageState extends State<HomePage> {
                   color: Color(0xFF5B59B4),
                 ),
                 padding: EdgeInsets.all(10),
-                child: Icon(icon, color: Colors.white),
+                child: Icon(
+                  icon,
+                  color: Colors.white
+                ),
               ),
               SizedBox(width: 15),
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18
+                  ),
                   textAlign: TextAlign.left,
                 ), 
               ),
@@ -588,7 +619,10 @@ class HomePageState extends State<HomePage> {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18
+                  ),
                   textAlign: TextAlign.right,
                 ),
               ),
@@ -599,7 +633,10 @@ class HomePageState extends State<HomePage> {
                   color: Color(0xFF5B59B4),
                 ),
                 padding: const EdgeInsets.all(10),
-                child: Icon(icon, color: Colors.white),
+                child: Icon(
+                  icon,
+                  color: Colors.white
+                ),
               ),
             ],
           ],

@@ -17,7 +17,9 @@ class UserModel {
 
   // Convert Firestore document to UserModel instance
 
-  factory UserModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+  factory UserModel.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot
+  ) {
   final data = snapshot.data();
   if (data == null) {
     return UserModel(
@@ -48,5 +50,3 @@ class UserModel {
     };
   }
 }
-
-

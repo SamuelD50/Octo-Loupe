@@ -32,7 +32,9 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
   final AuthService _authService = AuthService();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
@@ -83,7 +85,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre prénom';
+                                return 'Veuillez entrer un prénom';
                               }
                               return null;
                             },
@@ -102,7 +104,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre nom';
+                                return 'Veuillez entrer un nom';
                               }
                               return null;
                             },
@@ -117,13 +119,16 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             controller: newEmailAdminController,
                             decoration: const InputDecoration(
                               labelText: 'E-mail',
+                              hintText: 'Ex: abc@exemple.com',
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre e-mail';
+                                return 'Veuillez entrer un e-mail';
                               }
-                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                              if (
+                                !RegExp(r'^[^@]+@[^@]+\.[^@]+'
+                              ).hasMatch(value)) {
                                 return 'Veuillez entrer un e-mail valide';
                               }
                               return null;
@@ -143,7 +148,8 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               border: const OutlineInputBorder(),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  _isNewPasswordVisible ?
+                                    Icons.visibility : Icons.visibility_off,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -185,7 +191,9 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             }
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => AdminCentralPage()),
+                              MaterialPageRoute(
+                                builder: (context) => AdminCentralPage()
+                              ),
                             );
                           },
                           child: Text('Créer un compte'),

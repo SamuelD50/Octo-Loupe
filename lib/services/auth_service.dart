@@ -15,7 +15,15 @@ class AuthService {
   // Documentation : https://firebase.google.com/docs/auth/flutter/password-auth?hl=fr
   
   // Create account and save user data in Firestore
-  Future<UserCredential?> signUpUser(String email, String password, String firstName, String name, {required BuildContext context, required Function(bool) setLoading}) async {
+  Future<UserCredential?> signUpUser(
+    String email,
+    String password,
+    String firstName,
+    String name, {
+      required BuildContext context,
+      required Function(bool) setLoading
+    }
+  ) async {
     try {
       setLoading(true);
 
@@ -75,7 +83,15 @@ class AuthService {
     }
   }
 
-  Future<UserCredential?> signUpAdmin(String email, String password, String firstName, String name, {required BuildContext context, required Function(bool) setLoading} ) async {
+  Future<UserCredential?> signUpAdmin(
+    String email,
+    String password,
+    String firstName,
+    String name, {
+      required BuildContext context,
+      required Function(bool) setLoading
+    }
+  ) async {
     try {
       setLoading(true);
 
@@ -135,7 +151,13 @@ class AuthService {
 
 /* https://github.com/Nayangadhiya/Firebase-AuthServices-Flutter/blob/main/lib/screens/login_screen.dart */
   //SignIn with email and password
-  Future<UserCredential?> signIn(String email, String password, {required BuildContext context, required Function(bool) setLoading}) async {
+  Future<UserCredential?> signIn(
+    String email,
+    String password, {
+      required BuildContext context,
+      required Function(bool) setLoading
+    }
+  ) async {
     try {
       setLoading(true);
 
@@ -198,7 +220,12 @@ class AuthService {
   }
 
     //Send email to reset password
-  Future<void> sendPasswordResetEmail(String email, {required BuildContext context, required Function(bool) setLoading}) async {
+  Future<void> sendPasswordResetEmail(
+    String email, {
+      required BuildContext context,
+      required Function(bool) setLoading
+    }
+  ) async {
     try {
       setLoading(true);
 
@@ -251,7 +278,10 @@ class AuthService {
   }
 
   //SignOut
-  Future<void> signOut({required BuildContext context, required Function(bool) setLoading}) async {
+  Future<void> signOut({
+    required BuildContext context,
+    required Function(bool) setLoading
+  }) async {
     try {
       setLoading(true);
 
@@ -288,7 +318,10 @@ class AuthService {
   }
 
   //Delete User
-  Future<void> deleteUser({required BuildContext context, required Function(bool) setLoading}) async {
+  Future<void> deleteUser({
+    required BuildContext context,
+    required Function(bool) setLoading
+  }) async {
     try {
       setLoading(true);
 
@@ -350,7 +383,12 @@ class AuthService {
 
 
   //Update user password
-  Future<void> updatePassword(String newPassword, {required BuildContext context, required Function(bool) setLoading}) async {
+  Future<void> updatePassword(
+    String newPassword, {
+      required BuildContext context,
+      required Function(bool) setLoading
+    }
+  ) async {
     try {
       setLoading(true);
 
@@ -368,7 +406,6 @@ class AuthService {
         }
       } 
     } catch (e) {
-
       setLoading(false);
 
       if (context.mounted) {
@@ -377,7 +414,6 @@ class AuthService {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
-
       throw Exception('Erreur: $e');
     }
   }

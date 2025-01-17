@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:octoloupe/model/activity_model.dart';
 
 class ActivityCard extends StatelessWidget {
@@ -57,4 +57,4 @@ class ActivityCard extends StatelessWidget {
       ),
     );
   }
-}
+} */

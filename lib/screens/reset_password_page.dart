@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:octoloupe/screens/auth_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -25,7 +23,9 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
   final emailController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
@@ -72,6 +72,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             controller: emailController,
                             decoration: const InputDecoration(
                               labelText: 'Email',
+                              hintText: 'Ex: abc@exemple.com',
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {

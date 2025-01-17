@@ -4,37 +4,50 @@ class ActivityModel {
   final String activityId;
   final String discipline;
   final String information;
+  final String imageUrl;
   final Place place;
+  final Contact contact;
   final List<Schedule> schedules;
   final List<Pricing> pricings;
-  final List<Filters> filters;
-  /* final String imageUrl; */
+  final Filters filters;
+  
 
 
   ActivityModel({
     required this.activityId,
     required this.discipline,
     required this.information,
+    required this.imageUrl,
     required this.place,
+    required this.contact,
     required this.schedules,
     required this.pricings,
-    required this.filters,
+    required this.filters
     
     /* required this.imageUrl, */
 
   });
 
-  factory ActivityModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+  factory ActivityModel.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot
+  ) {
     final data = snapshot.data();
     if (data == null) {
       return ActivityModel(
         activityId: snapshot.id,
         discipline: '',
         information: '',
+        imageUrl: '',
+        contact: Contact(
+          structureName: '',
+          email: '',
+          phoneNumber: '',
+          webSite: '',
+        ),
         place: Place(
           titleAddress: '',
           streetAddress: '',
-          postalCode: '',
+          postalCode: 50130,
           city: '',
           latitude: 0.0,
           longitude: 0.0,
@@ -56,7 +69,7 @@ class ActivityModel {
             pricing: '',
           ),
         ],
-        filters: [
+        filters:
           Filters(
             categoriesId: [],
             agesId: [],
@@ -64,7 +77,6 @@ class ActivityModel {
             schedulesId: [],
             sectorsId: [],
           ),
-        ],
       );
     }
 
@@ -72,10 +84,17 @@ class ActivityModel {
       activityId: snapshot.id,
       discipline: data['discipline'] ?? '',
       information: data['information'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+      contact: Contact.fromMap(data['contact'] ?? {
+        'structureName': '',
+        'email': '',
+        'phoneNumber': '',
+        'webSite': '',
+      }),
       place: Place.fromMap(data['places'] ?? {
         'titleAddress': '',
         'streetAddress': '',
-        'postalCode': '',
+        'postalCode': 50130,
         'city': '',
         'latitude': 0.0,
         'longitude': 0.0,
@@ -91,27 +110,29 @@ class ActivityModel {
           ],
         },
       ])
-        .map((e) => Schedule.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => Schedule.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
       pricings: (data['pricings'] as List? ?? [
         {
           'profile': '',
           'pricing': '',
         },
       ])
-        .map((e) => Pricing.fromMap(e as Map<String, dynamic>))
-        .toList(),
-      filters: (data['filters'] as List? ?? [
-        {
-          'categoriesId': [],
-          'agesId': [],
-          'daysId': [],
-          'schedulesId': [],
-          'sectorsId': [],
-        },
-      ])
-        .map((e) => Filters.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => Pricing.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
+      filters: Filters.fromMap(data['filters'] ?? {
+        'categoriesId': [],
+        'agesId': [],
+        'daysId': [],
+        'schedulesId': [],
+        'sectorsId': [],
+      }),
     );
   }
 
@@ -119,10 +140,16 @@ class ActivityModel {
     return {
       'discipline': discipline,
       'information': information,
+      'imageUrl': imageUrl,
+      'contact': contact.toMap(),
       'places': place.toMap(),
-      'schedules': schedules.map((e) => e.toMap()).toList(),
-      'pricings': pricings.map((e) => e.toMap()).toList(),
-      'filters': filters.map((e) => e.toMap()).toList(),
+      'schedules': schedules.map(
+        (e) => e.toMap()
+      ).toList(),
+      'pricings': pricings.map(
+        (e) => e.toMap()
+      ).toList(),
+      'filters': filters.toMap(),
     };
   }
 }
@@ -130,7 +157,7 @@ class ActivityModel {
 class Place {
   final String titleAddress;
   final String streetAddress;
-  final String postalCode;
+  final int postalCode;
   final String city;
   final double latitude;
   final double longitude;
@@ -144,7 +171,9 @@ class Place {
     required this.longitude,
   });
 
-  factory Place.fromMap(Map<String, dynamic> map) {
+  factory Place.fromMap(
+    Map<String, dynamic> map
+  ) {
     return Place(
       titleAddress: map['titleAddress'] ?? '',
       streetAddress: map['streetAddress'] ?? '',
@@ -167,6 +196,40 @@ class Place {
   }
 }
 
+class Contact {
+  final String structureName;
+  final String email;
+  final String phoneNumber;
+  final String webSite;
+
+  Contact({
+    required this.structureName,
+    required this.email,
+    required this.phoneNumber,
+    required this.webSite,
+  });
+
+  factory Contact.fromMap(
+    Map<String, dynamic> map
+  ) {
+    return Contact(
+      structureName: map['structureName'] ?? '',
+      email: map['email'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
+      webSite: map['webSite'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'structureName': structureName,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'webSite': webSite,
+    };
+  }
+}
+
 class Schedule {
   final String day;
   final List<TimeSlot> timeSlots;
@@ -176,19 +239,26 @@ class Schedule {
     required this.timeSlots,
   });
 
-  factory Schedule.fromMap(Map<String, dynamic> map) {
+  factory Schedule.fromMap(
+    Map<String, dynamic> map
+  ) {
     return Schedule(
       day: map['day'] ?? '',
       timeSlots: (map['timeSlots'] as List? ?? [])
-        .map((e) => TimeSlot.fromMap(e as Map<String, dynamic>))
-        .toList(),
+        .map(
+          (e) => TimeSlot.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'day': day,
-      'timeSlots': timeSlots.map((e) => e.toMap()).toList(),
+      'timeSlots': timeSlots.map(
+        (e) => e.toMap()
+      ).toList(),
     };
   }
 }
@@ -202,7 +272,9 @@ class Pricing {
     required this.pricing,
   });
 
-  factory Pricing.fromMap(Map<String, dynamic> map) {
+  factory Pricing.fromMap(
+    Map<String, dynamic> map
+  ) {
     return Pricing(
       profile: map['profile'] ?? '',
       pricing: map['pricing'] ?? '',
@@ -226,7 +298,9 @@ class TimeSlot {
     required this.endHour,
   });
 
-  factory TimeSlot.fromMap(Map<String, dynamic> map) {
+  factory TimeSlot.fromMap(
+    Map<String, dynamic> map
+  ) {
     return TimeSlot(
       startHour: map['startHour'] ?? '',
       endHour: map['endHour'] ?? '',
@@ -242,11 +316,11 @@ class TimeSlot {
 }
 
 class Filters {
-  final List<String> categoriesId;
-  final List<String> agesId;
-  final List<String> daysId;
-  final List<String> schedulesId;
-  final List<String> sectorsId;
+  final List<Map<String, String>> categoriesId;
+  final List<Map<String, String>> agesId;
+  final List<Map<String, String>> daysId;
+  final List<Map<String, String>> schedulesId;
+  final List<Map<String, String>> sectorsId;
 
   Filters({
     required this.categoriesId,
@@ -256,23 +330,40 @@ class Filters {
     required this.sectorsId,
   });
 
-  factory Filters.fromMap(Map<String, dynamic> map) {
+  factory Filters.fromMap(
+    Map<String, dynamic> map
+  ) {
     return Filters(
       categoriesId: (map['categoriesId'] as List? ?? [])
-        .map((e) => e as String)
-        .toList(),
+        .map(
+          (e) => Map<String, String>.from(
+            e as Map
+          )
+        ).toList(),
       agesId: (map['agesId'] as List? ?? [])
-        .map((e) => e as String)
-        .toList(),
+        .map(
+          (e) => Map<String, String>.from(
+            e as Map
+          )
+        ).toList(),
       daysId: (map['daysId'] as List? ?? [])
-        .map((e) => e as String)
-        .toList(),
+        .map(
+          (e) => Map<String, String>.from(
+            e as Map
+          )
+        ).toList(),
       schedulesId: (map['schedulesId'] as List? ?? [])
-        .map((e) => e as String)
-        .toList(),
+        .map(
+          (e) => Map<String, String>.from(
+            e as Map
+          )
+        ).toList(),
       sectorsId: (map['sectorsId'] as List? ?? [])
-        .map((e) => e as String)
-        .toList(),
+        .map(
+          (e) => Map<String, String>.from(
+            e as Map
+          )
+        ).toList(),
     );
   }
 

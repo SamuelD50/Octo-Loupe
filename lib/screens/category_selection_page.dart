@@ -14,7 +14,7 @@ class CategorySelectionPage extends StatefulWidget {
     super.key,
     required this.selectedCategories,
     required this.isSport,
-    });
+  });
 
   @override
   CategorySelectionPageState createState() => CategorySelectionPageState();
@@ -35,7 +35,9 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth > 325 ? 20.0 : 14.0;
 
@@ -74,14 +76,20 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucune catégorie trouvée'));
+                        return const Center(
+                          child: Text('Aucune catégorie trouvée')
+                        );
                       }
 
                       final sportCategories = snapshot.data!;
 
-                      sportCategories.sort((a, b) => a.name.compareTo(b.name));
+                      sportCategories.sort(
+                        (a, b) => a.name.compareTo(b.name)
+                      );
 
                       return GridView.builder(
                         shrinkWrap: true,
@@ -178,14 +186,20 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucune catégorie trouvée'));
+                        return const Center(
+                          child: Text('Aucune catégorie trouvée')
+                        );
                       }
 
                       final cultureCategories = snapshot.data!;
 
-                      cultureCategories.sort((a, b) => a.name.compareTo(b.name));
+                      cultureCategories.sort(
+                        (a, b) => a.name.compareTo(b.name)
+                      );
 
                       return GridView.builder(
                         shrinkWrap: true,

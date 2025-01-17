@@ -48,9 +48,12 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
   ]; */
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth > 325 ? 20.0 : 14.0;
+    double fontSize = screenWidth > 325 ?
+      20.0 : 14.0;
 
     return Scaffold(
       appBar: const CustomAppBar(),
@@ -87,22 +90,28 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucun secteur trouvé'));
+                        return const Center(
+                          child: Text('Aucun secteur trouvé')
+                        );
                       }
 
                       final sportSectors = snapshot.data!;
 
-                      sportSectors.sort((a, b) => a.name.compareTo(b.name));
+                      sportSectors.sort(
+                        (a, b) => a.name.compareTo(b.name)
+                      );
 
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                          1 : MediaQuery.of(context).size.width < 600 ?
-                          2 : 3, // Deux colonnes
+                            1 : MediaQuery.of(context).size.width < 600 ?
+                              2 : 3, // Deux colonnes
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                         ),
@@ -127,7 +136,8 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                color: isSelected ?
+                                  Colors.blueAccent : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []
@@ -140,7 +150,8 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                     ],
                               ),
                               child: Card(
-                                elevation: isSelected ? 2 : 4,
+                                elevation: isSelected ?
+                                  2 : 4,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -191,22 +202,28 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Erreur: ${snapshot.error}'));
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Aucun secteur trouvé'));
+                        return const Center(
+                          child: Text('Aucun secteur trouvé')
+                        );
                       }
 
                       final cultureSectors = snapshot.data!;
 
-                      cultureSectors.sort((a, b) => a.name.compareTo(b.name));
+                      cultureSectors.sort(
+                        (a, b) => a.name.compareTo(b.name)
+                      );
 
                       return GridView.builder(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                          1 : MediaQuery.of(context).size.width < 600 ?
-                          2 : 3, // Deux colonnes
+                            1 : MediaQuery.of(context).size.width < 600 ?
+                              2 : 3, // Deux colonnes
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                         ),
@@ -231,7 +248,8 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeInOut,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                color: isSelected ?
+                                  Colors.blueAccent : Colors.transparent,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: isSelected
                                   ? []

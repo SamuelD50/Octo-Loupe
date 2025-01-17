@@ -25,7 +25,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
   }
   
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
@@ -65,7 +67,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => AdminInterfacePage()),
+                            MaterialPageRoute(
+                              builder: (context) => AdminInterfacePage()
+                            ),
                           );
                         },
                         child: Text('Gérer l\'interface de l\'application'),
@@ -87,7 +91,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminActivityPage()),
+                          MaterialPageRoute(
+                            builder: (context) => AdminActivityPage()
+                          ),
                         );
                       },
                       child: Text('Gérer les activités de l\'application'),
@@ -108,8 +114,11 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       onPressed: () {
                         // Naviguer vers une autre page ici
                         /* Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ModifierInterfacePage()),
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ModifierInterfacePage()
+                            ),
+                          );
                         ); */
                       },
                       child: Text('Mon profil utilisateur'),
@@ -130,7 +139,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminAddAdminPage()),
+                          MaterialPageRoute(
+                            builder: (context) => AdminAddAdminPage()
+                          ),
                         );
                       },
                       child: Text('Ajouter un profil administrateur'),
