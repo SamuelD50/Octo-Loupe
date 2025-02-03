@@ -11,7 +11,9 @@ class CustomSnackBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return Material(
       color: backgroundColor, 
       borderRadius: BorderRadius.circular(20),
@@ -28,7 +30,9 @@ class CustomSnackBar extends StatelessWidget {
     );
   }
 
-  void showSnackBar(BuildContext context) {
+  void showSnackBar(
+    BuildContext context
+  ) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
@@ -44,8 +48,10 @@ class CustomSnackBar extends StatelessWidget {
 
     overlay.insert(overlayEntry);
 
-    Future.delayed(const Duration(seconds: 3), () {
-      overlayEntry.remove();
-    });
+    Future.delayed(
+      const Duration(seconds: 3), () {
+        overlayEntry.remove();
+      }
+    );
   }
 }

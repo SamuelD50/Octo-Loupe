@@ -1,17 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/snackbar.dart';
-import 'package:octoloupe/model/sport_filters_model.dart';
-import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:http/http.dart';
-import 'package:path/path.dart';
-import 'dart:io';
 
 class AdminInterfacePage extends StatefulWidget {
   const AdminInterfacePage({super.key});
@@ -121,6 +113,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           );
         }
       }
+
+      await Future.delayed(Duration(milliseconds: 25));
 
       setState(() {
         isLoading = false;
@@ -276,6 +270,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         }
       }
 
+      await Future.delayed(Duration(milliseconds: 25));
+
       setState(() {
         isLoading = false;
       });
@@ -355,6 +351,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           );
         }
       }
+
+      await Future.delayed(Duration(milliseconds: 25));
 
       setState(() {
         isLoading = false;
@@ -681,7 +679,14 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           ),
           const SizedBox(height: 16),
           if (imageUrlController.text.isNotEmpty)
-            Container(
+            isLoading ?
+              Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.white,
+                  size: 60,
+                ),
+              )
+            : Container(
               height: 220,
               width: 220,
               decoration: BoxDecoration(
@@ -870,7 +875,14 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               ),
             ),
           if (newImageUrlController.text.isNotEmpty)
-            Container(
+            isLoading ?
+              Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.white,
+                  size: 60,
+                ),
+              )
+            : Container(
               height: 220,
               width: 220,
               decoration: BoxDecoration(
@@ -1041,7 +1053,14 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           ),
           const SizedBox(height: 16),
           if (selectedSubFilterIdForDeleting.isNotEmpty)
-            Container(
+            isLoading ?
+              Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.white,
+                  size: 60,
+                ),
+              )
+            : Container(
               height: 220,
               width: 220,
               decoration: BoxDecoration(

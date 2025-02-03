@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:octoloupe/components/activity_card.dart';
+import 'package:octoloupe/components/activity_map.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/components/loader_spinning.dart';
 import 'package:octoloupe/components/snackbar.dart';
-import 'package:octoloupe/screens/admin_interface_page.dart';
-import 'package:octoloupe/services/culture_filter_service.dart';
-import 'package:octoloupe/services/sport_filter_service.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:octoloupe/model/activity_model.dart';
-import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
+import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_activity_service.dart';
 import 'package:octoloupe/services/sport_activity_service.dart';
 
@@ -31,6 +29,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   int selectedSection = 0;
   String selectedFilter = '';
   List<dynamic> subFilters = [];
+  List<ActivityModel> activities = [];
   List<dynamic> selectedSubFilters = [];
   bool isLoading = false;
   bool isAdding = false;
@@ -52,19 +51,19 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   TextEditingController cityController = TextEditingController();
   TextEditingController latitudeController = TextEditingController();
   TextEditingController longitudeController = TextEditingController();
-  TextEditingController dayController = TextEditingController();
-  TextEditingController startHourController = TextEditingController();
-  TextEditingController endHourController = TextEditingController();
-  TextEditingController profileController = TextEditingController();
-  TextEditingController pricingController = TextEditingController();
-
+  List<Schedule> schedules = [];
+  List<TextEditingController> dayControllers = [];
+  List<List<TextEditingController>> startHourControllersPerDay = [];
+  List<List<TextEditingController>> endHourControllersPerDay = [];
+  List<Pricing> pricings = [];
+  List<TextEditingController> profileControllers = [];
+  List<TextEditingController> pricingControllers = [];
   List<Map<String, String>> selectedSubFiltersByCategories = [];
   List<Map<String, String>> selectedSubFiltersByAges = [];
   List<Map<String, String>> selectedSubFiltersByDays = [];
   List<Map<String, String>> selectedSubFiltersBySchedules = [];
   List<Map<String, String>> selectedSubFiltersBySectors = [];
-
-
+  
   Future<void> createNewActivity({
     required BuildContext context
   }) async {
@@ -81,11 +80,26 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     String city = cityController.text.trim();
     double latitude = double.parse(latitudeController.text.trim());
     double longitude = double.parse(longitudeController.text.trim());
-    String day = dayController.text.trim();
-    String startHour = startHourController.text.trim();
-    String endHour = endHourController.text.trim();
-    String profile = profileController.text.trim();
-    String pricing = pricingController.text.trim();
+    List<Schedule> schedules = [];
+    for (int d = 0; d < dayControllers.length; d++) {
+      String day = dayControllers[d].text.trim();
+      List<TimeSlot> timeSlots = [];
+      for (int t = 0; t < startHourControllersPerDay[d].length; t++) {
+        String startHour = startHourControllersPerDay[d][t].text.trim();
+        String endHour = endHourControllersPerDay[d][t].text.trim();
+        timeSlots.add(TimeSlot(startHour: startHour, endHour: endHour));
+      }
+      schedules.add(Schedule(day: day, timeSlots: timeSlots));
+    }
+    List<Pricing> pricings = [];
+    for (int i = 0; i < profileControllers.length; i++) {
+      String profile = profileControllers[i].text.trim();
+      String pricing = pricingControllers[i].text.trim();
+      pricings.add(Pricing(
+        profile: profile,
+        pricing: pricing,
+      ));
+    }
     List<Map<String, String>> categoriesId = selectedSubFiltersByCategories.map((item) {
       return {
         'id': item['id'] ?? '',
@@ -138,16 +152,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           city,
           latitude,
           longitude,
-          day,
-          startHour,
-          endHour,
-          profile,
-          pricing,
-          selectedSubFiltersByCategories,
-          selectedSubFiltersByAges,
-          selectedSubFiltersByDays,
-          selectedSubFiltersBySchedules,
-          selectedSubFiltersBySectors,
+          schedules,
+          pricings,
+          categoriesId,
+          agesId,
+          daysId,
+          schedulesId,
+          sectorsId,
         );
       } else {
         await cultureActivityService.addCultureActivity(
@@ -165,18 +176,17 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           city,
           latitude,
           longitude,
-          day,
-          startHour,
-          endHour,
-          profile,
-          pricing,
-          selectedSubFiltersByCategories,
-          selectedSubFiltersByAges,
-          selectedSubFiltersByDays,
-          selectedSubFiltersBySchedules,
-          selectedSubFiltersBySectors,
+          schedules,
+          pricings,
+          categoriesId,
+          agesId,
+          daysId,
+          schedulesId,
+          sectorsId,
         );
       }
+
+      await Future.delayed(Duration(milliseconds: 25));
     
       setState(() {
         isLoading = false;
@@ -209,12 +219,18 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       setState(() {
         isLoading = true;
       });
+      debugPrint('Fetching activities...');
 
       if (selectedSection == 0) {
-        await sportActivityService.getSportActivities();
+        activities = await sportActivityService.getSportActivities();
+        debugPrint('activities sport readActivities: ${activities.length}');
+        debugPrint('activities sport readActivities: $activities');
       } else {
-        await cultureActivityService.getCultureActivities();
+        activities = await cultureActivityService.getCultureActivities();
+        debugPrint('activities culture readActivities: ${activities.length}');
+        debugPrint('activities culture readActivities: $activities');
       }
+      debugPrint('Activities fetched');
     } catch (e) {
       debugPrint('Error fetching activity: $e');
     } finally {
@@ -224,6 +240,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     }
   }
 
+  /* String activityId = ''; */
   TextEditingController newDisciplineController = TextEditingController();
   TextEditingController newInformationController = TextEditingController();
   TextEditingController newImageUrlController = TextEditingController();
@@ -237,12 +254,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   TextEditingController newCityController = TextEditingController();
   TextEditingController newLatitudeController = TextEditingController();
   TextEditingController newLongitudeController = TextEditingController();
-  TextEditingController newDayController = TextEditingController();
-  TextEditingController newStartHourController = TextEditingController();
-  TextEditingController newEndHourController = TextEditingController();
-  TextEditingController newProfileController = TextEditingController();
-  TextEditingController newPricingController = TextEditingController();
-
+  List<Schedule> newSchedules = [];
+  List<TextEditingController> newDayControllers = [];
+  List<List<TextEditingController>> newStartHourControllersPerDay = [];
+  List<List<TextEditingController>> newEndHourControllersPerDay = [];
+  List<Pricing> newPricings = [];
+  List<TextEditingController> newProfileControllers = [];
+  List<TextEditingController> newPricingControllers = [];
   List<Map<String, String>> newSelectedSubFiltersByCategories = [];
   List<Map<String, String>> newSelectedSubFiltersByAges = [];
   List<Map<String, String>> newSelectedSubFiltersByDays = [];
@@ -265,11 +283,26 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     String newCity = newCityController.text.trim();
     double newLatitude = double.parse(newLatitudeController.text.trim());
     double newLongitude = double.parse(newLongitudeController.text.trim());
-    String newDay = newDayController.text.trim();
-    String newStartHour = newStartHourController.text.trim();
-    String newEndHour = newEndHourController.text.trim();
-    String newProfile = newProfileController.text.trim();
-    String newPricing = newPricingController.text.trim();
+    List<Schedule> newSchedules = [];
+    for (int d = 0; d < newDayControllers.length; d++) {
+      String newDay = newDayControllers[d].text.trim();
+      List<TimeSlot> newTimeSlots = [];
+      for (int t = 0; t < newStartHourControllersPerDay[d].length; t++) {
+        String newStartHour = newStartHourControllersPerDay[d][t].text.trim();
+        String newEndHour = newEndHourControllersPerDay[d][t].text.trim();
+        newTimeSlots.add(TimeSlot(startHour: newStartHour, endHour: newEndHour));
+      }
+      newSchedules.add(Schedule(day: newDay, timeSlots: newTimeSlots));
+    }
+    List<Pricing> newPricings = [];
+    for (int i = 0; i < newProfileControllers.length; i++) {
+      String newProfile = newProfileControllers[i].text.trim();
+      String newPricing = newPricingControllers[i].text.trim();
+      newPricings.add(Pricing(
+        profile: newProfile,
+        pricing: newPricing,
+      ));
+    }
     List<Map<String, String>> newCategoriesId = newSelectedSubFiltersByCategories.map((item) {
       return {
         'id': item['id'] ?? '',
@@ -322,11 +355,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newCity,
           newLatitude,
           newLongitude,
-          newDay,
-          newStartHour,
-          newEndHour,
-          newProfile,
-          newPricing,
+          newSchedules,
+          newPricings,
           newCategoriesId,
           newAgesId,
           newDaysId,
@@ -349,11 +379,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newCity,
           newLatitude,
           newLongitude,
-          newDay,
-          newStartHour,
-          newEndHour,
-          newProfile,
-          newPricing,
+          newSchedules,
+          newPricings,
           newCategoriesId,
           newAgesId,
           newDaysId,
@@ -361,6 +388,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newSectorsId,
         );
       }
+
+      await Future.delayed(Duration(milliseconds: 25));
 
       setState(() {
         isLoading = false;
@@ -405,6 +434,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           activityId,
         );
       }
+
+      await Future.delayed(Duration(milliseconds: 25));
 
       setState(() {
         isLoading = false;
@@ -577,6 +608,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     super.initState();
     selectedFilter = 'Par catégorie';
     readSubFilters();
+    readActivities();
+    addDayField();
+    addProfilePricing();
   }
 
   @override
@@ -678,16 +712,18 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             cityController.clear();
                             latitudeController.clear();
                             longitudeController.clear();
-                            dayController.clear();
-                            startHourController.clear();
-                            endHourController.clear();
-                            profileController.clear();
-                            pricingController.clear();
+                            dayControllers.clear();
+                            startHourControllersPerDay.clear();
+                            endHourControllersPerDay.clear();
+                            profileControllers.clear();
+                            pricingControllers.clear();
                             selectedSubFiltersByCategories.clear();
                             selectedSubFiltersByAges.clear();
                             selectedSubFiltersByDays.clear();
                             selectedSubFiltersBySchedules.clear();
                             selectedSubFiltersBySectors.clear();
+                            addDayField();
+                            addProfilePricing();
                             readSubFilters();
                           });
                         },
@@ -706,7 +742,34 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         onPressed: () {
                           setState(() {
                             _currentMode = ActivityMode.editing;
-                            readSubFilters();
+                            activityId = '';
+                            newDisciplineController.clear();
+                            newInformationController.clear();
+                            newImageUrlController.clear();
+                            newStructureNameController.clear();
+                            newEmailController.clear();
+                            newPhoneNumberController.clear();
+                            newWebSiteController.clear();
+                            newTitleAddressController.clear();
+                            newStreetAddressController.clear();
+                            newPostalCodeController.clear();
+                            newCityController.clear();
+                            newLatitudeController.clear();
+                            newLongitudeController.clear();
+                            newDayControllers.clear();
+                            newStartHourControllersPerDay.clear();
+                            newEndHourControllersPerDay.clear();
+                            newProfileControllers.clear();
+                            newPricingControllers.clear();
+                            newSelectedSubFiltersByCategories.clear();
+                            newSelectedSubFiltersByAges.clear();
+                            newSelectedSubFiltersByDays.clear();
+                            newSelectedSubFiltersBySchedules.clear();
+                            newSelectedSubFiltersBySectors.clear();
+                            isEditing = false;
+                            addDayField();
+                            addProfilePricing();
+                            readActivities();
                           });
                         },
                         child: Icon(Icons.edit, size: 30, color: Colors.white),
@@ -724,7 +787,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         onPressed: () {
                           setState(() {
                             _currentMode = ActivityMode.deleting;
-                            readSubFilters();
+                            readActivities();
+                            /* readSubFilters(); */
                           });
                         },
                         child: Icon(Icons.remove, size: 30, color: Colors.white),
@@ -745,6 +809,61 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     );
   }
 
+  void addDayField() {
+    setState(() {
+      dayControllers.add(TextEditingController());
+      startHourControllersPerDay.add([TextEditingController()]);
+      endHourControllersPerDay.add([TextEditingController()]);
+    });
+  }
+
+  void removeDayField(int dayIndex) {
+    setState(() {
+      dayControllers[dayIndex].dispose;
+      dayControllers.removeAt(dayIndex);
+      for (var controller in startHourControllersPerDay[dayIndex]) {
+        controller.dispose();
+      }
+      startHourControllersPerDay.removeAt(dayIndex);
+      for (var controller in endHourControllersPerDay[dayIndex]) {
+        controller.dispose();
+      }
+      endHourControllersPerDay.removeAt(dayIndex);
+    });
+  }
+
+  void addTimeSlotForDay(int dayIndex) {
+    setState(() {
+      startHourControllersPerDay[dayIndex].add(TextEditingController());
+      endHourControllersPerDay[dayIndex].add(TextEditingController());
+    });
+  }
+
+  void removeTimeSlotForDay(int dayIndex, int timeSlotIndex) {
+    setState(() {
+      startHourControllersPerDay[dayIndex][timeSlotIndex].dispose();
+      startHourControllersPerDay[dayIndex].removeAt(timeSlotIndex);
+      endHourControllersPerDay[dayIndex][timeSlotIndex].dispose();
+      endHourControllersPerDay[dayIndex].removeAt(timeSlotIndex);
+    });
+  }
+
+  void addProfilePricing() {
+    setState(() {
+      profileControllers.add(TextEditingController());
+      pricingControllers.add(TextEditingController());
+    });
+  }
+
+  void removeProfilePricing(int index) {
+    setState(() {
+      profileControllers[index].dispose();
+      profileControllers.removeAt(index);
+      pricingControllers[index].dispose();
+      pricingControllers.removeAt(index);
+    });
+  }
+
   Widget _buildAddActivity(
     BuildContext context
   ) {
@@ -756,6 +875,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             isSelected: [selectedSection == 0, selectedSection == 1],
             onPressed: (int section) {
               setState(() {
+                addDayField();
+                addProfilePricing();
+                readSubFilters();
                 selectedSection = section;
                 disciplineController.clear();
                 informationController.clear();
@@ -770,17 +892,16 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 cityController.clear();
                 latitudeController.clear();
                 longitudeController.clear();
-                dayController.clear();
-                startHourController.clear();
-                endHourController.clear();
-                profileController.clear();
-                pricingController.clear();
+                dayControllers.clear();
+                startHourControllersPerDay.clear();
+                endHourControllersPerDay.clear();
+                profileControllers.clear();
+                pricingControllers.clear();
                 selectedSubFiltersByCategories.clear();
                 selectedSubFiltersByAges.clear();
                 selectedSubFiltersByDays.clear();
                 selectedSubFiltersBySchedules.clear();
                 selectedSubFiltersBySectors.clear();
-                readSubFilters();
               });
             },
             color: Colors.black,
@@ -1062,6 +1183,27 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               },
             ),
           ),
+          if (imageUrlController.text.isNotEmpty)
+            const SizedBox(height: 16),
+          if (imageUrlController.text.isNotEmpty)
+            isLoading ?
+              Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.white,
+                  size: 60,
+                ),
+              )
+            : Container(
+              height: 220,
+              width: 220,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(imageUrlController.text),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
           const SizedBox(height: 16),
           ExpansionTile(
             title: Text(
@@ -1129,7 +1271,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     }
 
                     final regex = RegExp(
-                      r'^(\+33\s\d{1}\s\d{2}\s\d{2}\s\d{2}\s\d{2}|\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2})$'
+                      r'^(\+33\s?\d{1}\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|\d{10})$'
                     );
                     if (!regex.hasMatch(value)) {
                       return 'Veuillez entrer un numéro de téléphone valide';
@@ -1306,60 +1448,144 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               ),
             ),
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: dayController,
-                  decoration: const InputDecoration(
-                    labelText: 'Jour',
-                    hintText: 'Ex: Mercredi',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un jour';
-                    }
-                    return null;
-                  },
-                ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: dayControllers.length,
+                itemBuilder: (context, dayIndex) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextFormField(
+                          controller: dayControllers[dayIndex],
+                          decoration: const InputDecoration(
+                            labelText: 'Jour',
+                            hintText: 'Ex: Mercredi',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un jour';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      if (dayControllers.length > 1)
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            removeDayField(dayIndex);
+                          },
+                          child: Text('Supprimer cette journée'),
+                        ),
+                      if (dayControllers.length > 1)
+                        SizedBox(height: 16),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: startHourControllersPerDay[dayIndex].length,
+                        itemBuilder: (context, timeSlotIndex) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: TextFormField(
+                                  controller: startHourControllersPerDay[dayIndex][timeSlotIndex],
+                                  decoration: const InputDecoration(
+                                    labelText: 'Horaire de début',
+                                    hintText: 'Ex: 10h, 10h30',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez entrer un horaire de début';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: TextFormField(
+                                  controller: endHourControllersPerDay[dayIndex][timeSlotIndex],
+                                  decoration: const InputDecoration(
+                                    labelText: 'Horaire de fin',
+                                    hintText: 'Ex: 11h, 11h30',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez entrer un horaire de fin';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              if (startHourControllersPerDay[dayIndex].length > 1)
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                    side: BorderSide(color: Colors.red),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    removeTimeSlotForDay(dayIndex, timeSlotIndex);
+                                  },
+                                  child: Text('Supprimer ce créneau'),
+                                ),
+                              if (startHourControllersPerDay[dayIndex].length > 1)
+                                SizedBox(height: 16),
+                            ],
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.lightGreen),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        onPressed: () {
+                          addTimeSlotForDay(dayIndex);
+                        },
+                        child: Text('Ajouter un créneau'),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  );
+                },
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                controller: startHourController,
-                  decoration: const InputDecoration(
-                    labelText: 'Horaire de début',
-                    hintText: 'Ex: 10h, 10h30',
-                    border: OutlineInputBorder(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.lightGreen),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un horaire de début';
-                    }
-                    return null;
-                  },
                 ),
+                onPressed: () {
+                  addDayField();
+                },
+                child: Text('Ajouter une journée'),
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: endHourController,
-                  decoration: const InputDecoration(
-                    labelText: 'Horaire de fin',
-                    hintText: 'Ex: 11h, 11h30',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un horaire de fin';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
             ],
           ),
           ExpansionTile(
@@ -1371,42 +1597,82 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               ),
             ),
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: profileController,
-                  decoration: const InputDecoration(
-                    labelText: 'Profil',
-                    hintText: 'Ex: Débutants',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un profil';
-                    }
-                    return null;
-                  },
-                ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: profileControllers.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextFormField(
+                          controller: profileControllers[index],
+                          decoration: const InputDecoration(
+                            labelText: 'Profil',
+                            hintText: 'Ex: Débutants',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un profil';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextFormField(
+                          controller: pricingControllers[index],
+                          decoration: const InputDecoration(
+                            labelText: 'Prix',
+                            hintText: 'Ex: 10€, 10€50',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un prix';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      if (profileControllers.length > 1)
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            removeProfilePricing(index);
+                          },
+                          child: Text('Supprimer ce tarif par profil'),
+                        ),
+                      if (profileControllers.length > 1)
+                        SizedBox(height: 16),
+                    ],
+                  );
+                },
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: pricingController,
-                  decoration: const InputDecoration(
-                    labelText: 'Prix',
-                    hintText: 'Ex: 10€, 10€50',
-                    border: OutlineInputBorder(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.lightGreen),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un prix';
-                    }
-                    return null;
-                  },
                 ),
+                onPressed: addProfilePricing,
+                child: Text('Ajouter un tarif par profil'),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
             ],
           ),
           const SizedBox(height: 16),
@@ -1437,11 +1703,11 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 cityController.clear();
                 latitudeController.clear();
                 longitudeController.clear();
-                dayController.clear();
-                startHourController.clear();
-                endHourController.clear();
-                profileController.clear();
-                pricingController.clear();
+                dayControllers.clear();
+                startHourControllersPerDay.clear();
+                endHourControllersPerDay.clear();
+                profileControllers.clear();
+                pricingControllers.clear();
                 selectedSubFiltersByCategories.clear();
                 selectedSubFiltersByAges.clear();
                 selectedSubFiltersByDays.clear();
@@ -1459,13 +1725,876 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     );
   }
 
+  void addNewDayField() {
+    setState(() {
+      newDayControllers.add(TextEditingController());
+      newStartHourControllersPerDay.add([TextEditingController()]);
+      newEndHourControllersPerDay.add([TextEditingController()]);    
+    });
+  }
+
+  void removeNewDayField(int newDayIndex) {
+    setState(() {
+      newDayControllers.removeAt(newDayIndex);
+      newStartHourControllersPerDay.removeAt(newDayIndex);
+      newEndHourControllersPerDay.removeAt(newDayIndex);      
+    });
+  }
+
+  void addNewTimeSlotForDay(int newDayIndex) {
+    setState(() {
+      newStartHourControllersPerDay[newDayIndex].add(TextEditingController());
+      newEndHourControllersPerDay[newDayIndex].add(TextEditingController());      
+    });
+  }
+
+  void removeNewTimeSlotForDay(int newDayIndex, int newTimeSlotIndex) {
+    setState(() {
+      newStartHourControllersPerDay[newDayIndex].removeAt(newTimeSlotIndex);
+      newEndHourControllersPerDay[newDayIndex].removeAt(newTimeSlotIndex);     
+    });
+  }
+
+  void addNewProfilePricing() {
+    setState(() {
+      newProfileControllers.add(TextEditingController());
+      newPricingControllers.add(TextEditingController());
+    });
+  }
+
+  void removeNewProfilePricing(int newIndex) {
+    setState(() {
+      newProfileControllers.removeAt(newIndex);
+      newPricingControllers.removeAt(newIndex);
+    });
+  }
 
   Widget _buildEditActivity(
     BuildContext context
   ) {
-    return Form(
-      key: _editActivityKey,
-      child: Column(
+    return isEditing ?
+      Form(
+        key: _editActivityKey,
+        child: Column(
+          children: [
+            DropdownButton<String>(
+              value: selectedFilter,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedFilter = newValue!;
+                  subFilters = [];
+                  readSubFilters();
+                });
+              },
+              items: [
+                'Par catégorie',
+                'Par âge',
+                'Par jour',
+                'Par horaire',
+                'Par secteur'
+              ]
+              .map((String filter) {
+                return DropdownMenuItem<String>(
+                  value: filter,
+                  child: Text(filter),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            DropdownButton<String>(
+              value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters,
+              onChanged: (String? newValue) {
+                setState(() {
+                  var selectedSubFilter = subFilters.firstWhere(
+                    (item) => item.id == newValue
+                  );
+                  var subFilterMap = {
+                    'id': selectedSubFilter.id.toString(),
+                    'name': selectedSubFilter.name.toString()
+                  };
+
+                  if (selectedFilter == 'Par catégorie') {
+                    if (!newSelectedSubFiltersByCategories.any(
+                      (item) => item['id'] == newValue)
+                    ) {
+                      newSelectedSubFiltersByCategories.add(subFilterMap);
+                    }
+                  }
+                  if (selectedFilter == 'Par âge') {
+                    if (!newSelectedSubFiltersByAges.any(
+                      (item) => item['id'] == newValue)
+                    ) {
+                      newSelectedSubFiltersByAges.add(subFilterMap);
+                    }
+                  }
+                  if (selectedFilter == 'Par jour') {
+                    if (!newSelectedSubFiltersByDays.any(
+                      (item) => item['id'] == newValue)
+                    ) {
+                      newSelectedSubFiltersByDays.add(subFilterMap);
+                    }
+                  }
+                  if (selectedFilter == 'Par horaire') {
+                    if (!newSelectedSubFiltersBySchedules.any(
+                      (item) => item['id'] == newValue)
+                    ) {
+                      newSelectedSubFiltersBySchedules.add(subFilterMap);
+                    }
+                  }
+                  if (selectedFilter == 'Par secteur') {
+                    if (!newSelectedSubFiltersBySectors.any(
+                      (item) => item['id'] == newValue)
+                    ) {
+                      newSelectedSubFiltersBySectors.add(subFilterMap);
+                    }
+                  }
+                });
+              },
+              items: sortSubFilters(
+                subFilters, selectedFilter
+              ).map((subFilter) {
+                return DropdownMenuItem<String>(
+                  value: subFilter.id,
+                  child: Text(subFilter.name),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Par catégorie :',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            Wrap(
+              spacing: 8.0,
+              children: newSelectedSubFiltersByCategories.map((subFilter) {
+                debugPrint('newSelectedSubFiltersByCategories 1: $newSelectedSubFiltersByCategories');
+                return Chip(
+                  label: Text(subFilter['name']!),
+                  deleteIcon: Icon(Icons.close),
+                  onDeleted: () {
+                    setState(() {
+                      newSelectedSubFiltersByCategories.removeWhere(
+                        (item) => item['id'] == subFilter['id']
+                      );
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            Text(
+              'Par âge :',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            Wrap(
+              spacing: 8.0,
+              children: newSelectedSubFiltersByAges.map((subFilter) {
+                debugPrint('newSelectedSubFiltersByAges 1: $newSelectedSubFiltersByAges');
+                return Chip(
+                  label: Text(subFilter['name']!),
+                  deleteIcon: Icon(Icons.close),
+                  onDeleted: () {
+                    setState(() {
+                      newSelectedSubFiltersByAges.removeWhere(
+                        (item) => item['id'] == subFilter['id']
+                      );
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            Text(
+              'Par jour :',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            Wrap(
+              spacing: 8.0,
+              children: newSelectedSubFiltersByDays.map((subFilter) {
+                debugPrint('newSelectedSubFiltersByDays 1: $newSelectedSubFiltersByDays');
+                return Chip(
+                  label: Text(subFilter['name']!),
+                  deleteIcon: Icon(Icons.close),
+                  onDeleted: () {
+                    setState(() {
+                      newSelectedSubFiltersByDays.removeWhere(
+                        (item) => item['id'] == subFilter['id']
+                      );
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            Text(
+              'Par horaire :',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            Wrap(
+              spacing: 8.0,
+              children: newSelectedSubFiltersBySchedules.map((subFilter) {
+                debugPrint('newSelectedSubFiltersBySchedules 1: $newSelectedSubFiltersBySchedules');
+                return Chip(
+                  label: Text(subFilter['name']!),
+                  deleteIcon: Icon(Icons.close),
+                  onDeleted: () {
+                    setState(() {
+                      newSelectedSubFiltersBySchedules.removeWhere(
+                        (item) => item['id'] == subFilter['id']
+                      );
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            Text(
+              'Par secteur :',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            Wrap(
+              spacing: 8.0,
+              children: newSelectedSubFiltersBySectors.map((subFilter) {
+                debugPrint('newSelectedSubFiltersBySectors 1: $newSelectedSubFiltersBySectors');
+                return Chip(
+                  label: Text(subFilter['name']!),
+                  deleteIcon: Icon(Icons.close),
+                  onDeleted: () {
+                    setState(() {
+                      newSelectedSubFiltersBySectors.removeWhere(
+                        (item) => item['id'] == subFilter['id']
+                      );
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: TextFormField(
+              controller: newDisciplineController,
+                decoration: const InputDecoration(
+                  labelText: 'Nouvelle discipline',
+                  hintText: 'Ex: Course à pied',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer un nom de discipline';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: TextFormField(
+                controller: newInformationController,
+                decoration: const InputDecoration(
+                  labelText: 'Nouvelle information',
+                  hintText: 'Ex: Amenez votre bouteille d\'eau',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer une information';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: TextFormField(
+                controller: newImageUrlController,
+                decoration: const InputDecoration(
+                  labelText: 'Nouvelle image Url',
+                  hintText: 'Ex: https://www.example.com/image.jpg',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer une image url';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            if (newImageUrlController.text.isNotEmpty)
+              const SizedBox(height: 16),
+            if (newImageUrlController.text.isNotEmpty)
+              isLoading ?
+                Center(
+                  child: SpinKitSpinningLines(
+                    color: Colors.white,
+                    size: 60,
+                  ),
+                ) :
+                Container(
+                  height: 220,
+                  width: 220,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(newImageUrlController.text),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+            const SizedBox(height: 16),
+            ExpansionTile(
+              title: Text(
+                'Contact',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newStructureNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouveau nom de la structure organisatrice',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un nom de structure';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newEmailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouvel email',
+                      hintText: 'Ex: abc@exemple.com',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un email';
+                      }
+
+                      final regex = RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+                      );
+                      if (!regex.hasMatch(value)) {
+                        return 'Veuillez entrer un email valide';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newPhoneNumberController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouveau numéro de téléphone',
+                      hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un numéro de téléphone';
+                      }
+
+                      final regex = RegExp(
+                        r'^(\+33\s?\d{1}\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|\d{10})$'
+                      );
+                      if (!regex.hasMatch(value)) {
+                        return 'Veuillez entrer un numéro de téléphone valide';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newWebSiteController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouveau site internet',
+                      hintText: 'Ex: https://www.example.com',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un site internet';
+                      }
+
+                      final regex = RegExp(
+                        r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\:[0-9]{1,5})?(\/.*)?$'
+                      );
+                      if (!regex.hasMatch(value)) {
+                        return 'Veuillez entrer un site internet valide';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(
+                'Lieu',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newTitleAddressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouvel intitulé d\'adresse',
+                      hintText: 'Ex: Stade Maurice Postaire',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un intitulé d\'adresse';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newStreetAddressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouveau(x) N° et/ou nom de rue',
+                      hintText: 'Ex: 18 rue Pierre de Coubertin',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un N° et/ou nom de rue';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newPostalCodeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouveau code postal',
+                      hintText: 'Ex: 50100',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer un code postal';
+                      }
+                      final regex = RegExp(r'^\d{2}\s?\d{3}$');
+                      if (!regex.hasMatch(value)) {
+                        return 'Veuillez entrer un code postal valide';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newCityController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouvelle ville',
+                      hintText: 'Ex: Cherbourg-en-Cotentin',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer une ville';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newLatitudeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouvelle latitude Google Maps',
+                      hintText: 'Ex: 49.64358701909363',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer une latitude';
+                      }
+                      final regex = RegExp(r'^-?\d{1,2}(\.\d+)?$');
+                      if (!regex.hasMatch(value)) {
+                        return 'Veuillez entrer une latitude valide';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: TextFormField(
+                    controller: newLongitudeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nouvelle longitude Google Maps',
+                      hintText: 'Ex: -1.638480195782405',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer une longitude';
+                      }
+                      final regex = RegExp(r'^-?(\d{1,3}(\.\d+)?|\.\d+)$');
+                      if (!regex.hasMatch(value)) {
+                        return 'Veuillez entrer une longitude valide';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(
+                'Horaires',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: newDayControllers.length,
+                  itemBuilder: (context, newDayIndex) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: newDayControllers[newDayIndex],
+                            decoration: const InputDecoration(
+                              labelText: 'Nouveau jour',
+                              hintText: 'Ex: Mercredi',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer un jour';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Colors.red),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              removeNewDayField(newDayIndex);
+                            },
+                            child: Text('Supprimer cette journée'),
+                          ),
+                        
+                          SizedBox(height: 16),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: newStartHourControllersPerDay[newDayIndex].length,
+                          itemBuilder: (context, newTimeSlotIndex) {
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.9,
+                                  child: TextFormField(
+                                    controller: newStartHourControllersPerDay[newDayIndex][newTimeSlotIndex],
+                                    decoration: const InputDecoration(
+                                      labelText: 'Nouvel horaire de début',
+                                      hintText: 'Ex: 10h, 10h30',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Veuillez entrer un horaire de début';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.9,
+                                  child: TextFormField(
+                                    controller: newEndHourControllersPerDay[newDayIndex][newTimeSlotIndex],
+                                    decoration: const InputDecoration(
+                                      labelText: 'Nouvel horaire de fin',
+                                      hintText: 'Ex: 11h, 11h30',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Veuillez entrer un horaire de fin';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                      foregroundColor: Colors.white,
+                                      side: BorderSide(color: Colors.red),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20.0),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      removeNewTimeSlotForDay(newDayIndex, newTimeSlotIndex);
+                                    },
+                                    child: Text('Supprimer ce créneau'),
+                                  ),
+                                
+                                  SizedBox(height: 16),
+                              ],
+                            );
+                          },
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Colors.lightGreen),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                          onPressed: () {
+                            addNewTimeSlotForDay(newDayIndex);
+                          },
+                          child: Text('Ajouter un créneau'),
+                        ),
+                        SizedBox(height: 16),
+                      ],
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    side: BorderSide(color: Colors.lightGreen),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    addNewDayField();
+                  },
+                  child: Text('Ajouter une journée'),
+                ),
+                SizedBox(height: 16),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(
+                'Tarifs et profils',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: newProfileControllers.length,
+                  itemBuilder: (context, newIndex) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: newProfileControllers[newIndex],
+                            decoration: const InputDecoration(
+                              labelText: 'Nouveau profil',
+                              hintText: 'Ex: Débutants',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer un profil';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: TextFormField(
+                            controller: newPricingControllers[newIndex],
+                            decoration: const InputDecoration(
+                              labelText: 'Nouveau prix',
+                              hintText: 'Ex: 10€, 10€50',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez entrer un prix';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (newProfileControllers.length > 1)
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Colors.red),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              removeNewProfilePricing(newIndex);
+                            },
+                            child: Text('Supprimer ce tarif par profil'),
+                          ),
+                        if (newProfileControllers.length > 1)
+                          SizedBox(height: 16),
+                      ],
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    side: BorderSide(color: Colors.lightGreen),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  onPressed: addNewProfilePricing,
+                  child: Text('Ajouter un tarif par profil'),
+                ),
+                SizedBox(height: 16),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF5B59B4),
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Color(0xFF5B59B4)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
+              onPressed: () {
+                if (_editActivityKey.currentState!.validate()) {
+                  updateActivity(
+                    context: context,
+                  );
+                  activityId = '';
+                  newDisciplineController.clear();
+                  newInformationController.clear();
+                  newImageUrlController.clear();
+                  newStructureNameController.clear();
+                  newEmailController.clear();
+                  newPhoneNumberController.clear();
+                  newWebSiteController.clear();
+                  newTitleAddressController.clear();
+                  newStreetAddressController.clear();
+                  newPostalCodeController.clear();
+                  newCityController.clear();
+                  newLatitudeController.clear();
+                  newLongitudeController.clear();
+                  newDayControllers.clear();
+                  newStartHourControllersPerDay.clear();
+                  newEndHourControllersPerDay.clear();
+                  newProfileControllers.clear();
+                  newPricingControllers.clear();
+                  newSelectedSubFiltersByCategories.clear();
+                  newSelectedSubFiltersByAges.clear();
+                  newSelectedSubFiltersByDays.clear();
+                  newSelectedSubFiltersBySchedules.clear();
+                  newSelectedSubFiltersBySectors.clear();
+                  isEditing = false;
+                  readActivities();
+                }
+              },
+              child: Text('Modifier l\'activité'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF5B59B4),
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Color(0xFF5B59B4)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  isEditing = false;
+                });
+              },
+              child: Text('Retour à la liste'),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 32),
+            ),
+          ],
+        ),
+      )
+    : Column(
         children: [
           ToggleButtons(
             isSelected: [selectedSection == 0, selectedSection == 1],
@@ -1473,6 +2602,31 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               setState(() {
                 selectedSection = section;
                 readSubFilters();
+                readActivities();
+                activityId = '';
+                newDisciplineController.clear();
+                newInformationController.clear();
+                newImageUrlController.clear();
+                newStructureNameController.clear();
+                newEmailController.clear();
+                newPhoneNumberController.clear();
+                newWebSiteController.clear();
+                newTitleAddressController.clear();
+                newStreetAddressController.clear();
+                newPostalCodeController.clear();
+                newCityController.clear();
+                newLatitudeController.clear();
+                newLongitudeController.clear();
+                newDayControllers.clear();
+                newStartHourControllersPerDay.clear();
+                newEndHourControllersPerDay.clear();
+                newProfileControllers.clear();
+                newPricingControllers.clear();
+                newSelectedSubFiltersByCategories.clear();
+                newSelectedSubFiltersByAges.clear();
+                newSelectedSubFiltersByDays.clear();
+                newSelectedSubFiltersBySchedules.clear();
+                newSelectedSubFiltersBySectors.clear();
               });
             },
             color: Colors.black,
@@ -1497,6 +2651,290 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             ],  
           ),
           const SizedBox(height: 16),
+          Column(
+            children: activities.map((activity) {
+              return Column(
+                children: [
+                  /* ActivityMap(
+                    titleAddress: activity.place.titleAddress,
+                    streetAddress: activity.place.streetAddress,
+                    postalCode: activity.place.postalCode.toString(),
+                    city: activity.place.city,
+                    latitude: activity.place.latitude,
+                    longitude: activity.place.longitude,
+                  ), */
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ActivityCard(
+                      imageUrl: activity.imageUrl,
+                      discipline: activity.discipline,
+                      place: activity.place,
+                      schedules: activity.schedules,
+                      pricings: activity.pricings,
+                      onTap: () {
+                        activityId = '';
+                        newDisciplineController.clear();
+                        newInformationController.clear();
+                        newImageUrlController.clear();
+                        newStructureNameController.clear();
+                        newEmailController.clear();
+                        newPhoneNumberController.clear();
+                        newWebSiteController.clear();
+                        newTitleAddressController.clear();
+                        newStreetAddressController.clear();
+                        newPostalCodeController.clear();
+                        newCityController.clear();
+                        newLatitudeController.clear();
+                        newLongitudeController.clear();
+                        newDayControllers.clear();
+                        newStartHourControllersPerDay.clear();
+                        newEndHourControllersPerDay.clear();
+                        newProfileControllers.clear();
+                        newPricingControllers.clear();
+                        newSelectedSubFiltersByCategories.clear();
+                        newSelectedSubFiltersByAges.clear();
+                        newSelectedSubFiltersByDays.clear();
+                        newSelectedSubFiltersBySchedules.clear();
+                        newSelectedSubFiltersBySectors.clear();
+                        readActivities();
+                        activityId = activity.activityId;
+                        newDisciplineController.text = activity.discipline;
+                        newInformationController.text = activity.information;
+                        newImageUrlController.text = activity.imageUrl;
+                        newStructureNameController.text = activity.contact.structureName;
+                        newEmailController.text = activity.contact.email;
+                        newPhoneNumberController.text = activity.contact.phoneNumber;
+                        newWebSiteController.text = activity.contact.webSite;
+                        newTitleAddressController.text = activity.place.titleAddress;
+                        newStreetAddressController.text = activity.place.streetAddress;
+                        newPostalCodeController.text = activity.place.postalCode.toString();
+                        newCityController.text = activity.place.city;
+                        newLatitudeController.text = activity.place.latitude.toString();
+                        newLongitudeController.text = activity.place.longitude.toString();
+                        
+                        for (var schedule in activity.schedules) {
+                          newDayControllers.add(TextEditingController(text:schedule.day));
+                          List<TextEditingController> newStartHourControllers = [];
+                          List<TextEditingController> newEndHourControllers = [];
+
+                          for (var timeSlot in schedule.timeSlots) {
+                            newStartHourControllers.add(TextEditingController(text: timeSlot.startHour));
+                            newEndHourControllers.add(TextEditingController(text: timeSlot.endHour));
+                          }
+
+                          newStartHourControllersPerDay.add(newStartHourControllers);
+                          newEndHourControllersPerDay.add(newEndHourControllers);
+                        }
+
+                        for (var pricing in activity.pricings) {
+                          newProfileControllers.add(TextEditingController(text: pricing.profile));
+                          newPricingControllers.add(TextEditingController(text: pricing.pricing));
+                        }
+                        
+                        newSelectedSubFiltersByCategories = activity.filters.categoriesId;
+                        
+                        newSelectedSubFiltersByCategories.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersByAges = activity.filters.agesId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersByDays = activity.filters.daysId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersBySchedules = activity.filters.schedulesId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersBySectors = activity.filters.sectorsId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        isEditing = true;
+                      },
+                    ),
+                  )
+                ]
+              );
+            }).toList(),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 32),
+          ),
+        ],
+      );
+
+    /* return Form(
+      key: _editActivityKey,
+      child: Column(
+        children: [
+          ToggleButtons(
+            isSelected: [selectedSection == 0, selectedSection == 1],
+            onPressed: (int section) {
+              setState(() {
+                selectedSection = section;
+                activityId = '';
+                newDisciplineController.clear();
+                newInformationController.clear();
+                newImageUrlController.clear();
+                newStructureNameController.clear();
+                newEmailController.clear();
+                newPhoneNumberController.clear();
+                newWebSiteController.clear();
+                newTitleAddressController.clear();
+                newStreetAddressController.clear();
+                newPostalCodeController.clear();
+                newCityController.clear();
+                newLatitudeController.clear();
+                newLongitudeController.clear();
+                newDayControllers.clear();
+                newStartHourControllersPerDay.clear();
+                newEndHourControllersPerDay.clear();
+                newProfileControllers.clear();
+                newPricingControllers.clear();
+                newSelectedSubFiltersByCategories.clear();
+                newSelectedSubFiltersByAges.clear();
+                newSelectedSubFiltersByDays.clear();
+                newSelectedSubFiltersBySchedules.clear();
+                newSelectedSubFiltersBySectors.clear();
+                readSubFilters();
+                readActivities();
+              });
+            },
+            color: Colors.black,
+            selectedColor: Colors.white,
+            fillColor: Color(0xFF5B59B4),
+            borderColor: Color(0xFF5B59B4),
+            selectedBorderColor: Color(0xFF5B59B4),
+            borderRadius: BorderRadius.circular(20),
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                child: Center(
+                  child: Text('Sport')
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                child: Center(
+                  child: Text('Culture')
+                ),
+              ),
+            ],  
+          ),
+          const SizedBox(height: 16),
+          Column(
+            children: activities.map((activity) {
+              return Column(
+                children: [
+                  /* ActivityMap(
+                    titleAddress: activity.place.titleAddress,
+                    streetAddress: activity.place.streetAddress,
+                    postalCode: activity.place.postalCode.toString(),
+                    city: activity.place.city,
+                    latitude: activity.place.latitude,
+                    longitude: activity.place.longitude,
+                  ), */
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ActivityCard(
+                      imageUrl: activity.imageUrl,
+                      discipline: activity.discipline,
+                      place: activity.place,
+                      schedules: activity.schedules,
+                      pricings: activity.pricings,
+                      onTap: () {
+                        activityId = '';
+                        newDisciplineController.clear();
+                        newInformationController.clear();
+                        newImageUrlController.clear();
+                        newStructureNameController.clear();
+                        newEmailController.clear();
+                        newPhoneNumberController.clear();
+                        newWebSiteController.clear();
+                        newTitleAddressController.clear();
+                        newStreetAddressController.clear();
+                        newPostalCodeController.clear();
+                        newCityController.clear();
+                        newLatitudeController.clear();
+                        newLongitudeController.clear();
+                        newDayControllers.clear();
+                        newStartHourControllersPerDay.clear();
+                        newEndHourControllersPerDay.clear();
+                        newProfileControllers.clear();
+                        newPricingControllers.clear();
+                        newSelectedSubFiltersByCategories.clear();
+                        newSelectedSubFiltersByAges.clear();
+                        newSelectedSubFiltersByDays.clear();
+                        newSelectedSubFiltersBySchedules.clear();
+                        newSelectedSubFiltersBySectors.clear();
+                        readActivities();
+                        activityId = activity.activityId;
+                        newDisciplineController.text = activity.discipline;
+                        newInformationController.text = activity.information;
+                        newImageUrlController.text = activity.imageUrl;
+                        newStructureNameController.text = activity.contact.structureName;
+                        newEmailController.text = activity.contact.email;
+                        newPhoneNumberController.text = activity.contact.phoneNumber;
+                        newWebSiteController.text = activity.contact.webSite;
+                        newTitleAddressController.text = activity.place.titleAddress;
+                        newStreetAddressController.text = activity.place.streetAddress;
+                        newPostalCodeController.text = activity.place.postalCode.toString();
+                        newCityController.text = activity.place.city;
+                        newLatitudeController.text = activity.place.latitude.toString();
+                        newLongitudeController.text = activity.place.longitude.toString();
+                        
+                        for (var schedule in activity.schedules) {
+                          newDayControllers.add(TextEditingController(text:schedule.day));
+                          List<TextEditingController> newStartHourControllers = [];
+                          List<TextEditingController> newEndHourControllers = [];
+
+                          for (var timeSlot in schedule.timeSlots) {
+                            newStartHourControllers.add(TextEditingController(text: timeSlot.startHour));
+                            newEndHourControllers.add(TextEditingController(text: timeSlot.endHour));
+                          }
+
+                          newStartHourControllersPerDay.add(newStartHourControllers);
+                          newEndHourControllersPerDay.add(newEndHourControllers);
+                        }
+
+                        for (var pricing in activity.pricings) {
+                          newProfileControllers.add(TextEditingController(text: pricing.profile));
+                          newPricingControllers.add(TextEditingController(text: pricing.pricing));
+                        }
+                        
+                        newSelectedSubFiltersByCategories = activity.filters.categoriesId;
+                        
+                        newSelectedSubFiltersByCategories.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersByAges = activity.filters.agesId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersByDays = activity.filters.daysId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersBySchedules = activity.filters.schedulesId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                        newSelectedSubFiltersBySectors = activity.filters.sectorsId.map((item) => {
+                          'id': item['id'] ?? '',
+                          'name': item['name'] ?? '',
+                        }).toList();
+                      },
+                    ),
+                  )
+                ]
+              );
+            }).toList(),
+          ),
           DropdownButton<String>(
             value: selectedFilter,
             onChanged: (String? newValue) {
@@ -1525,14 +2963,48 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters,
             onChanged: (String? newValue) {
               setState(() {
-                var selectedSubFilters = subFilters.firstWhere(
-                  (subFilter) => subFilter.id == newValue
+                var selectedSubFilter = subFilters.firstWhere(
+                  (item) => item.id == newValue
                 );
-                selectedSubFilters = [newValue!];
-                if (selectedSubFilters.contains(newValue)) {
-                  selectedSubFilters.remove(newValue);
-                } else {
-                  selectedSubFilters.add(newValue);
+                var subFilterMap = {
+                  'id': selectedSubFilter.id.toString(),
+                  'name': selectedSubFilter.name.toString()
+                };
+
+                if (selectedFilter == 'Par catégorie') {
+                  if (!newSelectedSubFiltersByCategories.any(
+                    (item) => item['id'] == newValue)
+                  ) {
+                    newSelectedSubFiltersByCategories.add(subFilterMap);
+                  }
+                }
+                if (selectedFilter == 'Par âge') {
+                  if (!newSelectedSubFiltersByAges.any(
+                    (item) => item['id'] == newValue)
+                  ) {
+                    newSelectedSubFiltersByAges.add(subFilterMap);
+                  }
+                }
+                if (selectedFilter == 'Par jour') {
+                  if (!newSelectedSubFiltersByDays.any(
+                    (item) => item['id'] == newValue)
+                  ) {
+                    newSelectedSubFiltersByDays.add(subFilterMap);
+                  }
+                }
+                if (selectedFilter == 'Par horaire') {
+                  if (!newSelectedSubFiltersBySchedules.any(
+                    (item) => item['id'] == newValue)
+                  ) {
+                    newSelectedSubFiltersBySchedules.add(subFilterMap);
+                  }
+                }
+                if (selectedFilter == 'Par secteur') {
+                  if (!newSelectedSubFiltersBySectors.any(
+                    (item) => item['id'] == newValue)
+                  ) {
+                    newSelectedSubFiltersBySectors.add(subFilterMap);
+                  }
                 }
               });
             },
@@ -1544,6 +3016,666 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 child: Text(subFilter.name),
               );
             }).toList(),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Par catégorie :',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: newSelectedSubFiltersByCategories.map((subFilter) {
+              debugPrint('newSelectedSubFiltersByCategories 1: $newSelectedSubFiltersByCategories');
+              return Chip(
+                label: Text(subFilter['name']!),
+                deleteIcon: Icon(Icons.close),
+                onDeleted: () {
+                  setState(() {
+                    newSelectedSubFiltersByCategories.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          Text(
+            'Par âge :',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: newSelectedSubFiltersByAges.map((subFilter) {
+              debugPrint('newSelectedSubFiltersByAges 1: $newSelectedSubFiltersByAges');
+              return Chip(
+                label: Text(subFilter['name']!),
+                deleteIcon: Icon(Icons.close),
+                onDeleted: () {
+                  setState(() {
+                    newSelectedSubFiltersByAges.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          Text(
+            'Par jour :',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: newSelectedSubFiltersByDays.map((subFilter) {
+              debugPrint('newSelectedSubFiltersByDays 1: $newSelectedSubFiltersByDays');
+              return Chip(
+                label: Text(subFilter['name']!),
+                deleteIcon: Icon(Icons.close),
+                onDeleted: () {
+                  setState(() {
+                    newSelectedSubFiltersByDays.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          Text(
+            'Par horaire :',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: newSelectedSubFiltersBySchedules.map((subFilter) {
+              debugPrint('newSelectedSubFiltersBySchedules 1: $newSelectedSubFiltersBySchedules');
+              return Chip(
+                label: Text(subFilter['name']!),
+                deleteIcon: Icon(Icons.close),
+                onDeleted: () {
+                  setState(() {
+                    newSelectedSubFiltersBySchedules.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          Text(
+            'Par secteur :',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: newSelectedSubFiltersBySectors.map((subFilter) {
+              debugPrint('newSelectedSubFiltersBySectors 1: $newSelectedSubFiltersBySectors');
+              return Chip(
+                label: Text(subFilter['name']!),
+                deleteIcon: Icon(Icons.close),
+                onDeleted: () {
+                  setState(() {
+                    newSelectedSubFiltersBySectors.removeWhere(
+                      (item) => item['id'] == subFilter['id']
+                    );
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: TextFormField(
+            controller: newDisciplineController,
+              decoration: const InputDecoration(
+                labelText: 'Nouvelle discipline',
+                hintText: 'Ex: Course à pied',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer un nom de discipline';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: TextFormField(
+              controller: newInformationController,
+              decoration: const InputDecoration(
+                labelText: 'Nouvelle information',
+                hintText: 'Ex: Amenez votre bouteille d\'eau',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer une information';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: TextFormField(
+              controller: newImageUrlController,
+              decoration: const InputDecoration(
+                labelText: 'Nouvelle image Url',
+                hintText: 'Ex: https://www.example.com/image.jpg',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer une image url';
+                }
+                return null;
+              },
+            ),
+          ),
+          if (newImageUrlController.text.isNotEmpty)
+            const SizedBox(height: 16),
+          if (newImageUrlController.text.isNotEmpty)
+            Container(
+              height: 220,
+              width: 220,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(newImageUrlController.text),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          const SizedBox(height: 16),
+          ExpansionTile(
+            title: Text(
+              'Contact',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newStructureNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouveau nom de la structure organisatrice',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un nom de structure';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newEmailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouvel email',
+                    hintText: 'Ex: abc@exemple.com',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un email';
+                    }
+
+                    final regex = RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+                    );
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un email valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newPhoneNumberController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouveau numéro de téléphone',
+                    hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un numéro de téléphone';
+                    }
+
+                    final regex = RegExp(
+                      r'^(\+33\s?\d{1}\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|\d{10})$'
+                    );
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un numéro de téléphone valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newWebSiteController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouveau site internet',
+                    hintText: 'Ex: https://www.example.com',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un site internet';
+                    }
+
+                    final regex = RegExp(
+                      r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\:[0-9]{1,5})?(\/.*)?$'
+                    );
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un site internet valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          ExpansionTile(
+            title: Text(
+              'Lieu',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newTitleAddressController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouvel intitulé d\'adresse',
+                    hintText: 'Ex: Stade Maurice Postaire',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un intitulé d\'adresse';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newStreetAddressController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouveau(x) N° et/ou nom de rue',
+                    hintText: 'Ex: 18 rue Pierre de Coubertin',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un N° et/ou nom de rue';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newPostalCodeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouveau code postal',
+                    hintText: 'Ex: 50100',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un code postal';
+                    }
+                    final regex = RegExp(r'^\d{2}\s?\d{3}$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer un code postal valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newCityController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouvelle ville',
+                    hintText: 'Ex: Cherbourg-en-Cotentin',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une ville';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newLatitudeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouvelle latitude Google Maps',
+                    hintText: 'Ex: 49.64358701909363',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une latitude';
+                    }
+                    final regex = RegExp(r'^-?\d{1,2}(\.\d+)?$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer une latitude valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextFormField(
+                  controller: newLongitudeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nouvelle longitude Google Maps',
+                    hintText: 'Ex: -1.638480195782405',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une longitude';
+                    }
+                    final regex = RegExp(r'^-?(\d{1,3}(\.\d+)?|\.\d+)$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Veuillez entrer une longitude valide';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+          ExpansionTile(
+            title: Text(
+              'Horaires',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: newDayControllers.length,
+                itemBuilder: (context, newDayIndex) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextFormField(
+                          controller: newDayControllers[newDayIndex],
+                          decoration: const InputDecoration(
+                            labelText: 'Nouveau jour',
+                            hintText: 'Ex: Mercredi',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un jour';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            removeNewDayField(newDayIndex);
+                          },
+                          child: Text('Supprimer cette journée'),
+                        ),
+                      
+                        SizedBox(height: 16),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: newStartHourControllersPerDay[newDayIndex].length,
+                        itemBuilder: (context, newTimeSlotIndex) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: TextFormField(
+                                  controller: newStartHourControllersPerDay[newDayIndex][newTimeSlotIndex],
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nouvel horaire de début',
+                                    hintText: 'Ex: 10h, 10h30',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez entrer un horaire de début';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: TextFormField(
+                                  controller: newEndHourControllersPerDay[newDayIndex][newTimeSlotIndex],
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nouvel horaire de fin',
+                                    hintText: 'Ex: 11h, 11h30',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez entrer un horaire de fin';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                    side: BorderSide(color: Colors.red),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    removeNewTimeSlotForDay(newDayIndex, newTimeSlotIndex);
+                                  },
+                                  child: Text('Supprimer ce créneau'),
+                                ),
+                              
+                                SizedBox(height: 16),
+                            ],
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.lightGreen),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        onPressed: () {
+                          addNewTimeSlotForDay(newDayIndex);
+                        },
+                        child: Text('Ajouter un créneau'),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  );
+                },
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.lightGreen),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                onPressed: () {
+                  addNewDayField();
+                },
+                child: Text('Ajouter une journée'),
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
+          ExpansionTile(
+            title: Text(
+              'Tarifs et profils',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: newProfileControllers.length,
+                itemBuilder: (context, newIndex) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextFormField(
+                          controller: newProfileControllers[newIndex],
+                          decoration: const InputDecoration(
+                            labelText: 'Nouveau profil',
+                            hintText: 'Ex: Débutants',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un profil';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextFormField(
+                          controller: newPricingControllers[newIndex],
+                          decoration: const InputDecoration(
+                            labelText: 'Nouveau prix',
+                            hintText: 'Ex: 10€, 10€50',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un prix';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (newProfileControllers.length > 1)
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            removeNewProfilePricing(newIndex);
+                          },
+                          child: Text('Supprimer ce tarif par profil'),
+                        ),
+                      if (newProfileControllers.length > 1)
+                        SizedBox(height: 16),
+                    ],
+                  );
+                },
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.lightGreen),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                onPressed: addNewProfilePricing,
+                child: Text('Ajouter un tarif par profil'),
+              ),
+              SizedBox(height: 16),
+            ],
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -1560,6 +3692,31 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 updateActivity(
                   context: context,
                 );
+                activityId = '';
+                newDisciplineController.clear();
+                newInformationController.clear();
+                newImageUrlController.clear();
+                newStructureNameController.clear();
+                newEmailController.clear();
+                newPhoneNumberController.clear();
+                newWebSiteController.clear();
+                newTitleAddressController.clear();
+                newStreetAddressController.clear();
+                newPostalCodeController.clear();
+                newCityController.clear();
+                newLatitudeController.clear();
+                newLongitudeController.clear();
+                newDayControllers.clear();
+                newStartHourControllersPerDay.clear();
+                newEndHourControllersPerDay.clear();
+                newProfileControllers.clear();
+                newPricingControllers.clear();
+                newSelectedSubFiltersByCategories.clear();
+                newSelectedSubFiltersByAges.clear();
+                newSelectedSubFiltersByDays.clear();
+                newSelectedSubFiltersBySchedules.clear();
+                newSelectedSubFiltersBySectors.clear();
+                readActivities();
               }
             },
             child: Text('Modifier l\'activité'),
@@ -1568,7 +3725,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             padding: EdgeInsets.only(bottom: 32),
           ),
         ],)
-    );
+    ); */
   }
 
   Widget _buildDeleteActivity(

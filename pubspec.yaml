@@ -51,5 +51,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icons/
-    - assets/images/Octo_Loupe.png
+    - assets/images/Octoloupe.png
     - assets/images/

@@ -27,6 +27,19 @@ class AuthService {
     try {
       setLoading(true);
 
+      UserCRUD userCRUD = UserCRUD();
+      bool emailExists = await userCRUD.checkIfUserExists(email);
+      if (emailExists) {
+        setLoading(false);
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Email déjà utilisé',
+            backgroundColor: Colors.red,
+          ).showSnackBar(context);
+        }
+        return null;
+      }
+
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -48,6 +61,12 @@ class AuthService {
         // Save user in Firestore
         await UserCRUD(user.uid).createUser(newUser);
 
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
         setLoading(false);
 
         if (context.mounted) {
@@ -55,10 +74,6 @@ class AuthService {
             message: 'Compte utilisateur créé avec succès',
             backgroundColor: Colors.green,
           ).showSnackBar(context);
-        }
-
-        if (!user.emailVerified) {
-          await user.sendEmailVerification();
         }
       }
       return userCredential;
@@ -68,7 +83,7 @@ class AuthService {
 
       if (context.mounted) {
         CustomSnackBar(
-          message: 'Echec de la création de compte utilisateur',
+          message: 'Echec de la création de compte',
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
@@ -95,6 +110,19 @@ class AuthService {
     try {
       setLoading(true);
 
+      UserCRUD userCRUD = UserCRUD();
+      bool emailExists = await userCRUD.checkIfUserExists(email);
+      if (emailExists) {
+        setLoading(false);
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Email déjà utilisé',
+            backgroundColor: Colors.red,
+          ).showSnackBar(context);
+        }
+        return null;
+      }
+
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -114,6 +142,12 @@ class AuthService {
         // Ajout de l'utilisateur à la base de données
         await UserCRUD(user.uid).createUser(newUser);
 
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
         setLoading(false);
 
         if (context.mounted) {
@@ -121,10 +155,6 @@ class AuthService {
             message: 'Compte administrateur créé avec succès',
             backgroundColor: Colors.green,
           ).showSnackBar(context);
-        }
-
-        if (!user.emailVerified) {
-          await user.sendEmailVerification();
         }
       }
       return userCredential;
@@ -151,7 +181,7 @@ class AuthService {
 
 /* https://github.com/Nayangadhiya/Firebase-AuthServices-Flutter/blob/main/lib/screens/login_screen.dart */
   //SignIn with email and password
-  Future<UserCredential?> signIn(
+  Future<UserCredential> signIn(
     String email,
     String password, {
       required BuildContext context,
@@ -172,32 +202,31 @@ class AuthService {
         UserCRUD userCRUD = UserCRUD(user.uid);
         UserModel? userDoc = await userCRUD.getUser();
 
-        setLoading(false);
-
-        if (context.mounted) {
-          CustomSnackBar(
-            message: 'Connexion réussie',
-            backgroundColor: Colors.green,
-          ).showSnackBar(context);
-        }
-
-        if (userDoc?.role == 'admin') {
+        if (userDoc?.role != null) {
           if (context.mounted) {
             Navigator.pushReplacement(
               context, 
-              MaterialPageRoute(builder: (context) => AdminCentralPage()),
+              MaterialPageRoute(
+                builder: (context) => userDoc!.role == 'admin'
+                  ? AdminCentralPage()
+                  : HomePage(),
+              ),
             );
           }
-        } else {
+
+          await Future.delayed(Duration(milliseconds: 25));
+
+          setLoading(false);
+          
           if (context.mounted) {
-            Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            CustomSnackBar(
+              message: 'Connexion réussie',
+              backgroundColor: Colors.green,
+            ).showSnackBar(context);
           }
         }
       }
-      return userCredential; 
+      return userCredential;
     } on FirebaseAuthException catch (e) {
 
       setLoading(false);
@@ -238,6 +267,15 @@ class AuthService {
           email: email,
         );
 
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context, 
+            MaterialPageRoute(builder: (context) => AuthPage()),
+          );
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
         setLoading(false);
 
         if (context.mounted) {
@@ -246,26 +284,17 @@ class AuthService {
             backgroundColor: Colors.green,
           ).showSnackBar(context);
         }
-
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (context) => AuthPage()),
-          );
-        }
-      } else {
-        setLoading(false);
-
-        if (context.mounted) {
-          CustomSnackBar(
-            message: 'Aucun utilisateur trouvé pour cet email',
-            backgroundColor: Colors.red,
-          ).showSnackBar(context);
-        }
       }
     } on FirebaseAuthException catch (e) {
 
       setLoading(false);
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Aucun utilisateur trouvé pour cet email',
+          backgroundColor: Colors.red,
+        ).showSnackBar(context);
+      }
 
       if (e.code == 'invalid-email') {
         throw Exception(ErrorMessages.invalidEmail);
@@ -288,22 +317,24 @@ class AuthService {
       User? user = _auth.currentUser;
 
       if (user != null) {
-        setLoading(false);
-
         await _auth.signOut();
-
-        if (context.mounted) {
-          CustomSnackBar(
-            message: 'Déconnexion réussie',
-            backgroundColor: Colors.green,
-          ).showSnackBar(context);
-        }
 
         if (context.mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => AuthPage()),
           );
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
+        setLoading(false);
+
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Déconnexion réussie',
+            backgroundColor: Colors.green,
+          ).showSnackBar(context);
         }
       } 
     } catch (e) {
@@ -328,23 +359,25 @@ class AuthService {
       User? user = _auth.currentUser;
 
       if (user != null) {
-        setLoading(false);
-
         await UserCRUD(user.uid).deleteUser();
         await user.delete();
-
-        if (context.mounted) {
-          CustomSnackBar(
-            message: 'Utilisateur supprimé',
-            backgroundColor: Colors.green,
-          ).showSnackBar(context);
-        }
 
         if (context.mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => AuthPage()),
           );
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
+        setLoading(false);
+
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Utilisateur supprimé',
+            backgroundColor: Colors.green,
+          ).showSnackBar(context);
         }
       }
     } catch (e) {
@@ -395,6 +428,8 @@ class AuthService {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
+
+        await Future.delayed(Duration(milliseconds: 25));
 
         setLoading(false);
 

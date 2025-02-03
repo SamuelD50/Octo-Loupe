@@ -1,18 +1,72 @@
-/* import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:octoloupe/model/activity_model.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 
-class MapCard extends StatelessWidget {
-  const MapCard({super.key, required this.activities});
+class ActivityMap extends StatelessWidget {
+  final String titleAddress;
+  final String streetAddress;
+  final String postalCode;
+  final String city;
+  final double latitude;
+  final double longitude;
+  
+  const ActivityMap({
+    super.key,
+    required this.titleAddress,
+    required this.streetAddress,
+    required this.postalCode,
+    required this.city,
+    required this.latitude,
+    required this.longitude,
+  });
 
-  final List<ActivityModel> activities;
+  /* List<dynamic> activities = []; */
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
+    debugPrint('titleAddress ActivityMap: $titleAddress');
+    debugPrint('streetAddress ActivityMap: $streetAddress');
+    debugPrint('postalCode ActivityMap: $postalCode');
+    debugPrint('city ActivityMap: $city');
+    debugPrint('latitude ActivityMap: $latitude');
+    debugPrint('longitude ActivityMap: $longitude');
+
     return FlutterMap(
+      mapController: MapController(),
+      options: MapOptions(
+        initialCenter: LatLng(49.61443010609209, -1.5994695422704903),
+        initialZoom: 13.0,
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          userAgentPackageName: 'com.octoloupe.android',
+          tileProvider: CancellableNetworkTileProvider(),
+        ),
+        SimpleAttributionWidget(
+          source: Text('OpenStreetMap contributors'),
+        ),
+        MarkerLayer(
+          markers: [
+            Marker(
+              point: LatLng(latitude, longitude),
+              width: 80,
+              height: 80,
+              child: Icon(Icons.location_on, size: 40),
+            )
+          ],)
+      ],
+    );
+  }
+}
+
+  
+    /* return FlutterMap(
       mapController: MapController(),
       options: MapOptions(
         initialCenter: LatLng(49.61443010609209, -1.5994695422704903),
@@ -33,9 +87,9 @@ class MapCard extends StatelessWidget {
           ],
         ),
         MarkerLayer(
-          markers: activities.map((activity) {
-            return Marker(
-              point: LatLng(activity.place.latitude, activity.place.longitude),
+          markers: [
+            Marker(
+              point: LatLng(latitude, longitude),
               width: 80,
               height: 80,
               child: Column(
@@ -44,18 +98,19 @@ class MapCard extends StatelessWidget {
                   Image.asset('assets/icons/Localisation.png', height: 40),
                   SizedBox(height: 5),
                   Text(
-                    activity.place.title,
+                    '$titleAddress, $streetAddress, $postalCode, $city',
                     style: TextStyle(fontSize: 12),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-            );
-          }).toList(),
+            ),
+          ],
         ),
       ],
     );
   }
-}
+} */
 
 
 /* import 'package:flutter/material.dart';
@@ -81,4 +136,4 @@ class _MapCard extends State {
       ),
     );
   }
-} */ */
+} */

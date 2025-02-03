@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/CRUD/filters_crud.dart';
 

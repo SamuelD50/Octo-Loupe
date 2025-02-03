@@ -13,20 +13,24 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class CustomAppBarState extends State<CustomAppBar> {
   bool notificationsEnabled = true;
 
-  void _toggleNotifications(BuildContext context) {
+  void _toggleNotifications(
+    BuildContext context
+  ) {
     setState(() {
       notificationsEnabled = !notificationsEnabled;
     });
 
     final snackBar = SnackBar(
-      content: Text(notificationsEnabled
-        ? 'Notifications activées'
-        : 'Notifications désactivées'),
+      content: Text(notificationsEnabled ?
+        'Notifications activées' : 'Notifications désactivées'
+      ),
       duration: const Duration(seconds: 5),
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    debugPrint(notificationsEnabled ? 'Notifications activées' : 'Notifications désactivées');
+    debugPrint(notificationsEnabled ?
+      'Notifications activées' : 'Notifications désactivées'
+    );
   }
 
   @override
@@ -35,14 +39,15 @@ class CustomAppBarState extends State<CustomAppBar> {
       title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('assets/images/Octo_Loupe.png'),
-            radius: 20,
+            backgroundImage: AssetImage('images/Octoloupe.png'),
+            backgroundColor: const Color(0xFF5B59B4),
+            radius: 25,
           ),
           const SizedBox(width: 10),
           const Text(
             'Octo\'Loupe',
             style: TextStyle(
-              color: Colors.white
+              color: Colors.white,
 
             ),
           ),
@@ -60,7 +65,8 @@ class CustomAppBarState extends State<CustomAppBar> {
             ),
             child: IconButton(
               icon: Icon(
-                notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
+                notificationsEnabled ?
+                  Icons.notifications_active : Icons.notifications_off,
                 color: Colors.white,
               ),
               onPressed: () => _toggleNotifications(context),

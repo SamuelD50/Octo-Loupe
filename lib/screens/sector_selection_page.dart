@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../components/custom_app_bar.dart';
+import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';

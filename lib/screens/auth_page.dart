@@ -1,14 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/components/snackbar.dart';
-import 'package:octoloupe/model/user_model.dart';
-import 'package:octoloupe/screens/admin_central_page.dart';
-import 'package:octoloupe/screens/home_page.dart';
 import 'package:octoloupe/screens/reset_password_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
-import 'package:octoloupe/CRUD/user_crud.dart';
-import '../components/custom_app_bar.dart';
-import '../components/loader_spinning.dart';
+import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/components/loader_spinning.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -65,7 +59,9 @@ class AuthPageState extends State<AuthPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context
+  ) {
     return loading ? Loading() : Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(

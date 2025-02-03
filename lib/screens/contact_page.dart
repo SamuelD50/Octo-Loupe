@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/custom_app_bar.dart';
+import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';

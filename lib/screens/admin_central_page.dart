@@ -3,7 +3,6 @@ import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/screens/admin_activity_page.dart';
 import 'package:octoloupe/screens/admin_add_admin_page.dart';
 import 'package:octoloupe/screens/admin_interface_page.dart';
-import 'package:octoloupe/screens/auth_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 
 class AdminCentralPage extends StatefulWidget {

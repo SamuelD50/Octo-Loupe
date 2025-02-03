@@ -10,8 +10,6 @@ class ActivityModel {
   final List<Schedule> schedules;
   final List<Pricing> pricings;
   final Filters filters;
-  
-
 
   ActivityModel({
     required this.activityId,
@@ -91,7 +89,7 @@ class ActivityModel {
         'phoneNumber': '',
         'webSite': '',
       }),
-      place: Place.fromMap(data['places'] ?? {
+      place: Place.fromMap(data['place'] ?? {
         'titleAddress': '',
         'streetAddress': '',
         'postalCode': 50130,
@@ -123,7 +121,7 @@ class ActivityModel {
       ])
         .map(
           (e) => Pricing.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
       filters: Filters.fromMap(data['filters'] ?? {
@@ -142,7 +140,7 @@ class ActivityModel {
       'information': information,
       'imageUrl': imageUrl,
       'contact': contact.toMap(),
-      'places': place.toMap(),
+      'place': place.toMap(),
       'schedules': schedules.map(
         (e) => e.toMap()
       ).toList(),
@@ -210,7 +208,7 @@ class Contact {
   });
 
   factory Contact.fromMap(
-    Map<String, dynamic> map
+    Map<String, String> map
   ) {
     return Contact(
       structureName: map['structureName'] ?? '',
@@ -220,7 +218,7 @@ class Contact {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
       'structureName': structureName,
       'email': email,
@@ -247,7 +245,7 @@ class Schedule {
       timeSlots: (map['timeSlots'] as List? ?? [])
         .map(
           (e) => TimeSlot.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
     );
@@ -263,32 +261,6 @@ class Schedule {
   }
 }
 
-class Pricing {
-  final String profile;
-  final String pricing;
-
-  Pricing({
-    required this.profile,
-    required this.pricing,
-  });
-
-  factory Pricing.fromMap(
-    Map<String, dynamic> map
-  ) {
-    return Pricing(
-      profile: map['profile'] ?? '',
-      pricing: map['pricing'] ?? '',
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'profile': profile,
-      'pricing': pricing,
-    };
-  }
-}
-
 class TimeSlot {
   final String startHour;
   final String endHour;
@@ -299,7 +271,7 @@ class TimeSlot {
   });
 
   factory TimeSlot.fromMap(
-    Map<String, dynamic> map
+    Map<String, String> map
   ) {
     return TimeSlot(
       startHour: map['startHour'] ?? '',
@@ -307,10 +279,36 @@ class TimeSlot {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
       'startHour': startHour,
       'endHour': endHour,
+    };
+  }
+}
+
+class Pricing {
+  final String profile;
+  final String pricing;
+
+  Pricing({
+    required this.profile,
+    required this.pricing,
+  });
+
+  factory Pricing.fromMap(
+    Map<String, String> map
+  ) {
+    return Pricing(
+      profile: map['profile'] ?? '',
+      pricing: map['pricing'] ?? '',
+    );
+  }
+
+  Map<String, String> toMap() {
+    return {
+      'profile': profile,
+      'pricing': pricing,
     };
   }
 }
@@ -335,35 +333,30 @@ class Filters {
   ) {
     return Filters(
       categoriesId: (map['categoriesId'] as List? ?? [])
-        .map(
-          (e) => Map<String, String>.from(
-            e as Map
-          )
-        ).toList(),
+        .map((e) => {
+          'id': e['id'] as String,
+          'name': e['name'] as String,
+        }).toList(),
       agesId: (map['agesId'] as List? ?? [])
-        .map(
-          (e) => Map<String, String>.from(
-            e as Map
-          )
-        ).toList(),
+        .map((e) => {
+          'id': e['id'] as String,
+          'name': e['name'] as String,
+        }).toList(),
       daysId: (map['daysId'] as List? ?? [])
-        .map(
-          (e) => Map<String, String>.from(
-            e as Map
-          )
-        ).toList(),
+        .map((e) => {
+          'id': e['id'] as String,
+          'name': e['name'] as String,
+        }).toList(),
       schedulesId: (map['schedulesId'] as List? ?? [])
-        .map(
-          (e) => Map<String, String>.from(
-            e as Map
-          )
-        ).toList(),
+        .map((e) => {
+          'id': e['id'] as String,
+          'name': e['name'] as String,
+        }).toList(),
       sectorsId: (map['sectorsId'] as List? ?? [])
-        .map(
-          (e) => Map<String, String>.from(
-            e as Map
-          )
-        ).toList(),
+        .map((e) => {
+          'id': e['id'] as String,
+          'name': e['name'] as String,
+        }).toList(),
     );
   }
 

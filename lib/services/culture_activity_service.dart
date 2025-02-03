@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:octoloupe/CRUD/activities_crud.dart';
 import 'package:octoloupe/model/activity_model.dart';
 
@@ -19,51 +21,54 @@ class CultureActivityService {
     String city,
     double latitude,
     double longitude,
-    String day,
-    String startHour,
-    String endHour,
-    String profile,
-    String pricing,
+    List<Schedule> schedules,
+    List<Pricing> pricings,
     List<Map<String, String>> categoriesId,
     List<Map<String, String>> agesId,
     List<Map<String, String>> daysId,
     List<Map<String, String>> schedulesId,
     List<Map<String, String>> sectorsId,
   ) async {
+    final activityModel = ActivityModel(
+      activityId: activityId ?? '',
+      discipline: discipline,
+      information: information,
+      imageUrl: imageUrl,
+      contact: Contact(
+        structureName: structureName,
+        email: email,
+        phoneNumber: phoneNumber,
+        webSite: webSite,
+      ),
+      place: Place(
+        titleAddress: titleAddress,
+        streetAddress: streetAddress,
+        postalCode: postalCode,
+        city: city,
+        latitude: latitude,
+        longitude: longitude,
+      ),
+      schedules: schedules,
+      pricings: pricings,
+      filters: Filters(
+        categoriesId: categoriesId,
+        agesId: agesId,
+        daysId: daysId,
+        schedulesId: schedulesId,
+        sectorsId: sectorsId,
+      ),
+    );
+
     await activitiesCRUD.createActivity(
       'cultures',
       activityId,
-      discipline,
-      information,
-      imageUrl,
-      structureName,
-      email,
-      phoneNumber,
-      webSite,
-      titleAddress,
-      streetAddress,
-      postalCode,
-      city,
-      latitude,
-      longitude,
-      day,
-      startHour,
-      endHour,
-      profile,
-      pricing,
-      categoriesId,
-      agesId,
-      daysId,
-      schedulesId,
-      sectorsId,
+      activityModel,
     );
   }
 
   Future<List<ActivityModel>> getCultureActivities() async {
     try {
-      var activitiesData = await activitiesCRUD.getActivities(
-        'cultures'
-      );
+      var activitiesData = await activitiesCRUD.getActivities('cultures');
       return activitiesData.map((docSnapshot) {
         final activityId = docSnapshot.id;
         final discipline = docSnapshot['discipline'];
@@ -79,16 +84,49 @@ class CultureActivityService {
         final city = docSnapshot['place']['city'];
         final latitude = docSnapshot['place']['latitude'];
         final longitude = docSnapshot['place']['longitude'];
-        final day = docSnapshot['schedules']['day'];
-        final startHour = docSnapshot['timeSlot']['startHour'];
-        final endHour = docSnapshot['timeSlot']['endHour'];
-        final profile = docSnapshot['pricings']['profile'];
-        final pricing = docSnapshot['pricings']['pricing'];
-        final categoriesId = docSnapshot['filters']['categoriesId'];
-        final agesId = docSnapshot['filters']['agesId'];
-        final daysId = docSnapshot['filters']['daysId'];
-        final schedulesId = docSnapshot['filters']['schedulesId'];
-        final sectorsId = docSnapshot['filters']['sectorsId'];
+        List<Schedule> schedules = [];
+        for (var schedule in docSnapshot['schedules']) {
+          final day = schedule['day'];
+          List<TimeSlot> timeSlots = [];
+          for (var timeSlot in schedule['timeSlots']) {
+            timeSlots.add(TimeSlot(
+              startHour: timeSlot['startHour'],
+              endHour: timeSlot['endHour'],
+            ));
+          }
+          schedules.add(Schedule(day: day, timeSlots: timeSlots));
+        }
+        final pricings = (docSnapshot['pricings'] as List).map((pricingDoc) {
+          return Pricing(
+            profile: pricingDoc['profile'],
+            pricing: pricingDoc['pricing'],
+          );
+        }).toList();
+        final categoriesId = (docSnapshot['filters']['categoriesId'] as List)
+          .map((e) => {
+            'id': e['id'] as String,
+            'name': e['name'] as String,
+          }).toList();
+        final agesId = (docSnapshot['filters']['agesId'] as List)
+          .map((e) => {
+            'id': e['id'] as String,
+            'name': e['name'] as String,
+          }).toList();
+        final daysId = (docSnapshot['filters']['daysId'] as List)
+          .map((e) => {
+            'id': e['id'] as String,
+            'name': e['name'] as String,
+          }).toList();
+        final schedulesId = (docSnapshot['filters']['schedulesId'] as List)
+          .map((e) => {
+            'id': e['id'] as String,
+            'name': e['name'] as String,
+          }).toList();
+        final sectorsId = (docSnapshot['filters']['sectorsId'] as List)
+          .map((e) => {
+            'id': e['id'] as String,
+            'name': e['name'] as String,
+          }).toList();
 
         return ActivityModel(
           activityId: activityId,
@@ -109,34 +147,19 @@ class CultureActivityService {
             latitude: latitude,
             longitude: longitude,
           ),
-          schedules: [
-            Schedule(
-              day: day,
-              timeSlots: [
-                TimeSlot(
-                  startHour: startHour,
-                  endHour: endHour,
-                ),
-              ],
-            ),
-          ],
-          pricings: [
-            Pricing(
-              profile: profile,
-              pricing: pricing,
-            ),
-          ],
+          schedules: schedules,
+          pricings: pricings,
           filters: Filters(
             categoriesId: categoriesId,
             agesId: agesId,
             daysId: daysId,
             schedulesId: schedulesId,
             sectorsId: sectorsId,
-          ),
+          )
         );
       }).toList();
     } catch (e) {
-      return [];
+      throw Exception('Erreur lors de la récupération des activités culturelles: $e');
     }
   }
 
@@ -155,43 +178,48 @@ class CultureActivityService {
     String newCity,
     double newLatitude,
     double newLongitude,
-    String newDay,
-    String newStartHour,
-    String newEndHour,
-    String newProfile,
-    String newPricing,
+    List<Schedule> newSchedules,
+    List<Pricing> newPricings,
     List<Map<String, String>> newCategoriesId,
     List<Map<String, String>> newAgesId,
     List<Map<String, String>> newDaysId,
     List<Map<String, String>> newSchedulesId,
     List<Map<String, String>> newSectorsId
   ) async {
-    await activitiesCRUD.createActivity(
+    final activityModel = ActivityModel(
+      activityId: activityId,
+      discipline: newDiscipline,
+      information: newInformation,
+      imageUrl: newImageUrl,
+      contact: Contact(
+        structureName: newStructureName,
+        email: newEmail,
+        phoneNumber: newPhoneNumber,
+        webSite: newWebSite,
+      ),
+      place: Place(
+        titleAddress: newTitleAddress,
+        streetAddress: newStreetAddress,
+        postalCode: newPostalCode,
+        city: newCity,
+        latitude: newLatitude,
+        longitude: newLongitude,
+      ),
+      schedules: newSchedules,
+      pricings: newPricings,
+      filters: Filters(
+        categoriesId: newCategoriesId,
+        agesId: newAgesId,
+        daysId: newDaysId,
+        schedulesId: newSchedulesId,
+        sectorsId: newSectorsId,
+      ),
+    );
+
+    await activitiesCRUD.updateActivity(
       'cultures',
       activityId,
-      newDiscipline,
-      newInformation,
-      newStructureName,
-      newImageUrl,
-      newEmail,
-      newPhoneNumber,
-      newWebSite,
-      newTitleAddress,
-      newStreetAddress,
-      newPostalCode,
-      newCity,
-      newLatitude,
-      newLongitude,
-      newDay,
-      newStartHour,
-      newEndHour,
-      newProfile,
-      newPricing,
-      newCategoriesId,
-      newAgesId,
-      newDaysId,
-      newSchedulesId,
-      newSectorsId,
+      activityModel,
     );
   }
 
