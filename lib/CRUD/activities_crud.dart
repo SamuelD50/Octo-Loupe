@@ -80,24 +80,26 @@ class ActivitiesCRUD {
     }
   }
 
-  Future<void> deleteActivity(String section, String activityId) async {
+  Future<void> deleteActivities(String section, List<String> activityIds) async {
     try {
-      var docSnapshot = await activitiesCollection
-        .doc(section)
-        .collection('ActivityById')
-        .doc(activityId)
-        .get();
-
-      if (docSnapshot.exists) {
-        await activitiesCollection
+      for (String activityId in activityIds) {
+        var docSnapshot = await activitiesCollection
           .doc(section)
           .collection('ActivityById')
           .doc(activityId)
-          .delete();
-        debugPrint('Activity deleted');
+          .get();
+
+        if (docSnapshot.exists) {
+          await activitiesCollection
+            .doc(section)
+            .collection('ActivityById')
+            .doc(activityId)
+            .delete();
+          debugPrint('Activity(ies) deleted');
+        }
       }
     } catch (e) {
-      throw Exception('Erreur lors de la suppression de l\'activité: $e');
+      throw Exception('Erreur lors de la suppression de(s) l\'activité(s): $e');
     }
   }
 }

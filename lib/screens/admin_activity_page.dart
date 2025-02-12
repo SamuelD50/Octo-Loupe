@@ -6,6 +6,8 @@ import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/loader_spinning.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/activity_model.dart';
+import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_activity_service.dart';
@@ -28,8 +30,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   String activityId = '';
   int selectedSection = 0;
   String selectedFilter = '';
-  List<dynamic> subFilters = [];
-  List<ActivityModel> activities = [];
+  List<Map<String, dynamic>> subFilters = [];
+  List<Map<String, dynamic>> activities = [];
   List<dynamic> selectedSubFilters = [];
   bool isLoading = false;
   bool isAdding = false;
@@ -39,7 +41,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   CultureActivityService cultureActivityService = CultureActivityService();
 
   TextEditingController disciplineController = TextEditingController();
-  TextEditingController informationController = TextEditingController();
+  List<TextEditingController> informationControllers = [];
   TextEditingController imageUrlController = TextEditingController();
   TextEditingController structureNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -51,11 +53,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   TextEditingController cityController = TextEditingController();
   TextEditingController latitudeController = TextEditingController();
   TextEditingController longitudeController = TextEditingController();
-  List<Schedule> schedules = [];
   List<TextEditingController> dayControllers = [];
   List<List<TextEditingController>> startHourControllersPerDay = [];
   List<List<TextEditingController>> endHourControllersPerDay = [];
-  List<Pricing> pricings = [];
   List<TextEditingController> profileControllers = [];
   List<TextEditingController> pricingControllers = [];
   List<Map<String, String>> selectedSubFiltersByCategories = [];
@@ -68,15 +68,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     required BuildContext context
   }) async {
     String discipline = disciplineController.text.trim();
-    String information = informationController.text.trim();
-    String imageUrl = imageUrlController.text.trim();
+    List<String>? information = [];
+    for (int i = 0; i < informationControllers.length; i++) {
+      String informations = informationControllers[i].text.trim();
+      if (informations.isNotEmpty) {
+        information.add(informations);
+      }
+    }
+    String? imageUrl = imageUrlController.text.trim();
     String structureName = structureNameController.text.trim();
-    String email = emailController.text.trim();
-    String phoneNumber = phoneNumberController.text.trim();
-    String webSite = webSiteController.text.trim();
+    String? email = emailController.text.trim();
+    String? phoneNumber = phoneNumberController.text.trim();
+    String? webSite = webSiteController.text.trim();
     String titleAddress = titleAddressController.text.trim();
     String streetAddress = streetAddressController.text.trim();
-    int postalCode = int.tryParse(postalCodeController.text.trim()) ?? 50130;
+    int postalCode = int.parse(postalCodeController.text.trim());
     String city = cityController.text.trim();
     double latitude = double.parse(latitudeController.text.trim());
     double longitude = double.parse(longitudeController.text.trim());
@@ -85,8 +91,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       String day = dayControllers[d].text.trim();
       List<TimeSlot> timeSlots = [];
       for (int t = 0; t < startHourControllersPerDay[d].length; t++) {
-        String startHour = startHourControllersPerDay[d][t].text.trim();
-        String endHour = endHourControllersPerDay[d][t].text.trim();
+        String? startHour = startHourControllersPerDay[d][t].text.trim();
+        String? endHour = endHourControllersPerDay[d][t].text.trim();
         timeSlots.add(TimeSlot(startHour: startHour, endHour: endHour));
       }
       schedules.add(Schedule(day: day, timeSlots: timeSlots));
@@ -140,7 +146,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         await sportActivityService.addSportActivity(
           null,
           discipline,
-          information,
+          information.isNotEmpty? information : [],
           imageUrl,
           structureName,
           email,
@@ -164,7 +170,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         await cultureActivityService.addCultureActivity(
           null,
           discipline,
-          information,
+          information.isNotEmpty ? information : [],
           imageUrl,
           structureName,
           email,
@@ -219,30 +225,30 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       setState(() {
         isLoading = true;
       });
-      debugPrint('Fetching activities...');
 
       if (selectedSection == 0) {
-        activities = await sportActivityService.getSportActivities();
-        debugPrint('activities sport readActivities: ${activities.length}');
-        debugPrint('activities sport readActivities: $activities');
+        activities = (await sportActivityService.getSportActivities())
+          .map((item) => (item).toMap())
+          .toList();
       } else {
-        activities = await cultureActivityService.getCultureActivities();
-        debugPrint('activities culture readActivities: ${activities.length}');
-        debugPrint('activities culture readActivities: $activities');
+        activities = (await cultureActivityService.getCultureActivities())
+          .map((item) => (item).toMap())
+          .toList();
       }
-      debugPrint('Activities fetched');
-    } catch (e) {
-      debugPrint('Error fetching activity: $e');
-    } finally {
+      
+      await Future.delayed(Duration(milliseconds: 25));
+
       setState(() {
         isLoading = false;
       });
+    
+    } catch (e) {
+      debugPrint('Error fetching activity: $e');
     }
   }
 
-  /* String activityId = ''; */
   TextEditingController newDisciplineController = TextEditingController();
-  TextEditingController newInformationController = TextEditingController();
+  List<TextEditingController> newInformationControllers = [];
   TextEditingController newImageUrlController = TextEditingController();
   TextEditingController newStructureNameController = TextEditingController();
   TextEditingController newEmailController = TextEditingController();
@@ -254,11 +260,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   TextEditingController newCityController = TextEditingController();
   TextEditingController newLatitudeController = TextEditingController();
   TextEditingController newLongitudeController = TextEditingController();
-  List<Schedule> newSchedules = [];
   List<TextEditingController> newDayControllers = [];
   List<List<TextEditingController>> newStartHourControllersPerDay = [];
   List<List<TextEditingController>> newEndHourControllersPerDay = [];
-  List<Pricing> newPricings = [];
   List<TextEditingController> newProfileControllers = [];
   List<TextEditingController> newPricingControllers = [];
   List<Map<String, String>> newSelectedSubFiltersByCategories = [];
@@ -271,15 +275,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     required BuildContext context
   }) async {
     String newDiscipline = newDisciplineController.text.trim();
-    String newInformation = newInformationController.text.trim();
-    String newImageUrl = newImageUrlController.text.trim();
+    List<String>? newInformation = [];
+    for (int i = 0; i < newInformationControllers.length; i++) {
+      String newInformations = newInformationControllers[i].text.trim();
+      if (newInformations.isNotEmpty) {
+        newInformation.add(newInformations);
+      }
+    }
+    String? newImageUrl = newImageUrlController.text.trim();
     String newStructureName = newStructureNameController.text.trim();
-    String newEmail = newEmailController.text.trim();
-    String newPhoneNumber = newPhoneNumberController.text.trim();
-    String newWebSite = newWebSiteController.text.trim();
+    String? newEmail = newEmailController.text.trim();
+    String? newPhoneNumber = newPhoneNumberController.text.trim();
+    String? newWebSite = newWebSiteController.text.trim();
     String newTitleAddress = newTitleAddressController.text.trim();
     String newStreetAddress = newStreetAddressController.text.trim();
-    int newPostalCode = int.tryParse(newPostalCodeController.text.trim()) ?? 50130;
+    int newPostalCode = int.parse(newPostalCodeController.text.trim());
     String newCity = newCityController.text.trim();
     double newLatitude = double.parse(newLatitudeController.text.trim());
     double newLongitude = double.parse(newLongitudeController.text.trim());
@@ -288,8 +298,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       String newDay = newDayControllers[d].text.trim();
       List<TimeSlot> newTimeSlots = [];
       for (int t = 0; t < newStartHourControllersPerDay[d].length; t++) {
-        String newStartHour = newStartHourControllersPerDay[d][t].text.trim();
-        String newEndHour = newEndHourControllersPerDay[d][t].text.trim();
+        String? newStartHour = newStartHourControllersPerDay[d][t].text.trim();
+        String? newEndHour = newEndHourControllersPerDay[d][t].text.trim();
         newTimeSlots.add(TimeSlot(startHour: newStartHour, endHour: newEndHour));
       }
       newSchedules.add(Schedule(day: newDay, timeSlots: newTimeSlots));
@@ -343,7 +353,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         await sportActivityService.updateSportActivity(
           activityId,
           newDiscipline,
-          newInformation,
+          newInformation.isNotEmpty? newInformation : [],
           newImageUrl,
           newStructureName,
           newEmail,
@@ -367,7 +377,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         await cultureActivityService.updateCultureActivity(
           activityId,
           newDiscipline,
-          newInformation,
+          newInformation.isNotEmpty ? newInformation : [],
           newImageUrl,
           newStructureName,
           newEmail,
@@ -417,21 +427,24 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     }
   }
 
-  Future<void> deleteActivity({
-    required BuildContext context
+  List<String> selectedActivityIds = [];
+
+  Future<void> deleteActivities({
+    required BuildContext context,
+    required List<String> activityIds,
   }) async {
     try {
       setState(() {
         isLoading = true;
       });
-
+      
       if (selectedSection == 0) {
-        await sportActivityService.deleteSportActivity(
-          activityId,
+        await sportActivityService.deleteSportActivities(
+          activityIds,
         );
       } else {
-        await cultureActivityService.deleteCultureActivity(
-          activityId,
+        await cultureActivityService.deleteCultureActivities(
+          activityIds,
         );
       }
 
@@ -443,12 +456,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
 
       if (context.mounted) {
         CustomSnackBar(
-          message: 'Activité supprimée',
+          message: 'Activité(s) supprimée(s)',
           backgroundColor: Colors.green,
         ).showSnackBar(context);
       }
     } catch (e) {
-      debugPrint('Error deleting activity: $e');
+      debugPrint('Error deleting activity(ies): $e');
 
       setState(() {
         isLoading = false;
@@ -456,14 +469,14 @@ class AdminActivityPageState extends State<AdminActivityPage> {
 
       if (context.mounted) {
         CustomSnackBar(
-          message: 'Echec de la suppression de l\'activité',
+          message: 'Echec de la suppression de(s) l\'activité(s)',
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
     }
   }
 
-  Future<List<dynamic>> readSubFilters() async {
+  Future<List<Map<String, dynamic>>> readSubFilters() async {
     setState(() {
       isLoading = true;
     });
@@ -471,37 +484,50 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     try {
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await SportFilterService().getSportCategories();
+          subFilters = (await SportFilterService().getSportCategories())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await SportFilterService().getSportAges();
+          subFilters = (await SportFilterService().getSportAges())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await SportFilterService().getSportDays();
+          subFilters = (await SportFilterService().getSportDays())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await SportFilterService().getSportSchedules();
+          subFilters = (await SportFilterService().getSportSchedules())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await SportFilterService().getSportSectors();
+          subFilters = (await SportFilterService().getSportSectors())
+            .map((item) => (item).toMap())
+            .toList();
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await CultureFilterService().getCultureCategories();
+          subFilters = (await CultureFilterService().getCultureCategories())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await CultureFilterService().getCultureAges();
+          subFilters = (await CultureFilterService().getCultureAges())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await CultureFilterService().getCultureDays();
+          subFilters = (await CultureFilterService().getCultureDays())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await CultureFilterService().getCultureSchedules();
+          subFilters = (await CultureFilterService().getCultureSchedules())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await CultureFilterService().getCultureSectors();
+          subFilters = (await CultureFilterService().getCultureSectors())
+            .map((item) => (item).toMap())
+            .toList();
         }
       }
 
-      if (!subFilters.any(
-        (subFilter) => subFilter.id == selectedSubFilters)
-      ) {
-        setState(() {
-          selectedSubFilters = [];
-        });
-      }
     } catch (e) {
       debugPrint('Error reading sub-filters: $e');
     } finally {
@@ -513,22 +539,79 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     return subFilters;
   }
 
+  Future<void> updateSelectedSubFilters() async {
+    List<String> filters = [
+      'Par catégorie',
+      'Par âge',
+      'Par jour',
+      'Par horaire',
+      'Par secteur'
+    ];
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      for (String filter in filters) {
+        selectedFilter = filter;
+        List<Map<String, dynamic>> subFiltersBy = await readSubFilters();
+
+        debugPrint('Sous-filtres pour $filter: $subFiltersBy');
+
+        List<Map<String, dynamic>> newSelectedSubFiltersBy = [];
+
+        switch (filter) {
+          case 'Par catégorie':
+            newSelectedSubFiltersBy = newSelectedSubFiltersByCategories;
+            break;
+          case 'Par âge':
+            newSelectedSubFiltersBy = newSelectedSubFiltersByAges;
+            break;
+          case 'Par jour':
+            newSelectedSubFiltersBy = newSelectedSubFiltersByDays;
+            break;
+          case 'Par horaire':
+            newSelectedSubFiltersBy = newSelectedSubFiltersBySchedules;
+            break;
+          case 'Par secteur':
+            newSelectedSubFiltersBy = newSelectedSubFiltersBySectors;
+            break;
+        }
+
+        for (var subFilterBy in subFiltersBy) {
+          var index = newSelectedSubFiltersBy.indexWhere((item) => item['id'] == subFilterBy['id']);
+          if (index != -1) {
+            newSelectedSubFiltersBy[index]['name'] = subFilterBy['name'];
+          }
+        }
+        newSelectedSubFiltersBy.removeWhere((item) => !subFiltersBy.any((subFilterBy) => subFilterBy['id'] == item['id']));
+      }
+    } catch (e) {
+      debugPrint('Error updating selected sub-filters: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   List<dynamic> sortSubFilters(
-    List<dynamic> subFilters,
+    List<Map<String, dynamic>> subFilters,
     String selectedFilter
   ) {
     switch (selectedFilter) {
       case 'Par catégorie':
         subFilters.sort(
-          (a,b) => a.name.compareTo(b.name)
+          (a,b) => a['name'].compareTo(b['name'])
         );
         break;
 
       case 'Par âge':
         subFilters.sort(
           (a, b) {
-            int minAgeA = _getMinAgeFromAgeRange(a.name);
-            int minAgeB = _getMinAgeFromAgeRange(b.name);
+            int minAgeA = _getMinAgeFromAgeRange(a['name']);
+            int minAgeB = _getMinAgeFromAgeRange(b['name']);
             return minAgeA.compareTo(minAgeB);
           }
         );
@@ -537,8 +620,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       case 'Par horaire':
         subFilters.sort(
           (a, b) {
-            int startTimeA = _getStartTimeFromSchedule(a.name);
-            int startTimeB = _getStartTimeFromSchedule(b.name);
+            int startTimeA = _getStartTimeFromSchedule(a['name']);
+            int startTimeB = _getStartTimeFromSchedule(b['name']);
             return startTimeA.compareTo(startTimeB);
           }
         );
@@ -547,20 +630,20 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       case 'Par jour':
         subFilters.sort(
           (a, b) {
-            return _getDayIndex(a.name).compareTo(_getDayIndex(b.name));
+            return _getDayIndex(a['name']).compareTo(_getDayIndex(b['name']));
           }
         );
         break;
 
       case 'Par secteur':
       subFilters.sort(
-        (a, b) => a.name.compareTo(b.name)
+        (a, b) => a['name'].compareTo(b['name'])
       );
       break;
 
       default:
         subFilters.sort(
-          (a, b) => a.name.compareTo(b.name)
+          (a, b) => a['name'].compareTo(b['name'])
         );
     }
 
@@ -609,6 +692,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     selectedFilter = 'Par catégorie';
     readSubFilters();
     readActivities();
+    addInformationField();
     addDayField();
     addProfilePricing();
   }
@@ -687,111 +771,186 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children : [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: _currentMode == ActivityMode.adding ?
+                            [
+                              BoxShadow(
+                                color: Colors.blueAccent,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ] :
+                            [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _currentMode = ActivityMode.adding;
-                            disciplineController.clear();
-                            informationController.clear();
-                            imageUrlController.clear();
-                            structureNameController.clear();
-                            emailController.clear();
-                            phoneNumberController.clear();
-                            webSiteController.clear();
-                            titleAddressController.clear();
-                            streetAddressController.clear();
-                            postalCodeController.clear();
-                            cityController.clear();
-                            latitudeController.clear();
-                            longitudeController.clear();
-                            dayControllers.clear();
-                            startHourControllersPerDay.clear();
-                            endHourControllersPerDay.clear();
-                            profileControllers.clear();
-                            pricingControllers.clear();
-                            selectedSubFiltersByCategories.clear();
-                            selectedSubFiltersByAges.clear();
-                            selectedSubFiltersByDays.clear();
-                            selectedSubFiltersBySchedules.clear();
-                            selectedSubFiltersBySectors.clear();
-                            addDayField();
-                            addProfilePricing();
-                            readSubFilters();
-                          });
-                        },
-                        child: Icon(Icons.add, size: 30, color: Colors.white),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentMode = ActivityMode.adding;
+                              readSubFilters();
+                              disciplineController.clear();
+                              informationControllers.clear();
+                              imageUrlController.clear();
+                              structureNameController.clear();
+                              emailController.clear();
+                              phoneNumberController.clear();
+                              webSiteController.clear();
+                              titleAddressController.clear();
+                              streetAddressController.clear();
+                              postalCodeController.clear();
+                              cityController.clear();
+                              latitudeController.clear();
+                              longitudeController.clear();
+                              dayControllers.clear();
+                              startHourControllersPerDay.clear();
+                              endHourControllersPerDay.clear();
+                              profileControllers.clear();
+                              pricingControllers.clear();
+                              selectedSubFiltersByCategories.clear();
+                              selectedSubFiltersByAges.clear();
+                              selectedSubFiltersByDays.clear();
+                              selectedSubFiltersBySchedules.clear();
+                              selectedSubFiltersBySectors.clear();
+                              addInformationField();
+                              addDayField();
+                              addProfilePricing();
+                            });
+                          },
+                          child: Icon(Icons.add, size: 30, color: Colors.white),
+                        ),
                       ),
                       SizedBox(width: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: _currentMode == ActivityMode.editing ? Colors.blueAccent : Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: _currentMode == ActivityMode.editing ?
+                            [
+                              BoxShadow(
+                                color: Colors.blueAccent,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ] :
+                            [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _currentMode = ActivityMode.editing;
-                            activityId = '';
-                            newDisciplineController.clear();
-                            newInformationController.clear();
-                            newImageUrlController.clear();
-                            newStructureNameController.clear();
-                            newEmailController.clear();
-                            newPhoneNumberController.clear();
-                            newWebSiteController.clear();
-                            newTitleAddressController.clear();
-                            newStreetAddressController.clear();
-                            newPostalCodeController.clear();
-                            newCityController.clear();
-                            newLatitudeController.clear();
-                            newLongitudeController.clear();
-                            newDayControllers.clear();
-                            newStartHourControllersPerDay.clear();
-                            newEndHourControllersPerDay.clear();
-                            newProfileControllers.clear();
-                            newPricingControllers.clear();
-                            newSelectedSubFiltersByCategories.clear();
-                            newSelectedSubFiltersByAges.clear();
-                            newSelectedSubFiltersByDays.clear();
-                            newSelectedSubFiltersBySchedules.clear();
-                            newSelectedSubFiltersBySectors.clear();
-                            isEditing = false;
-                            addDayField();
-                            addProfilePricing();
-                            readActivities();
-                          });
-                        },
-                        child: Icon(Icons.edit, size: 30, color: Colors.white),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentMode = ActivityMode.editing;
+                              isEditing = false;
+                              readActivities();
+                              activityId = '';
+                              newDisciplineController.clear();
+                              newInformationControllers.clear();
+                              newImageUrlController.clear();
+                              newStructureNameController.clear();
+                              newEmailController.clear();
+                              newPhoneNumberController.clear();
+                              newWebSiteController.clear();
+                              newTitleAddressController.clear();
+                              newStreetAddressController.clear();
+                              newPostalCodeController.clear();
+                              newCityController.clear();
+                              newLatitudeController.clear();
+                              newLongitudeController.clear();
+                              newDayControllers.clear();
+                              newStartHourControllersPerDay.clear();
+                              newEndHourControllersPerDay.clear();
+                              newProfileControllers.clear();
+                              newPricingControllers.clear();
+                              newSelectedSubFiltersByCategories.clear();
+                              newSelectedSubFiltersByAges.clear();
+                              newSelectedSubFiltersByDays.clear();
+                              newSelectedSubFiltersBySchedules.clear();
+                              newSelectedSubFiltersBySectors.clear();
+                            });
+                          },
+                          child: Icon(Icons.edit, size: 30, color: Colors.white),
+                        ),
                       ),
                       SizedBox(width: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: _currentMode == ActivityMode.deleting ? Colors.blueAccent : Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: _currentMode == ActivityMode.deleting ?
+                            [
+                              BoxShadow(
+                                color: Colors.blueAccent,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ] :
+                            [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ],
+                        ),
+                        child:  ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentMode = ActivityMode.deleting;
+                              readActivities();
+                              selectedActivityIds.clear();
+                            });
+                          },
+                          child: Icon(
+                            Icons.remove,
+                            size: 30,
+                            color: Colors.white,
                           ),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _currentMode = ActivityMode.deleting;
-                            readActivities();
-                            /* readSubFilters(); */
-                          });
-                        },
-                        child: Icon(Icons.remove, size: 30, color: Colors.white),
                       ),
                     ], 
                   ),
@@ -864,6 +1023,19 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     });
   }
 
+  void addInformationField() {
+    setState(() {
+      informationControllers.add(TextEditingController());
+    });
+  }
+
+  void removeInformationField(int infoIndex) {
+    setState(() {
+      informationControllers[infoIndex].dispose();
+      informationControllers.removeAt(infoIndex);
+    });
+  }
+
   Widget _buildAddActivity(
     BuildContext context
   ) {
@@ -875,12 +1047,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             isSelected: [selectedSection == 0, selectedSection == 1],
             onPressed: (int section) {
               setState(() {
-                addDayField();
-                addProfilePricing();
-                readSubFilters();
                 selectedSection = section;
+                readSubFilters();
                 disciplineController.clear();
-                informationController.clear();
+                informationControllers.clear();
                 imageUrlController.clear();
                 structureNameController.clear();
                 emailController.clear();
@@ -902,6 +1072,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 selectedSubFiltersByDays.clear();
                 selectedSubFiltersBySchedules.clear();
                 selectedSubFiltersBySectors.clear();
+                addInformationField();
+                addDayField();
+                addProfilePricing();
               });
             },
             color: Colors.black,
@@ -951,15 +1124,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           ),
           const SizedBox(height: 16),
           DropdownButton<String>(
-            value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters[0],
+            value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0]['id'] : selectedSubFilters[0],
             onChanged: (String? newValue) {
               setState(() {
                 var selectedSubFilter = subFilters.firstWhere(
-                  (item) => item.id == newValue
+                  (item) => item['id'] == newValue
                 );
                 var subFilterMap = {
-                  'id': selectedSubFilter.id.toString(),
-                  'name': selectedSubFilter.name.toString()
+                  'id': selectedSubFilter['id'].toString(),
+                  'name': selectedSubFilter['name'].toString()
                 };
 
                 if (selectedFilter == 'Par catégorie') {
@@ -1003,26 +1176,36 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               subFilters, selectedFilter
             ).map((subFilter) {
               return DropdownMenuItem<String>(
-                value: subFilter.id,
-                child: Text(subFilter.name),
+                value: subFilter['id'],
+                child: Text(subFilter['name']),
               );
             }).toList(),
           ),
           const SizedBox(height: 16),
           Text(
-            'Par catégorie :',
+            'Par catégorie',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 4),
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersByCategories.map((subFilter) {
-              debugPrint('selectedSubFiltersByCategories 1: $selectedSubFiltersByCategories');
               return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
+                label: Text(
+                  subFilter['name']!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                deleteIcon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onDeleted: () {
                   setState(() {
                     selectedSubFiltersByCategories.removeWhere(
@@ -1030,23 +1213,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     );
                   });
                 },
+                backgroundColor: Color(0xFF5B59B4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  side: BorderSide(
+                    color: Color(0xFF5B59B4)
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
               );
             }).toList(),
           ),
+          const SizedBox(height: 4),
           Text(
-            'Par âge :',
+            'Par âge',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 4),
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersByAges.map((subFilter) {
-              debugPrint('selectedSubFiltersByAges 1: $selectedSubFiltersByAges');
               return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
+                label: Text(
+                  subFilter['name']!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                deleteIcon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onDeleted: () {
                   setState(() {
                     selectedSubFiltersByAges.removeWhere(
@@ -1054,23 +1256,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     );
                   });
                 },
+                backgroundColor: Color(0xFF5B59B4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  side: BorderSide(
+                    color: Color(0xFF5B59B4)
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
               );
             }).toList(),
           ),
+          const SizedBox(height: 4),
           Text(
-            'Par jour :',
+            'Par jour',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 4),
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersByDays.map((subFilter) {
-              debugPrint('selectedSubFiltersByDays 1: $selectedSubFiltersByDays');
               return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
+                label: Text(
+                  subFilter['name']!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                deleteIcon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onDeleted: () {
                   setState(() {
                     selectedSubFiltersByDays.removeWhere(
@@ -1078,23 +1299,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     );
                   });
                 },
+                backgroundColor: Color(0xFF5B59B4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  side: BorderSide(
+                    color: Color(0xFF5B59B4)
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
               );
             }).toList(),
           ),
+          const SizedBox(height: 4),
           Text(
-            'Par horaire :',
+            'Par horaire',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 4),
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersBySchedules.map((subFilter) {
-              debugPrint('selectedSubFiltersBySchedules 1: $selectedSubFiltersBySchedules');
               return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
+                label: Text(
+                  subFilter['name']!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                deleteIcon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onDeleted: () {
                   setState(() {
                     selectedSubFiltersBySchedules.removeWhere(
@@ -1102,23 +1342,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     );
                   });
                 },
+                backgroundColor: Color(0xFF5B59B4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  side: BorderSide(
+                    color: Color(0xFF5B59B4)
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
               );
             }).toList(),
           ),
+          const SizedBox(height: 4),
           Text(
-            'Par secteur :',
+            'Par secteur',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 4),
           Wrap(
             spacing: 8.0,
             children: selectedSubFiltersBySectors.map((subFilter) {
-              debugPrint('selectedSubFiltersBySectors 1: $selectedSubFiltersBySectors');
               return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
+                label: Text(
+                  subFilter['name']!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                deleteIcon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onDeleted: () {
                   setState(() {
                     selectedSubFiltersBySectors.removeWhere(
@@ -1126,6 +1385,14 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     );
                   });
                 },
+                backgroundColor: Color(0xFF5B59B4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  side: BorderSide(
+                    color: Color(0xFF5B59B4)
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
               );
             }).toList(),
           ),
@@ -1133,7 +1400,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             child: TextFormField(
-            controller: disciplineController,
+              controller: disciplineController,
               decoration: const InputDecoration(
                 labelText: 'Discipline',
                 hintText: 'Ex: Course à pied',
@@ -1148,22 +1415,56 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             ),
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: TextFormField(
-              controller: informationController,
-              decoration: const InputDecoration(
-                labelText: 'Information',
-                hintText: 'Ex: Amenez votre bouteille d\'eau',
-                border: OutlineInputBorder(),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: informationControllers.length,
+            itemBuilder: (context, infoIndex) {
+              return Column(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: TextFormField(
+                      controller: informationControllers[infoIndex],
+                      decoration: const InputDecoration(
+                        labelText: 'Information (optionnel)',
+                        hintText: 'Ex: Amenez votre bouteille d\'eau',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  if (informationControllers.length > 1)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Colors.red),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        removeInformationField(infoIndex);
+                      },
+                      child: Text('Supprimer cette information'),
+                    ),
+                  if (informationControllers.length > 1)
+                    SizedBox(height: 16),
+                ],
+              );
+            },
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.lightGreen),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer une information';
-                }
-                return null;
-              },
             ),
+            onPressed: addInformationField,
+            child: Text('Ajouter une information'),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -1171,21 +1472,17 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             child: TextFormField(
               controller: imageUrlController,
               decoration: const InputDecoration(
-                labelText: 'Image Url',
+                labelText: 'Image Url (optionnel)',
                 hintText: 'Ex: https://www.example.com/image.jpg',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer une image url';
-                }
-                return null;
+              onChanged: (value) {
+                setState(() {});
               },
             ),
           ),
-          if (imageUrlController.text.isNotEmpty)
+          if (imageUrlController.text.isNotEmpty) ...[
             const SizedBox(height: 16),
-          if (imageUrlController.text.isNotEmpty)
             isLoading ?
               Center(
                 child: SpinKitSpinningLines(
@@ -1193,17 +1490,18 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   size: 60,
                 ),
               )
-            : Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(imageUrlController.text),
-                  fit: BoxFit.cover,
+              : Container(
+                height: 220,
+                width: 220,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrlController.text),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
-            ),
+          ],
           const SizedBox(height: 16),
           ExpansionTile(
             title: Text(
@@ -1219,12 +1517,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 child: TextFormField(
                   controller: structureNameController,
                   decoration: const InputDecoration(
-                    labelText: 'Nom de la structure organisatrice',
+                    labelText: 'Nom de la structure/du responsable',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un nom de structure';
+                      return 'Veuillez entrer un nom de structure/du responsable';
                     }
                     return null;
                   },
@@ -1236,13 +1534,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 child: TextFormField(
                   controller: emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Email (optionnel)',
                     hintText: 'Ex: abc@exemple.com',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un email';
+                      return null;
                     }
 
                     final regex = RegExp(
@@ -1261,13 +1559,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 child: TextFormField(
                   controller: phoneNumberController,
                   decoration: const InputDecoration(
-                    labelText: 'Numéro de téléphone',
+                    labelText: 'Numéro de téléphone (optionnel)',
                     hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un numéro de téléphone';
+                      return null;
                     }
 
                     final regex = RegExp(
@@ -1286,13 +1584,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 child: TextFormField(
                   controller: webSiteController,
                   decoration: const InputDecoration(
-                    labelText: 'Site internet',
+                    labelText: 'Site internet (optionnel)',
                     hintText: 'Ex: https://www.example.com',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un site internet';
+                      return null;
                     }
 
                     final regex = RegExp(
@@ -1500,13 +1798,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                 child: TextFormField(
                                   controller: startHourControllersPerDay[dayIndex][timeSlotIndex],
                                   decoration: const InputDecoration(
-                                    labelText: 'Horaire de début',
+                                    labelText: 'Horaire de début (optionnel)',
                                     hintText: 'Ex: 10h, 10h30',
                                     border: OutlineInputBorder(),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Veuillez entrer un horaire de début';
+                                      return null;
                                     }
                                     return null;
                                   },
@@ -1518,13 +1816,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                 child: TextFormField(
                                   controller: endHourControllersPerDay[dayIndex][timeSlotIndex],
                                   decoration: const InputDecoration(
-                                    labelText: 'Horaire de fin',
+                                    labelText: 'Horaire de fin (optionnel)',
                                     hintText: 'Ex: 11h, 11h30',
                                     border: OutlineInputBorder(),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Veuillez entrer un horaire de fin';
+                                      return null;
                                     }
                                     return null;
                                   },
@@ -1690,8 +1988,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 createNewActivity(
                   context: context,
                 );
+                readSubFilters();
                 disciplineController.clear();
-                informationController.clear();
+                informationControllers.clear();
                 imageUrlController.clear();
                 structureNameController.clear();
                 emailController.clear();
@@ -1713,6 +2012,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 selectedSubFiltersByDays.clear();
                 selectedSubFiltersBySchedules.clear();
                 selectedSubFiltersBySectors.clear();
+                addInformationField();
+                addDayField();
+                addProfilePricing();
               }
             },
             child: Text('Ajouter l\'activité'),
@@ -1769,6 +2071,19 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     });
   }
 
+  void addNewInformationField() {
+    setState(() {
+      newInformationControllers.add(TextEditingController());
+    });
+  }
+
+  void removeNewInformationField(int newInfoIndex) {
+    setState(() {
+      newInformationControllers[newInfoIndex].dispose();
+      newInformationControllers.removeAt(newInfoIndex);
+    });
+  }
+
   Widget _buildEditActivity(
     BuildContext context
   ) {
@@ -1802,15 +2117,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             ),
             const SizedBox(height: 16),
             DropdownButton<String>(
-              value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters,
+              value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0]['id'] : selectedSubFilters,
               onChanged: (String? newValue) {
                 setState(() {
                   var selectedSubFilter = subFilters.firstWhere(
-                    (item) => item.id == newValue
+                    (item) => item['id'] == newValue
                   );
                   var subFilterMap = {
-                    'id': selectedSubFilter.id.toString(),
-                    'name': selectedSubFilter.name.toString()
+                    'id': selectedSubFilter['id'].toString(),
+                    'name': selectedSubFilter['name'].toString()
                   };
 
                   if (selectedFilter == 'Par catégorie') {
@@ -1854,26 +2169,36 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 subFilters, selectedFilter
               ).map((subFilter) {
                 return DropdownMenuItem<String>(
-                  value: subFilter.id,
-                  child: Text(subFilter.name),
+                  value: subFilter['id'],
+                  child: Text(subFilter['name']),
                 );
               }).toList(),
             ),
             const SizedBox(height: 16),
             Text(
-              'Par catégorie :',
+              'Par catégorie',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
             ),
+            const SizedBox(height: 4),
             Wrap(
               spacing: 8.0,
               children: newSelectedSubFiltersByCategories.map((subFilter) {
-                debugPrint('newSelectedSubFiltersByCategories 1: $newSelectedSubFiltersByCategories');
                 return Chip(
-                  label: Text(subFilter['name']!),
-                  deleteIcon: Icon(Icons.close),
+                  label: Text(
+                    subFilter['name']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onDeleted: () {
                     setState(() {
                       newSelectedSubFiltersByCategories.removeWhere(
@@ -1881,23 +2206,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       );
                     });
                   },
+                  backgroundColor: Color(0xFF5B59B4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side: BorderSide(
+                      color: Color(0xFF5B59B4)
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
                 );
               }).toList(),
             ),
+            const SizedBox(height: 4),
             Text(
-              'Par âge :',
+              'Par âge',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
             ),
+            const SizedBox(height: 4),
             Wrap(
               spacing: 8.0,
               children: newSelectedSubFiltersByAges.map((subFilter) {
-                debugPrint('newSelectedSubFiltersByAges 1: $newSelectedSubFiltersByAges');
                 return Chip(
-                  label: Text(subFilter['name']!),
-                  deleteIcon: Icon(Icons.close),
+                  label: Text(
+                    subFilter['name']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onDeleted: () {
                     setState(() {
                       newSelectedSubFiltersByAges.removeWhere(
@@ -1905,23 +2249,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       );
                     });
                   },
+                  backgroundColor: Color(0xFF5B59B4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side: BorderSide(
+                      color: Color(0xFF5B59B4)
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
                 );
               }).toList(),
             ),
+            const SizedBox(height: 4),
             Text(
-              'Par jour :',
+              'Par jour',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
             ),
+            const SizedBox(height: 4),
             Wrap(
               spacing: 8.0,
               children: newSelectedSubFiltersByDays.map((subFilter) {
-                debugPrint('newSelectedSubFiltersByDays 1: $newSelectedSubFiltersByDays');
                 return Chip(
-                  label: Text(subFilter['name']!),
-                  deleteIcon: Icon(Icons.close),
+                  label: Text(
+                    subFilter['name']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onDeleted: () {
                     setState(() {
                       newSelectedSubFiltersByDays.removeWhere(
@@ -1929,23 +2292,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       );
                     });
                   },
+                  backgroundColor: Color(0xFF5B59B4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side: BorderSide(
+                      color: Color(0xFF5B59B4)
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
                 );
               }).toList(),
             ),
+            const SizedBox(height: 4),
             Text(
-              'Par horaire :',
+              'Par horaire',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
             ),
+            const SizedBox(height: 4),
             Wrap(
               spacing: 8.0,
               children: newSelectedSubFiltersBySchedules.map((subFilter) {
-                debugPrint('newSelectedSubFiltersBySchedules 1: $newSelectedSubFiltersBySchedules');
                 return Chip(
-                  label: Text(subFilter['name']!),
-                  deleteIcon: Icon(Icons.close),
+                  label: Text(
+                    subFilter['name']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onDeleted: () {
                     setState(() {
                       newSelectedSubFiltersBySchedules.removeWhere(
@@ -1953,23 +2335,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       );
                     });
                   },
+                  backgroundColor: Color(0xFF5B59B4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side: BorderSide(
+                      color: Color(0xFF5B59B4)
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
                 );
               }).toList(),
             ),
+            const SizedBox(height: 4),
             Text(
-              'Par secteur :',
+              'Par secteur',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
             ),
+            const SizedBox(height: 4),
             Wrap(
               spacing: 8.0,
               children: newSelectedSubFiltersBySectors.map((subFilter) {
-                debugPrint('newSelectedSubFiltersBySectors 1: $newSelectedSubFiltersBySectors');
                 return Chip(
-                  label: Text(subFilter['name']!),
-                  deleteIcon: Icon(Icons.close),
+                  label: Text(
+                    subFilter['name']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onDeleted: () {
                     setState(() {
                       newSelectedSubFiltersBySectors.removeWhere(
@@ -1977,10 +2378,42 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       );
                     });
                   },
+                  backgroundColor: Color(0xFF5B59B4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side: BorderSide(
+                      color: Color(0xFF5B59B4)
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical : 12),
                 );
               }).toList(),
             ),
             const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF5B59B4),
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Color(0xFF5B59B4)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+              ),
+              onPressed: () async {
+                updateSelectedSubFilters();
+              },
+              child: isLoading ?
+                CircularProgressIndicator() :
+                Text(
+                  'Mettre à jour les filtres',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+            ),
+            SizedBox(height: 16),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextFormField(
@@ -1999,22 +2432,54 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: TextFormField(
-                controller: newInformationController,
-                decoration: const InputDecoration(
-                  labelText: 'Nouvelle information',
-                  hintText: 'Ex: Amenez votre bouteille d\'eau',
-                  border: OutlineInputBorder(),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: newInformationControllers.length,
+              itemBuilder: (context, newInfoIndex) {
+                return Column(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextFormField(
+                        controller: newInformationControllers[newInfoIndex],
+                        decoration: const InputDecoration(
+                          labelText: 'Nouvelle information (optionnel)',
+                          hintText: 'Ex: Amenez votre bouteille d\'eau',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Colors.red),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        removeNewInformationField(newInfoIndex);
+                      },
+                      child: Text('Supprimer cette information'),
+                    ),
+                    SizedBox(height: 16),
+                  ],
+                );
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Colors.lightGreen),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une information';
-                  }
-                  return null;
-                },
               ),
+              onPressed: addNewInformationField,
+              child: Text('Ajouter une information'),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -2022,29 +2487,25 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               child: TextFormField(
                 controller: newImageUrlController,
                 decoration: const InputDecoration(
-                  labelText: 'Nouvelle image Url',
+                  labelText: 'Nouvelle image Url (optionnel)',
                   hintText: 'Ex: https://www.example.com/image.jpg',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une image url';
-                  }
-                  return null;
+                onChanged: (value) {
+                  setState(() {});
                 },
               ),
             ),
-            if (newImageUrlController.text.isNotEmpty)
+            if (newImageUrlController.text.isNotEmpty) ...[
               const SizedBox(height: 16),
-            if (newImageUrlController.text.isNotEmpty)
               isLoading ?
                 Center(
                   child: SpinKitSpinningLines(
                     color: Colors.white,
                     size: 60,
                   ),
-                ) :
-                Container(
+                )
+                : Container(
                   height: 220,
                   width: 220,
                   decoration: BoxDecoration(
@@ -2055,6 +2516,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+            ],
             const SizedBox(height: 16),
             ExpansionTile(
               title: Text(
@@ -2070,12 +2532,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   child: TextFormField(
                     controller: newStructureNameController,
                     decoration: const InputDecoration(
-                      labelText: 'Nouveau nom de la structure organisatrice',
+                      labelText: 'Nouveau nom de la structure/du responsable',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un nom de structure';
+                        return 'Veuillez entrer un nom de structure/du responsable';
                       }
                       return null;
                     },
@@ -2087,13 +2549,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   child: TextFormField(
                     controller: newEmailController,
                     decoration: const InputDecoration(
-                      labelText: 'Nouvel email',
+                      labelText: 'Nouvel email (optionnel)',
                       hintText: 'Ex: abc@exemple.com',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un email';
+                        return null;
                       }
 
                       final regex = RegExp(
@@ -2112,13 +2574,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   child: TextFormField(
                     controller: newPhoneNumberController,
                     decoration: const InputDecoration(
-                      labelText: 'Nouveau numéro de téléphone',
+                      labelText: 'Nouveau numéro de téléphone (optionnel)',
                       hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un numéro de téléphone';
+                        return null;
                       }
 
                       final regex = RegExp(
@@ -2137,13 +2599,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   child: TextFormField(
                     controller: newWebSiteController,
                     decoration: const InputDecoration(
-                      labelText: 'Nouveau site internet',
+                      labelText: 'Nouveau site internet (optionnel)',
                       hintText: 'Ex: https://www.example.com',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un site internet';
+                        return null;
                       }
 
                       final regex = RegExp(
@@ -2323,23 +2785,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           ),
                         ),
                         SizedBox(height: 16),
-                        
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              foregroundColor: Colors.white,
-                              side: BorderSide(color: Colors.red),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
-                            onPressed: () {
-                              removeNewDayField(newDayIndex);
-                            },
-                            child: Text('Supprimer cette journée'),
                           ),
-                        
-                          SizedBox(height: 16),
+                          onPressed: () {
+                            removeNewDayField(newDayIndex);
+                          },
+                          child: Text('Supprimer cette journée'),
+                        ),
+                        SizedBox(height: 16),
                         ListView.builder(
                           shrinkWrap: true,
                           itemCount: newStartHourControllersPerDay[newDayIndex].length,
@@ -2351,13 +2811,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   child: TextFormField(
                                     controller: newStartHourControllersPerDay[newDayIndex][newTimeSlotIndex],
                                     decoration: const InputDecoration(
-                                      labelText: 'Nouvel horaire de début',
+                                      labelText: 'Nouvel horaire de début (optionnel)',
                                       hintText: 'Ex: 10h, 10h30',
                                       border: OutlineInputBorder(),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Veuillez entrer un horaire de début';
+                                        return null;
                                       }
                                       return null;
                                     },
@@ -2369,36 +2829,34 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   child: TextFormField(
                                     controller: newEndHourControllersPerDay[newDayIndex][newTimeSlotIndex],
                                     decoration: const InputDecoration(
-                                      labelText: 'Nouvel horaire de fin',
+                                      labelText: 'Nouvel horaire de fin (optionnel)',
                                       hintText: 'Ex: 11h, 11h30',
                                       border: OutlineInputBorder(),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Veuillez entrer un horaire de fin';
+                                        return null;
                                       }
                                       return null;
                                     },
                                   ),
                                 ),
                                 SizedBox(height: 16),
-                                
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.redAccent,
-                                      foregroundColor: Colors.white,
-                                      side: BorderSide(color: Colors.red),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20.0),
-                                      ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                    side: BorderSide(color: Colors.red),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
                                     ),
-                                    onPressed: () {
-                                      removeNewTimeSlotForDay(newDayIndex, newTimeSlotIndex);
-                                    },
-                                    child: Text('Supprimer ce créneau'),
                                   ),
-                                
-                                  SizedBox(height: 16),
+                                  onPressed: () {
+                                    removeNewTimeSlotForDay(newDayIndex, newTimeSlotIndex);
+                                  },
+                                  child: Text('Supprimer ce créneau'),
+                                ),
+                                SizedBox(height: 16),
                               ],
                             );
                           },
@@ -2490,23 +2948,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        if (newProfileControllers.length > 1)
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              foregroundColor: Colors.white,
-                              side: BorderSide(color: Colors.red),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
-                            onPressed: () {
-                              removeNewProfilePricing(newIndex);
-                            },
-                            child: Text('Supprimer ce tarif par profil'),
                           ),
-                        if (newProfileControllers.length > 1)
-                          SizedBox(height: 16),
+                          onPressed: () {
+                            removeNewProfilePricing(newIndex);
+                          },
+                          child: Text('Supprimer ce tarif par profil'),
+                        ),
+                        SizedBox(height: 16),
                       ],
                     );
                   },
@@ -2541,9 +2997,11 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   updateActivity(
                     context: context,
                   );
+                  isEditing = false;
+                  readActivities();
                   activityId = '';
                   newDisciplineController.clear();
-                  newInformationController.clear();
+                  newInformationControllers.clear();
                   newImageUrlController.clear();
                   newStructureNameController.clear();
                   newEmailController.clear();
@@ -2565,8 +3023,6 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   newSelectedSubFiltersByDays.clear();
                   newSelectedSubFiltersBySchedules.clear();
                   newSelectedSubFiltersBySectors.clear();
-                  isEditing = false;
-                  readActivities();
                 }
               },
               child: Text('Modifier l\'activité'),
@@ -2584,6 +3040,31 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               onPressed: () {
                 setState(() {
                   isEditing = false;
+                  readActivities();
+                  activityId = '';
+                  newDisciplineController.clear();
+                  newInformationControllers.clear();
+                  newImageUrlController.clear();
+                  newStructureNameController.clear();
+                  newEmailController.clear();
+                  newPhoneNumberController.clear();
+                  newWebSiteController.clear();
+                  newTitleAddressController.clear();
+                  newStreetAddressController.clear();
+                  newPostalCodeController.clear();
+                  newCityController.clear();
+                  newLatitudeController.clear();
+                  newLongitudeController.clear();
+                  newDayControllers.clear();
+                  newStartHourControllersPerDay.clear();
+                  newEndHourControllersPerDay.clear();
+                  newProfileControllers.clear();
+                  newPricingControllers.clear();
+                  newSelectedSubFiltersByCategories.clear();
+                  newSelectedSubFiltersByAges.clear();
+                  newSelectedSubFiltersByDays.clear();
+                  newSelectedSubFiltersBySchedules.clear();
+                  newSelectedSubFiltersBySectors.clear();
                 });
               },
               child: Text('Retour à la liste'),
@@ -2593,40 +3074,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             ),
           ],
         ),
-      )
-    : Column(
+      ) :
+      Column(
         children: [
           ToggleButtons(
             isSelected: [selectedSection == 0, selectedSection == 1],
             onPressed: (int section) {
               setState(() {
                 selectedSection = section;
-                readSubFilters();
                 readActivities();
-                activityId = '';
-                newDisciplineController.clear();
-                newInformationController.clear();
-                newImageUrlController.clear();
-                newStructureNameController.clear();
-                newEmailController.clear();
-                newPhoneNumberController.clear();
-                newWebSiteController.clear();
-                newTitleAddressController.clear();
-                newStreetAddressController.clear();
-                newPostalCodeController.clear();
-                newCityController.clear();
-                newLatitudeController.clear();
-                newLongitudeController.clear();
-                newDayControllers.clear();
-                newStartHourControllersPerDay.clear();
-                newEndHourControllersPerDay.clear();
-                newProfileControllers.clear();
-                newPricingControllers.clear();
-                newSelectedSubFiltersByCategories.clear();
-                newSelectedSubFiltersByAges.clear();
-                newSelectedSubFiltersByDays.clear();
-                newSelectedSubFiltersBySchedules.clear();
-                newSelectedSubFiltersBySectors.clear();
               });
             },
             color: Colors.black,
@@ -2653,1084 +3109,124 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           const SizedBox(height: 16),
           Column(
             children: activities.map((activity) {
+              Place place = Place.fromMap(activity['place'] ?? {});
+              List<Schedule> schedules = (activity['schedules'] as List?)
+                ?.map((schedule) => Schedule.fromMap(schedule as Map<String, dynamic>))
+                .toList() ?? [];
+              List<Pricing> pricings = (activity['pricings'] as List?)
+                ?.map((pricing) => Pricing.fromMap(pricing as Map<String, String>))
+                .toList() ?? [];
+
               return Column(
                 children: [
-                  /* ActivityMap(
-                    titleAddress: activity.place.titleAddress,
-                    streetAddress: activity.place.streetAddress,
-                    postalCode: activity.place.postalCode.toString(),
-                    city: activity.place.city,
-                    latitude: activity.place.latitude,
-                    longitude: activity.place.longitude,
-                  ), */
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ActivityCard(
-                      imageUrl: activity.imageUrl,
-                      discipline: activity.discipline,
-                      place: activity.place,
-                      schedules: activity.schedules,
-                      pricings: activity.pricings,
-                      onTap: () {
-                        activityId = '';
-                        newDisciplineController.clear();
-                        newInformationController.clear();
-                        newImageUrlController.clear();
-                        newStructureNameController.clear();
-                        newEmailController.clear();
-                        newPhoneNumberController.clear();
-                        newWebSiteController.clear();
-                        newTitleAddressController.clear();
-                        newStreetAddressController.clear();
-                        newPostalCodeController.clear();
-                        newCityController.clear();
-                        newLatitudeController.clear();
-                        newLongitudeController.clear();
-                        newDayControllers.clear();
-                        newStartHourControllersPerDay.clear();
-                        newEndHourControllersPerDay.clear();
-                        newProfileControllers.clear();
-                        newPricingControllers.clear();
-                        newSelectedSubFiltersByCategories.clear();
-                        newSelectedSubFiltersByAges.clear();
-                        newSelectedSubFiltersByDays.clear();
-                        newSelectedSubFiltersBySchedules.clear();
-                        newSelectedSubFiltersBySectors.clear();
-                        readActivities();
-                        activityId = activity.activityId;
-                        newDisciplineController.text = activity.discipline;
-                        newInformationController.text = activity.information;
-                        newImageUrlController.text = activity.imageUrl;
-                        newStructureNameController.text = activity.contact.structureName;
-                        newEmailController.text = activity.contact.email;
-                        newPhoneNumberController.text = activity.contact.phoneNumber;
-                        newWebSiteController.text = activity.contact.webSite;
-                        newTitleAddressController.text = activity.place.titleAddress;
-                        newStreetAddressController.text = activity.place.streetAddress;
-                        newPostalCodeController.text = activity.place.postalCode.toString();
-                        newCityController.text = activity.place.city;
-                        newLatitudeController.text = activity.place.latitude.toString();
-                        newLongitudeController.text = activity.place.longitude.toString();
-                        
-                        for (var schedule in activity.schedules) {
-                          newDayControllers.add(TextEditingController(text:schedule.day));
-                          List<TextEditingController> newStartHourControllers = [];
-                          List<TextEditingController> newEndHourControllers = [];
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black54,
+                          offset: Offset(4, 4),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ActivityCard(
+                        imageUrl: activity['imageUrl'] ?? '',
+                        discipline: activity['discipline'] ?? '',
+                        place: place,
+                        schedules: schedules,
+                        pricings: pricings,
+                        onTap: () {
+                          readActivities();
+                          activityId = activity['activityId'] ?? '';
+                          newDisciplineController.text = activity['discipline'] ?? '';
+                          if (activity['information'] != null) {
+                            for (var info in activity['information']!) {
+                              newInformationControllers.add(TextEditingController(text: info ?? ''));
+                            }
+                          }
+                          newImageUrlController.text = activity['imageUrl'] ?? '';
+                          newStructureNameController.text = activity['contact']?['structureName'] ?? '';
+                          newEmailController.text = activity['contact']?['email'] ?? '';
+                          newPhoneNumberController.text = activity['contact']?['phoneNumber'] ?? '';
+                          newWebSiteController.text = activity['contact']?['webSite'] ?? '';
+                          newTitleAddressController.text = activity['place']?['titleAddress'] ?? '';
+                          newStreetAddressController.text = activity['place']?['streetAddress'] ?? '';
+                          newPostalCodeController.text = activity['place']?['postalCode']?.toString() ?? '00000';
+                          newCityController.text = activity['place']?['city'] ?? '';
+                          newLatitudeController.text = activity['place']?['latitude']?.toString() ?? '0.0';
+                          newLongitudeController.text = activity['place']?['longitude']?.toString() ?? '0.0';
+                          
+                          for (var schedule in activity['schedules'] ?? []) {
+                            newDayControllers.add(TextEditingController(text:schedule['day'] ?? ''));
+                            List<TextEditingController> newStartHourControllers = [];
+                            List<TextEditingController> newEndHourControllers = [];
 
-                          for (var timeSlot in schedule.timeSlots) {
-                            newStartHourControllers.add(TextEditingController(text: timeSlot.startHour));
-                            newEndHourControllers.add(TextEditingController(text: timeSlot.endHour));
+                            for (var timeSlot in schedule['timeSlots'] ?? []) {
+                              newStartHourControllers.add(TextEditingController(text: timeSlot['startHour'] ?? ''));
+                              newEndHourControllers.add(TextEditingController(text: timeSlot['endHour'] ?? ''));
+                            }
+
+                            newStartHourControllersPerDay.add(newStartHourControllers);
+                            newEndHourControllersPerDay.add(newEndHourControllers);
                           }
 
-                          newStartHourControllersPerDay.add(newStartHourControllers);
-                          newEndHourControllersPerDay.add(newEndHourControllers);
-                        }
-
-                        for (var pricing in activity.pricings) {
-                          newProfileControllers.add(TextEditingController(text: pricing.profile));
-                          newPricingControllers.add(TextEditingController(text: pricing.pricing));
-                        }
-                        
-                        newSelectedSubFiltersByCategories = activity.filters.categoriesId;
-                        
-                        newSelectedSubFiltersByCategories.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersByAges = activity.filters.agesId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersByDays = activity.filters.daysId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersBySchedules = activity.filters.schedulesId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersBySectors = activity.filters.sectorsId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        isEditing = true;
-                      },
+                          for (var pricing in activity['pricings'] ?? []) {
+                            newProfileControllers.add(TextEditingController(text: pricing['profile'] ?? ''));
+                            newPricingControllers.add(TextEditingController(text: pricing['pricing'] ?? ''));
+                          }
+                          
+                          newSelectedSubFiltersByCategories = (activity['filters']?['categoriesId'] as List? ?? [])
+                            .map<Map<String, String>>((item) => {
+                              'id': item['id'] ?? '',
+                              'name': item['name'] ?? '',
+                            }).toList();
+                          newSelectedSubFiltersByAges = (activity['filters']?['agesId'] as List? ?? [])
+                            .map<Map<String, String>>((item) => {
+                              'id': item['id'] ?? '',
+                              'name': item['name'] ?? '',
+                            }).toList();
+                          newSelectedSubFiltersByDays = (activity['filters']?['daysId'] as List? ?? [])
+                            .map<Map<String, String>>((item) => {
+                              'id': item['id'] ?? '',
+                              'name': item['name'] ?? '',
+                            }).toList();
+                          newSelectedSubFiltersBySchedules = (activity['filters']?['schedulesId'] as List? ?? [])
+                            .map<Map<String, String>>((item) => {
+                              'id': item['id'] ?? '',
+                              'name': item['name'] ?? '',
+                            }).toList();
+                          newSelectedSubFiltersBySectors = (activity['filters']?['sectorsId'] as List? ?? [])
+                            .map<Map<String, String>>((item) => {
+                              'id': item['id'] ?? '',
+                              'name': item['name'] ?? '',
+                            }).toList();
+                          isEditing = true;
+                        },
+                      ),
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 8),
                 ]
               );
             }).toList(),
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 32),
+            padding: EdgeInsets.only(bottom: 16),
           ),
         ],
       );
-
-    /* return Form(
-      key: _editActivityKey,
-      child: Column(
-        children: [
-          ToggleButtons(
-            isSelected: [selectedSection == 0, selectedSection == 1],
-            onPressed: (int section) {
-              setState(() {
-                selectedSection = section;
-                activityId = '';
-                newDisciplineController.clear();
-                newInformationController.clear();
-                newImageUrlController.clear();
-                newStructureNameController.clear();
-                newEmailController.clear();
-                newPhoneNumberController.clear();
-                newWebSiteController.clear();
-                newTitleAddressController.clear();
-                newStreetAddressController.clear();
-                newPostalCodeController.clear();
-                newCityController.clear();
-                newLatitudeController.clear();
-                newLongitudeController.clear();
-                newDayControllers.clear();
-                newStartHourControllersPerDay.clear();
-                newEndHourControllersPerDay.clear();
-                newProfileControllers.clear();
-                newPricingControllers.clear();
-                newSelectedSubFiltersByCategories.clear();
-                newSelectedSubFiltersByAges.clear();
-                newSelectedSubFiltersByDays.clear();
-                newSelectedSubFiltersBySchedules.clear();
-                newSelectedSubFiltersBySectors.clear();
-                readSubFilters();
-                readActivities();
-              });
-            },
-            color: Colors.black,
-            selectedColor: Colors.white,
-            fillColor: Color(0xFF5B59B4),
-            borderColor: Color(0xFF5B59B4),
-            selectedBorderColor: Color(0xFF5B59B4),
-            borderRadius: BorderRadius.circular(20),
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
-                child: Center(
-                  child: Text('Sport')
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
-                child: Center(
-                  child: Text('Culture')
-                ),
-              ),
-            ],  
-          ),
-          const SizedBox(height: 16),
-          Column(
-            children: activities.map((activity) {
-              return Column(
-                children: [
-                  /* ActivityMap(
-                    titleAddress: activity.place.titleAddress,
-                    streetAddress: activity.place.streetAddress,
-                    postalCode: activity.place.postalCode.toString(),
-                    city: activity.place.city,
-                    latitude: activity.place.latitude,
-                    longitude: activity.place.longitude,
-                  ), */
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ActivityCard(
-                      imageUrl: activity.imageUrl,
-                      discipline: activity.discipline,
-                      place: activity.place,
-                      schedules: activity.schedules,
-                      pricings: activity.pricings,
-                      onTap: () {
-                        activityId = '';
-                        newDisciplineController.clear();
-                        newInformationController.clear();
-                        newImageUrlController.clear();
-                        newStructureNameController.clear();
-                        newEmailController.clear();
-                        newPhoneNumberController.clear();
-                        newWebSiteController.clear();
-                        newTitleAddressController.clear();
-                        newStreetAddressController.clear();
-                        newPostalCodeController.clear();
-                        newCityController.clear();
-                        newLatitudeController.clear();
-                        newLongitudeController.clear();
-                        newDayControllers.clear();
-                        newStartHourControllersPerDay.clear();
-                        newEndHourControllersPerDay.clear();
-                        newProfileControllers.clear();
-                        newPricingControllers.clear();
-                        newSelectedSubFiltersByCategories.clear();
-                        newSelectedSubFiltersByAges.clear();
-                        newSelectedSubFiltersByDays.clear();
-                        newSelectedSubFiltersBySchedules.clear();
-                        newSelectedSubFiltersBySectors.clear();
-                        readActivities();
-                        activityId = activity.activityId;
-                        newDisciplineController.text = activity.discipline;
-                        newInformationController.text = activity.information;
-                        newImageUrlController.text = activity.imageUrl;
-                        newStructureNameController.text = activity.contact.structureName;
-                        newEmailController.text = activity.contact.email;
-                        newPhoneNumberController.text = activity.contact.phoneNumber;
-                        newWebSiteController.text = activity.contact.webSite;
-                        newTitleAddressController.text = activity.place.titleAddress;
-                        newStreetAddressController.text = activity.place.streetAddress;
-                        newPostalCodeController.text = activity.place.postalCode.toString();
-                        newCityController.text = activity.place.city;
-                        newLatitudeController.text = activity.place.latitude.toString();
-                        newLongitudeController.text = activity.place.longitude.toString();
-                        
-                        for (var schedule in activity.schedules) {
-                          newDayControllers.add(TextEditingController(text:schedule.day));
-                          List<TextEditingController> newStartHourControllers = [];
-                          List<TextEditingController> newEndHourControllers = [];
-
-                          for (var timeSlot in schedule.timeSlots) {
-                            newStartHourControllers.add(TextEditingController(text: timeSlot.startHour));
-                            newEndHourControllers.add(TextEditingController(text: timeSlot.endHour));
-                          }
-
-                          newStartHourControllersPerDay.add(newStartHourControllers);
-                          newEndHourControllersPerDay.add(newEndHourControllers);
-                        }
-
-                        for (var pricing in activity.pricings) {
-                          newProfileControllers.add(TextEditingController(text: pricing.profile));
-                          newPricingControllers.add(TextEditingController(text: pricing.pricing));
-                        }
-                        
-                        newSelectedSubFiltersByCategories = activity.filters.categoriesId;
-                        
-                        newSelectedSubFiltersByCategories.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersByAges = activity.filters.agesId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersByDays = activity.filters.daysId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersBySchedules = activity.filters.schedulesId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                        newSelectedSubFiltersBySectors = activity.filters.sectorsId.map((item) => {
-                          'id': item['id'] ?? '',
-                          'name': item['name'] ?? '',
-                        }).toList();
-                      },
-                    ),
-                  )
-                ]
-              );
-            }).toList(),
-          ),
-          DropdownButton<String>(
-            value: selectedFilter,
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedFilter = newValue!;
-                subFilters = [];
-                readSubFilters();
-              });
-            },
-            items: [
-              'Par catégorie',
-              'Par âge',
-              'Par jour',
-              'Par horaire',
-              'Par secteur'
-            ]
-            .map((String filter) {
-              return DropdownMenuItem<String>(
-                value: filter,
-                child: Text(filter),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          DropdownButton<String>(
-            value: selectedSubFilters.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilters,
-            onChanged: (String? newValue) {
-              setState(() {
-                var selectedSubFilter = subFilters.firstWhere(
-                  (item) => item.id == newValue
-                );
-                var subFilterMap = {
-                  'id': selectedSubFilter.id.toString(),
-                  'name': selectedSubFilter.name.toString()
-                };
-
-                if (selectedFilter == 'Par catégorie') {
-                  if (!newSelectedSubFiltersByCategories.any(
-                    (item) => item['id'] == newValue)
-                  ) {
-                    newSelectedSubFiltersByCategories.add(subFilterMap);
-                  }
-                }
-                if (selectedFilter == 'Par âge') {
-                  if (!newSelectedSubFiltersByAges.any(
-                    (item) => item['id'] == newValue)
-                  ) {
-                    newSelectedSubFiltersByAges.add(subFilterMap);
-                  }
-                }
-                if (selectedFilter == 'Par jour') {
-                  if (!newSelectedSubFiltersByDays.any(
-                    (item) => item['id'] == newValue)
-                  ) {
-                    newSelectedSubFiltersByDays.add(subFilterMap);
-                  }
-                }
-                if (selectedFilter == 'Par horaire') {
-                  if (!newSelectedSubFiltersBySchedules.any(
-                    (item) => item['id'] == newValue)
-                  ) {
-                    newSelectedSubFiltersBySchedules.add(subFilterMap);
-                  }
-                }
-                if (selectedFilter == 'Par secteur') {
-                  if (!newSelectedSubFiltersBySectors.any(
-                    (item) => item['id'] == newValue)
-                  ) {
-                    newSelectedSubFiltersBySectors.add(subFilterMap);
-                  }
-                }
-              });
-            },
-            items: sortSubFilters(
-              subFilters, selectedFilter
-            ).map((subFilter) {
-              return DropdownMenuItem<String>(
-                value: subFilter.id,
-                child: Text(subFilter.name),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Par catégorie :',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          Wrap(
-            spacing: 8.0,
-            children: newSelectedSubFiltersByCategories.map((subFilter) {
-              debugPrint('newSelectedSubFiltersByCategories 1: $newSelectedSubFiltersByCategories');
-              return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
-                onDeleted: () {
-                  setState(() {
-                    newSelectedSubFiltersByCategories.removeWhere(
-                      (item) => item['id'] == subFilter['id']
-                    );
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          Text(
-            'Par âge :',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          Wrap(
-            spacing: 8.0,
-            children: newSelectedSubFiltersByAges.map((subFilter) {
-              debugPrint('newSelectedSubFiltersByAges 1: $newSelectedSubFiltersByAges');
-              return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
-                onDeleted: () {
-                  setState(() {
-                    newSelectedSubFiltersByAges.removeWhere(
-                      (item) => item['id'] == subFilter['id']
-                    );
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          Text(
-            'Par jour :',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          Wrap(
-            spacing: 8.0,
-            children: newSelectedSubFiltersByDays.map((subFilter) {
-              debugPrint('newSelectedSubFiltersByDays 1: $newSelectedSubFiltersByDays');
-              return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
-                onDeleted: () {
-                  setState(() {
-                    newSelectedSubFiltersByDays.removeWhere(
-                      (item) => item['id'] == subFilter['id']
-                    );
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          Text(
-            'Par horaire :',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          Wrap(
-            spacing: 8.0,
-            children: newSelectedSubFiltersBySchedules.map((subFilter) {
-              debugPrint('newSelectedSubFiltersBySchedules 1: $newSelectedSubFiltersBySchedules');
-              return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
-                onDeleted: () {
-                  setState(() {
-                    newSelectedSubFiltersBySchedules.removeWhere(
-                      (item) => item['id'] == subFilter['id']
-                    );
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          Text(
-            'Par secteur :',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          Wrap(
-            spacing: 8.0,
-            children: newSelectedSubFiltersBySectors.map((subFilter) {
-              debugPrint('newSelectedSubFiltersBySectors 1: $newSelectedSubFiltersBySectors');
-              return Chip(
-                label: Text(subFilter['name']!),
-                deleteIcon: Icon(Icons.close),
-                onDeleted: () {
-                  setState(() {
-                    newSelectedSubFiltersBySectors.removeWhere(
-                      (item) => item['id'] == subFilter['id']
-                    );
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: TextFormField(
-            controller: newDisciplineController,
-              decoration: const InputDecoration(
-                labelText: 'Nouvelle discipline',
-                hintText: 'Ex: Course à pied',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer un nom de discipline';
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: TextFormField(
-              controller: newInformationController,
-              decoration: const InputDecoration(
-                labelText: 'Nouvelle information',
-                hintText: 'Ex: Amenez votre bouteille d\'eau',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer une information';
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: TextFormField(
-              controller: newImageUrlController,
-              decoration: const InputDecoration(
-                labelText: 'Nouvelle image Url',
-                hintText: 'Ex: https://www.example.com/image.jpg',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer une image url';
-                }
-                return null;
-              },
-            ),
-          ),
-          if (newImageUrlController.text.isNotEmpty)
-            const SizedBox(height: 16),
-          if (newImageUrlController.text.isNotEmpty)
-            Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(newImageUrlController.text),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          const SizedBox(height: 16),
-          ExpansionTile(
-            title: Text(
-              'Contact',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newStructureNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouveau nom de la structure organisatrice',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un nom de structure';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newEmailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouvel email',
-                    hintText: 'Ex: abc@exemple.com',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un email';
-                    }
-
-                    final regex = RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
-                    );
-                    if (!regex.hasMatch(value)) {
-                      return 'Veuillez entrer un email valide';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newPhoneNumberController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouveau numéro de téléphone',
-                    hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un numéro de téléphone';
-                    }
-
-                    final regex = RegExp(
-                      r'^(\+33\s?\d{1}\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|\d{10})$'
-                    );
-                    if (!regex.hasMatch(value)) {
-                      return 'Veuillez entrer un numéro de téléphone valide';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newWebSiteController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouveau site internet',
-                    hintText: 'Ex: https://www.example.com',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un site internet';
-                    }
-
-                    final regex = RegExp(
-                      r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\:[0-9]{1,5})?(\/.*)?$'
-                    );
-                    if (!regex.hasMatch(value)) {
-                      return 'Veuillez entrer un site internet valide';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-          ExpansionTile(
-            title: Text(
-              'Lieu',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newTitleAddressController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouvel intitulé d\'adresse',
-                    hintText: 'Ex: Stade Maurice Postaire',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un intitulé d\'adresse';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newStreetAddressController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouveau(x) N° et/ou nom de rue',
-                    hintText: 'Ex: 18 rue Pierre de Coubertin',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un N° et/ou nom de rue';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newPostalCodeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouveau code postal',
-                    hintText: 'Ex: 50100',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un code postal';
-                    }
-                    final regex = RegExp(r'^\d{2}\s?\d{3}$');
-                    if (!regex.hasMatch(value)) {
-                      return 'Veuillez entrer un code postal valide';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newCityController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouvelle ville',
-                    hintText: 'Ex: Cherbourg-en-Cotentin',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer une ville';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newLatitudeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouvelle latitude Google Maps',
-                    hintText: 'Ex: 49.64358701909363',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer une latitude';
-                    }
-                    final regex = RegExp(r'^-?\d{1,2}(\.\d+)?$');
-                    if (!regex.hasMatch(value)) {
-                      return 'Veuillez entrer une latitude valide';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextFormField(
-                  controller: newLongitudeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nouvelle longitude Google Maps',
-                    hintText: 'Ex: -1.638480195782405',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer une longitude';
-                    }
-                    final regex = RegExp(r'^-?(\d{1,3}(\.\d+)?|\.\d+)$');
-                    if (!regex.hasMatch(value)) {
-                      return 'Veuillez entrer une longitude valide';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-          ExpansionTile(
-            title: Text(
-              'Horaires',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: newDayControllers.length,
-                itemBuilder: (context, newDayIndex) {
-                  return Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child: TextFormField(
-                          controller: newDayControllers[newDayIndex],
-                          decoration: const InputDecoration(
-                            labelText: 'Nouveau jour',
-                            hintText: 'Ex: Mercredi',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un jour';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.red),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                          onPressed: () {
-                            removeNewDayField(newDayIndex);
-                          },
-                          child: Text('Supprimer cette journée'),
-                        ),
-                      
-                        SizedBox(height: 16),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: newStartHourControllersPerDay[newDayIndex].length,
-                        itemBuilder: (context, newTimeSlotIndex) {
-                          return Column(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                child: TextFormField(
-                                  controller: newStartHourControllersPerDay[newDayIndex][newTimeSlotIndex],
-                                  decoration: const InputDecoration(
-                                    labelText: 'Nouvel horaire de début',
-                                    hintText: 'Ex: 10h, 10h30',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Veuillez entrer un horaire de début';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: 16),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                child: TextFormField(
-                                  controller: newEndHourControllersPerDay[newDayIndex][newTimeSlotIndex],
-                                  decoration: const InputDecoration(
-                                    labelText: 'Nouvel horaire de fin',
-                                    hintText: 'Ex: 11h, 11h30',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Veuillez entrer un horaire de fin';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: 16),
-                              
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.redAccent,
-                                    foregroundColor: Colors.white,
-                                    side: BorderSide(color: Colors.red),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    removeNewTimeSlotForDay(newDayIndex, newTimeSlotIndex);
-                                  },
-                                  child: Text('Supprimer ce créneau'),
-                                ),
-                              
-                                SizedBox(height: 16),
-                            ],
-                          );
-                        },
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.lightGreen),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                        onPressed: () {
-                          addNewTimeSlotForDay(newDayIndex);
-                        },
-                        child: Text('Ajouter un créneau'),
-                      ),
-                      SizedBox(height: 16),
-                    ],
-                  );
-                },
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.lightGreen),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onPressed: () {
-                  addNewDayField();
-                },
-                child: Text('Ajouter une journée'),
-              ),
-              SizedBox(height: 16),
-            ],
-          ),
-          ExpansionTile(
-            title: Text(
-              'Tarifs et profils',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: newProfileControllers.length,
-                itemBuilder: (context, newIndex) {
-                  return Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child: TextFormField(
-                          controller: newProfileControllers[newIndex],
-                          decoration: const InputDecoration(
-                            labelText: 'Nouveau profil',
-                            hintText: 'Ex: Débutants',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un profil';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child: TextFormField(
-                          controller: newPricingControllers[newIndex],
-                          decoration: const InputDecoration(
-                            labelText: 'Nouveau prix',
-                            hintText: 'Ex: 10€, 10€50',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un prix';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (newProfileControllers.length > 1)
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.red),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                          onPressed: () {
-                            removeNewProfilePricing(newIndex);
-                          },
-                          child: Text('Supprimer ce tarif par profil'),
-                        ),
-                      if (newProfileControllers.length > 1)
-                        SizedBox(height: 16),
-                    ],
-                  );
-                },
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.lightGreen),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                onPressed: addNewProfilePricing,
-                child: Text('Ajouter un tarif par profil'),
-              ),
-              SizedBox(height: 16),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF5B59B4),
-              foregroundColor: Colors.white,
-              side: BorderSide(color: Color(0xFF5B59B4)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            onPressed: () {
-              if (_editActivityKey.currentState!.validate()) {
-                updateActivity(
-                  context: context,
-                );
-                activityId = '';
-                newDisciplineController.clear();
-                newInformationController.clear();
-                newImageUrlController.clear();
-                newStructureNameController.clear();
-                newEmailController.clear();
-                newPhoneNumberController.clear();
-                newWebSiteController.clear();
-                newTitleAddressController.clear();
-                newStreetAddressController.clear();
-                newPostalCodeController.clear();
-                newCityController.clear();
-                newLatitudeController.clear();
-                newLongitudeController.clear();
-                newDayControllers.clear();
-                newStartHourControllersPerDay.clear();
-                newEndHourControllersPerDay.clear();
-                newProfileControllers.clear();
-                newPricingControllers.clear();
-                newSelectedSubFiltersByCategories.clear();
-                newSelectedSubFiltersByAges.clear();
-                newSelectedSubFiltersByDays.clear();
-                newSelectedSubFiltersBySchedules.clear();
-                newSelectedSubFiltersBySectors.clear();
-                readActivities();
-              }
-            },
-            child: Text('Modifier l\'activité'),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 32),
-          ),
-        ],)
-    ); */
   }
 
   Widget _buildDeleteActivity(
     BuildContext context
   ) {
+
     return Form(
       key: _deleteActivityKey,
       child: Column(
@@ -3740,7 +3236,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             onPressed: (int section) {
               setState(() {
                 selectedSection = section;
-                readSubFilters();
+                readActivities();
+                selectedActivityIds.clear();
               });
             },
             color: Colors.black,
@@ -3763,6 +3260,70 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 ),
               ),
             ],  
+          ),
+          const SizedBox(height: 16),
+          Column(
+            children: activities.map((activity) {
+              Place place = Place.fromMap(activity['place'] ?? {});
+              List<Schedule> schedules = (activity['schedules'] as List?)
+                ?.map((schedule) => Schedule.fromMap(schedule as Map<String, dynamic>))
+                .toList() ?? [];
+              List<Pricing> pricings = (activity['pricings'] as List?)
+                ?.map((pricing) => Pricing.fromMap(pricing as Map<String, String>))
+                .toList() ?? [];
+              bool isSelected = selectedActivityIds.contains(activity['activityId']);
+
+              return Column(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.blueAccent : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isSelected ?
+                        [
+                          BoxShadow(
+                            color: Colors.blueAccent,
+                            offset: Offset(4, 4),
+                            blurRadius: 6,
+                          ),
+                        ] :
+                        [
+                          BoxShadow(
+                            color: Colors.black54,
+                            offset: Offset(4, 4),
+                            blurRadius: 6,
+                          ),
+                        ],
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ActivityCard(
+                        imageUrl: activity['imageUrl'] ?? '',
+                        discipline: activity['discipline'] ?? '',
+                        place: place,
+                        schedules: schedules,
+                        pricings: pricings,
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              selectedActivityIds.remove(activity['activityId']);
+                              debugPrint('Déselectionné: ${activity['activityId']}');
+                            } else {
+                              selectedActivityIds.add(activity['activityId']);
+                              debugPrint('Sélectionné: ${activity['activityId']}');
+                            }
+                            debugPrint('Activités sélectionnées: $selectedActivityIds');
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              );
+            }).toList(),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -3776,15 +3337,18 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             ),
             onPressed: () {
               if (_deleteActivityKey.currentState!.validate()) {
-                deleteActivity(
+                deleteActivities(
                   context: context,
+                  activityIds: selectedActivityIds,
                 );
+                readActivities();
+                selectedActivityIds.clear();
               }
             },
             child: Text('Supprimer l\'activité'),
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 32),
+            padding: EdgeInsets.only(bottom: 16),
           ),
         ],
       )

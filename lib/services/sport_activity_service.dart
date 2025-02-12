@@ -9,12 +9,12 @@ class SportActivityService {
   Future<void> addSportActivity(
     String? activityId,
     String discipline,
-    String information,
-    String imageUrl,
+    List<String>? information,
+    String? imageUrl,
     String structureName,
-    String email,
-    String phoneNumber,
-    String webSite,
+    String? email,
+    String? phoneNumber,
+    String? webSite,
     String titleAddress,
     String streetAddress,
     int postalCode,
@@ -83,12 +83,14 @@ class SportActivityService {
     return activitiesData.map((docSnapshot) {
       final activityId = docSnapshot.id;
       final discipline = docSnapshot['discipline'];
-      final information = docSnapshot['information'];
-      final imageUrl = docSnapshot['imageUrl'];
+      final information = (docSnapshot['information'] is List) ?
+        (docSnapshot['information'] as List).map((e) => e as String).toList() :
+        null;
+      final imageUrl = docSnapshot['imageUrl'] as String?;
       final structureName = docSnapshot['contact']['structureName'];
-      final email = docSnapshot['contact']['email'];
-      final phoneNumber = docSnapshot['contact']['phoneNumber'];
-      final webSite = docSnapshot['contact']['webSite'];
+      final email = docSnapshot['contact']['email'] as String?;
+      final phoneNumber = docSnapshot['contact']['phoneNumber'] as String?;
+      final webSite = docSnapshot['contact']['webSite'] as String?;
       final titleAddress = docSnapshot['place']['titleAddress'];
       final streetAddress = docSnapshot['place']['streetAddress'];
       final postalCode = docSnapshot['place']['postalCode'];
@@ -177,12 +179,12 @@ class SportActivityService {
   Future<void> updateSportActivity(
     String activityId,
     String newDiscipline,
-    String newInformation,
-    String newImageUrl,
+    List<String>? newInformation,
+    String? newImageUrl,
     String newStructureName,
-    String newEmail,
-    String newPhoneNumber,
-    String newWebSite,
+    String? newEmail,
+    String? newPhoneNumber,
+    String? newWebSite,
     String newTitleAddress,
     String newStreetAddress,
     int newPostalCode,
@@ -234,12 +236,12 @@ class SportActivityService {
     );
   }
 
-  Future<void> deleteSportActivity(
-    String activityId
+  Future<void> deleteSportActivities(
+    List<String> activityIds
   ) async {
-    await activitiesCRUD.deleteActivity(
+    await activitiesCRUD.deleteActivities(
       'sports',
-      activityId,
+      activityIds,
     );
   }
 }

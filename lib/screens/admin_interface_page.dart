@@ -24,14 +24,14 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
   String selectedSubFilterId = '';
   String selectedSubFilterIdForEditing = '';
   String selectedSubFilterIdForDeleting = '';
-  List<dynamic> subFilters = [];
+  List<Map<String, dynamic>> subFilters = [];
   bool isLoading = false;
   bool isAdding = false;
   bool isEditing = false;
   bool isDeleting = false;
 
-  String? imageUrl;
-  String? newImageUrl;
+  late String imageUrl;
+  late String newImageUrl;
   TextEditingController nameController = TextEditingController();
   TextEditingController imageUrlController = TextEditingController();
   TextEditingController newNameController = TextEditingController();
@@ -40,6 +40,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
   Future<void> createSubFilter({
     required BuildContext context
   }) async {
+
     String name = nameController.text.trim();
     String imageUrl = imageUrlController.text.trim();
     
@@ -53,31 +54,31 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await SportFilterService().addSportCategory(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par âge') {
           await SportFilterService().addSportAge(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par jour') {
           await SportFilterService().addSportDay(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par horaire') {
           await SportFilterService().addSportSchedule(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par secteur') {
           await SportFilterService().addSportSector(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         }
       } else {
@@ -85,31 +86,31 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await CultureFilterService().addCultureCategory(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par âge') {
           await CultureFilterService().addCultureAge(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par jour') {
           await CultureFilterService().addCultureDay(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par horaire') {
           await CultureFilterService().addCultureSchedule(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         } else if (selectedFilter == 'Par secteur') {
           await CultureFilterService().addCultureSector(
             null,
             name,
-            imageUrl
+            imageUrl,
           );
         }
       }
@@ -150,39 +151,62 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
 
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await SportFilterService().getSportCategories();
-          debugPrint(subFilters.toString());
+          subFilters = (await SportFilterService().getSportCategories())
+            .map((item) => (item).toMap())
+            .toList();
+          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await SportFilterService().getSportAges();
-          debugPrint(subFilters.toString());
+          subFilters = (await SportFilterService().getSportAges())
+            .map((item) => (item).toMap())
+            .toList(); 
+          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await SportFilterService().getSportDays();
+          subFilters = (await SportFilterService().getSportDays())
+            .map((item) => (item).toMap())
+            .toList();
+          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await SportFilterService().getSportSchedules();
+          subFilters = (await SportFilterService().getSportSchedules())
+            .map((item) => (item).toMap())
+            .toList();
+          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await SportFilterService().getSportSectors();
+          subFilters = (await SportFilterService().getSportSectors())
+            .map((item) => (item).toMap())
+            .toList();
+          debugPrint('ReadSubFIlters: $subFilters');
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
-          subFilters = await CultureFilterService().getCultureCategories();
+          subFilters = (await CultureFilterService().getCultureCategories())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par âge') {
-          subFilters = await CultureFilterService().getCultureAges();
+          subFilters = (await CultureFilterService().getCultureAges())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par jour') {
-          subFilters = await CultureFilterService().getCultureDays();
+          subFilters = (await CultureFilterService().getCultureDays())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par horaire') {
-          subFilters = await CultureFilterService().getCultureSchedules();
+          subFilters = (await CultureFilterService().getCultureSchedules())
+            .map((item) => (item).toMap())
+            .toList();
         } else if (selectedFilter == 'Par secteur') {
-          subFilters = await CultureFilterService().getCultureSectors();
+          subFilters = (await CultureFilterService().getCultureSectors())
+            .map((item) => (item).toMap())
+            .toList();
         }
       }
 
-      if (!subFilters.any(
-        (subFilter) => subFilter.id == selectedSubFilterIdForDeleting)
+      /* if (!subFilters.any(
+        (subFilter) => subFilter['id'] == selectedSubFilterForDeleting)
       ) {
         setState(() {
-          selectedSubFilterIdForDeleting = '';
+          selectedSubFilterForDeleting = {};
         });
-      }
+      } */
     } catch (e) {
       debugPrint('Error reading sub-filters: $e');
     } finally {
@@ -195,9 +219,11 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
   Future<void> updateSubFilter({
     required BuildContext context
   }) async {
-    
     String newName = newNameController.text.trim();
     String newImageUrl = newImageUrlController.text.trim();
+
+    debugPrint('newName: $newName');
+    debugPrint('newImageUrl: $newImageUrl');
     
     try {
       setState(() {
@@ -209,31 +235,31 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await SportFilterService().updateSportCategory(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par âge') {
           await SportFilterService().updateSportAge(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par jour') {
           await SportFilterService().updateSportDay(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par horaire') {
           await SportFilterService().updateSportSchedule(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par secteur') {
           await SportFilterService().updateSportSector(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         }
       } else {
@@ -241,31 +267,31 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           await CultureFilterService().updateCultureCategory(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par âge') {
           await CultureFilterService().updateCultureAge(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par jour') {
           await CultureFilterService().updateCultureDay(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par horaire') {
           await CultureFilterService().updateCultureSchedule(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         } else if (selectedFilter == 'Par secteur') {
           await CultureFilterService().updateCultureSector(
             selectedSubFilterId,
             newName,
-            newImageUrl
+            newImageUrl,
           );
         }
       }
@@ -309,45 +335,45 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
       if (selectedSection == 0) {
         if (selectedFilter == 'Par catégorie') {
           await SportFilterService().deleteSportCategory(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par âge') {
           await SportFilterService().deleteSportAge(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par jour') {
           await SportFilterService().deleteSportDay(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par horaire') {
           await SportFilterService().deleteSportSchedule(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par secteur') {
           await SportFilterService().deleteSportSector(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
           await CultureFilterService().deleteCultureCategory(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par âge') {
           await CultureFilterService().deleteCultureAge(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par jour') {
           await CultureFilterService().deleteCultureDay(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par horaire') {
           await CultureFilterService().deleteCultureSchedule(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         } else if (selectedFilter == 'Par secteur') {
           await CultureFilterService().deleteCultureSector(
-            selectedSubFilterId
+            selectedSubFilterId,
           );
         }
       }
@@ -382,27 +408,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
 
   bool isNameDuplicated(String name) {
     return subFilters.any(
-      (subFilter) => subFilter.name.toLowerCase() == name.toLowerCase() &&
-      subFilter.id != selectedSubFilterIdForEditing,
+      (subFilter) => subFilter['name'].toLowerCase() == name.toLowerCase() &&
+      subFilter['id'] != selectedSubFilterIdForEditing,
     );
   }
 
   List<dynamic> sortSubFilters(
-    List<dynamic> subFilters,
+    List<Map<String, dynamic>> subFilters,
     String selectedFilter
   ) {
     switch (selectedFilter) {
       case 'Par catégorie':
         subFilters.sort(
-          (a,b) => a.name.compareTo(b.name)
+          (a,b) => a['name'].compareTo(b['name'])
         );
         break;
 
       case 'Par âge':
         subFilters.sort(
           (a, b) {
-            int minAgeA = _getMinAgeFromAgeRange(a.name);
-            int minAgeB = _getMinAgeFromAgeRange(b.name);
+            int minAgeA = _getMinAgeFromAgeRange(a['name']);
+            int minAgeB = _getMinAgeFromAgeRange(b['name']);
             return minAgeA.compareTo(minAgeB);
           }
         );
@@ -411,8 +437,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
       case 'Par horaire':
         subFilters.sort(
           (a, b) {
-            int startTimeA = _getStartTimeFromSchedule(a.name);
-            int startTimeB = _getStartTimeFromSchedule(b.name);
+            int startTimeA = _getStartTimeFromSchedule(a['name']);
+            int startTimeB = _getStartTimeFromSchedule(b['name']);
             return startTimeA.compareTo(startTimeB);
           }
         );
@@ -421,20 +447,20 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
       case 'Par jour':
         subFilters.sort(
           (a, b) {
-            return _getDayIndex(a.name).compareTo(_getDayIndex(b.name));
+            return _getDayIndex(a['name']).compareTo(_getDayIndex(b['name']));
           }
         );
         break;
 
       case 'Par secteur':
       subFilters.sort(
-        (a, b) => a.name.compareTo(b.name)
+        (a, b) => a['name'].compareTo(b['name'])
       );
       break;
 
       default:
         subFilters.sort(
-          (a, b) => a.name.compareTo(b.name)
+          (a, b) => a['name'].compareTo(b['name'])
         );
     }
 
@@ -538,24 +564,48 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children : [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: _currentMode == SubFilterMode.adding ?
+                            [
+                              BoxShadow(
+                                color: Colors.blueAccent,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ] :
+                            [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _currentMode = SubFilterMode.adding;
-                            selectedFilter = 'Par catégorie';
-                            subFilters = [];
-                            readSubFilters();
-                          });
-                        },
-                        child: Icon(Icons.add, size: 30, color: Colors.white),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentMode = SubFilterMode.adding;
+                              selectedFilter = 'Par catégorie';
+                              subFilters = [];
+                              readSubFilters();
+                            });
+                          },
+                          child: Icon(Icons.add, size: 30, color: Colors.white),
+                        ),
                       ),
                       SizedBox(width: 16),
                       ElevatedButton(
@@ -685,18 +735,18 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   color: Colors.white,
                   size: 60,
                 ),
-              )
-            : Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(imageUrlController.text),
-                  fit: BoxFit.cover,
+              ) :
+              Container(
+                height: 220,
+                width: 220,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrlController.text),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
-            ),
           const SizedBox(height: 16),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
@@ -836,26 +886,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           ),
           const SizedBox(height: 16),
           DropdownButton<String>(
-            value: selectedSubFilterIdForEditing.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilterIdForEditing,
+            value: selectedSubFilterIdForEditing.isEmpty && subFilters.isNotEmpty ? subFilters[0]['id'] : selectedSubFilterIdForEditing,
             onChanged: (String? newValue) {
               setState(() {
                 selectedSubFilterIdForEditing = newValue!;
                 var selectedSubFilter = subFilters.firstWhere(
-                  (subFilter) => subFilter.id == newValue
+                  (subFilter) => subFilter['id'] == newValue
                 );
-                if (selectedSubFilter != null) {
-                  newNameController.text = selectedSubFilter.name;
-                  newImageUrlController.text = selectedSubFilter.imageUrl; 
-                  selectedSubFilterId = selectedSubFilter.id;
-                }
+
+                /* if (selectedSubFilter != null) { */
+                  newNameController.text = selectedSubFilter['name'];
+                  newImageUrlController.text = selectedSubFilter['imageUrl'];
+                  selectedSubFilterId = selectedSubFilter['id'];
+                /* } */
               });
             },
             items: sortSubFilters(
               subFilters, selectedFilter
             ).map((subFilter) {
               return DropdownMenuItem<String>(
-                value: subFilter.id,
-                child: Text(subFilter.name),
+                value: subFilter['id'],
+                child: Text(subFilter['name']),
               );
             }).toList(),
           ),
@@ -867,7 +918,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(
-                    subFilters.firstWhere((subFilter) => subFilter.id == selectedSubFilterIdForEditing).imageUrl
+                    subFilters.firstWhere((subFilter) => subFilter['id'] == selectedSubFilterIdForEditing)['imageUrl']
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -881,18 +932,18 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   color: Colors.white,
                   size: 60,
                 ),
-              )
-            : Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(newImageUrlController.text),
-                  fit: BoxFit.cover,
+              ) :
+              Container(
+                height: 220,
+                width: 220,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(newImageUrlController.text),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
-            ),
           const SizedBox(height: 16),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
@@ -1028,17 +1079,17 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           ),
           const SizedBox(height: 16),
           DropdownButton<String>(
-            value: selectedSubFilterIdForDeleting.isEmpty && subFilters.isNotEmpty ? subFilters[0].id : selectedSubFilterIdForDeleting,
+            value: selectedSubFilterIdForDeleting.isEmpty && subFilters.isNotEmpty ? subFilters[0]['id'] : selectedSubFilterIdForDeleting,
             onChanged: (String? newValue) {
               setState(() {
                 selectedSubFilterIdForDeleting = newValue!;
                 var selectedSubFilter = subFilters.firstWhere(
-                  (subFilter) => subFilter.id == newValue
+                  (subFilter) => subFilter['id'] == newValue
                 );
-                if (selectedSubFilter != null) {
-                  imageUrl = selectedSubFilter.imageUrl;
-                  selectedSubFilterId = selectedSubFilter.id;
-                }
+                /* if (selectedSubFilter != null) { */
+                  imageUrl = selectedSubFilter['imageUrl'];
+                  selectedSubFilterId = selectedSubFilter['id'];
+                /* } */
               });
               debugPrint('DebugPrint 1: $selectedSubFilterId');
             },
@@ -1046,8 +1097,8 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               subFilters, selectedFilter
             ).map((subFilter) {
               return DropdownMenuItem<String>(
-                value: subFilter.id,
-                child: Text(subFilter.name),
+                value: subFilter['id'],
+                child: Text(subFilter['name']),
               );
             }).toList(),
           ),
@@ -1059,27 +1110,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   color: Colors.white,
                   size: 60,
                 ),
-              )
-            : Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    subFilters.firstWhere(
-                      (subFilter) => subFilter.id == selectedSubFilterIdForDeleting
-                    ).imageUrl
+              ) :
+              Container(
+                height: 220,
+                width: 220,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      subFilters.firstWhere(
+                        (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting
+                      )['imageUrl']
+                    ),
+                    fit: BoxFit.cover,
                   ),
-                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
-            ),
           const SizedBox(height: 16),
           if (selectedSubFilterIdForDeleting.isNotEmpty)
             Text('Nom du sous-filtre: ${subFilters.firstWhere(
-              (subFilter) => subFilter.id == selectedSubFilterIdForDeleting
-            ).name}'),
+              (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting
+            )['name']}'),
           const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

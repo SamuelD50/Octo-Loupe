@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ActivityModel {
   final String activityId;
   final String discipline;
-  final String information;
-  final String imageUrl;
+  final List<String>? information;
+  final String? imageUrl;
   final Place place;
   final Contact contact;
   final List<Schedule> schedules;
@@ -14,16 +14,13 @@ class ActivityModel {
   ActivityModel({
     required this.activityId,
     required this.discipline,
-    required this.information,
-    required this.imageUrl,
+    this.information,
+    this.imageUrl,
     required this.place,
     required this.contact,
     required this.schedules,
     required this.pricings,
     required this.filters
-    
-    /* required this.imageUrl, */
-
   });
 
   factory ActivityModel.fromFirestore(
@@ -34,7 +31,7 @@ class ActivityModel {
       return ActivityModel(
         activityId: snapshot.id,
         discipline: '',
-        information: '',
+        information: [],
         imageUrl: '',
         contact: Contact(
           structureName: '',
@@ -45,7 +42,7 @@ class ActivityModel {
         place: Place(
           titleAddress: '',
           streetAddress: '',
-          postalCode: 50130,
+          postalCode: 00000,
           city: '',
           latitude: 0.0,
           longitude: 0.0,
@@ -81,8 +78,9 @@ class ActivityModel {
     return ActivityModel(
       activityId: snapshot.id,
       discipline: data['discipline'] ?? '',
-      information: data['information'] ?? '',
-      imageUrl: data['imageUrl'] ?? '',
+      information: (data['information'] as List?)?.map((e) =>
+         e as String).toList(),
+      imageUrl: data['imageUrl'] as String?,
       contact: Contact.fromMap(data['contact'] ?? {
         'structureName': '',
         'email': '',
@@ -92,7 +90,7 @@ class ActivityModel {
       place: Place.fromMap(data['place'] ?? {
         'titleAddress': '',
         'streetAddress': '',
-        'postalCode': 50130,
+        'postalCode': 00000,
         'city': '',
         'latitude': 0.0,
         'longitude': 0.0,
@@ -136,8 +134,9 @@ class ActivityModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'activityId': activityId,
       'discipline': discipline,
-      'information': information,
+      'information': information ?? [],
       'imageUrl': imageUrl,
       'contact': contact.toMap(),
       'place': place.toMap(),
@@ -196,15 +195,15 @@ class Place {
 
 class Contact {
   final String structureName;
-  final String email;
-  final String phoneNumber;
-  final String webSite;
+  final String? email;
+  final String? phoneNumber;
+  final String? webSite;
 
   Contact({
     required this.structureName,
-    required this.email,
-    required this.phoneNumber,
-    required this.webSite,
+    this.email,
+    this.phoneNumber,
+    this.webSite,
   });
 
   factory Contact.fromMap(
@@ -218,7 +217,7 @@ class Contact {
     );
   }
 
-  Map<String, String> toMap() {
+  Map<String, String?> toMap() {
     return {
       'structureName': structureName,
       'email': email,
@@ -245,7 +244,7 @@ class Schedule {
       timeSlots: (map['timeSlots'] as List? ?? [])
         .map(
           (e) => TimeSlot.fromMap(
-            e as Map<String, String>
+            e as Map<String, String?>
           )
         ).toList(),
     );
@@ -262,8 +261,8 @@ class Schedule {
 }
 
 class TimeSlot {
-  final String startHour;
-  final String endHour;
+  final String? startHour;
+  final String? endHour;
 
   TimeSlot({
     required this.startHour,
@@ -271,7 +270,7 @@ class TimeSlot {
   });
 
   factory TimeSlot.fromMap(
-    Map<String, String> map
+    Map<String, String?> map
   ) {
     return TimeSlot(
       startHour: map['startHour'] ?? '',
@@ -279,7 +278,7 @@ class TimeSlot {
     );
   }
 
-  Map<String, String> toMap() {
+  Map<String, String?> toMap() {
     return {
       'startHour': startHour,
       'endHour': endHour,
@@ -329,30 +328,30 @@ class Filters {
   });
 
   factory Filters.fromMap(
-    Map<String, dynamic> map
+    Map<String, List> map
   ) {
     return Filters(
-      categoriesId: (map['categoriesId'] as List? ?? [])
+      categoriesId: (map['categoriesId'] ?? [])
         .map((e) => {
           'id': e['id'] as String,
           'name': e['name'] as String,
         }).toList(),
-      agesId: (map['agesId'] as List? ?? [])
+      agesId: (map['agesId'] ?? [])
         .map((e) => {
           'id': e['id'] as String,
           'name': e['name'] as String,
         }).toList(),
-      daysId: (map['daysId'] as List? ?? [])
+      daysId: (map['daysId'] ?? [])
         .map((e) => {
           'id': e['id'] as String,
           'name': e['name'] as String,
         }).toList(),
-      schedulesId: (map['schedulesId'] as List? ?? [])
+      schedulesId: (map['schedulesId'] ?? [])
         .map((e) => {
           'id': e['id'] as String,
           'name': e['name'] as String,
         }).toList(),
-      sectorsId: (map['sectorsId'] as List? ?? [])
+      sectorsId: (map['sectorsId'] ?? [])
         .map((e) => {
           'id': e['id'] as String,
           'name': e['name'] as String,
@@ -360,7 +359,7 @@ class Filters {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, List> toMap() {
     return {
       'categoriesId': categoriesId,
       'agesId': agesId,

@@ -17,7 +17,7 @@ class SportFilterModel {
   });
 
   factory SportFilterModel.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot
+    DocumentSnapshot<Map<String, List>> snapshot
   ) {
     final data = snapshot.data();
     if (data == null) {
@@ -32,40 +32,40 @@ class SportFilterModel {
     }
 
     return SportFilterModel(
-      categories: (data['categories'] as List? ?? [])
+      categories: (data['categories'] as List)
         .map(
           (e) => SportCategory.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      ages: (data['ages'] as List? ?? [])
+      ages: (data['ages'] as List)
         .map(
           (e) => SportAge.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      days: (data['days'] as List? ?? [])
+      days: (data['days'] as List)
         .map(
           (e) => SportDay.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      schedules: (data['schedules'] as List? ?? [])
+      schedules: (data['schedules'] as List)
         .map(
           (e) => SportSchedule.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      sectors: (data['sectors'] as List? ?? [])
+      sectors: (data['sectors'] as List)
         .map(
           (e) => SportSector.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, List> toMap() {
     return {
       'categories': categories.map(
         (e) => e.toMap()
@@ -98,7 +98,7 @@ class SportCategory {
   });
 
   factory SportCategory.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return SportCategory(
@@ -108,8 +108,9 @@ class SportCategory {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -128,7 +129,7 @@ class SportAge {
   });
 
   factory SportAge.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return SportAge(
@@ -138,8 +139,9 @@ class SportAge {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -158,7 +160,7 @@ class SportDay {
   });
 
   factory SportDay.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return SportDay(
@@ -168,8 +170,9 @@ class SportDay {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -188,7 +191,7 @@ class SportSchedule {
   });
 
   factory SportSchedule.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return SportSchedule(
@@ -198,8 +201,9 @@ class SportSchedule {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -218,7 +222,7 @@ class SportSector {
   });
 
   factory SportSector.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return SportSector(
@@ -228,8 +232,9 @@ class SportSector {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };

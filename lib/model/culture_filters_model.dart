@@ -16,7 +16,7 @@ class CultureFilterModel {
   });
 
   factory CultureFilterModel.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot
+    DocumentSnapshot<Map<String, List>> snapshot
   ) {
     final data = snapshot.data();
     if (data == null) {
@@ -30,40 +30,40 @@ class CultureFilterModel {
     }
 
     return CultureFilterModel(
-      categories: (data['categories'] as List? ?? [])
+      categories: (data['categories'] as List)
         .map(
           (e) => CultureCategory.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      ages: (data['ages'] as List? ?? [])
+      ages: (data['ages'] as List)
         .map(
           (e) => CultureAge.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      days: (data['days'] as List? ?? [])
+      days: (data['days'] as List)
         .map(
           (e) => CultureDay.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      schedules: (data['schedules'] as List? ?? [])
+      schedules: (data['schedules'] as List)
         .map(
           (e) => CultureSchedule.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
-      sectors: (data['sectors'] as List? ?? [])
+      sectors: (data['sectors'] as List)
         .map(
           (e) => CultureSector.fromMap(
-            e as Map<String, dynamic>
+            e as Map<String, String>
           )
         ).toList(),
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, List> toMap() {
     return {
       'categories': categories.map(
         (e) => e.toMap()
@@ -96,7 +96,7 @@ class CultureCategory {
   });
 
   factory CultureCategory.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return CultureCategory(
@@ -106,8 +106,9 @@ class CultureCategory {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -126,7 +127,7 @@ class CultureAge {
   });
 
   factory CultureAge.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return CultureAge(
@@ -136,8 +137,9 @@ class CultureAge {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -156,7 +158,7 @@ class CultureDay {
   });
 
   factory CultureDay.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return CultureDay(
@@ -166,8 +168,9 @@ class CultureDay {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -186,7 +189,7 @@ class CultureSchedule {
   });
 
   factory CultureSchedule.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return CultureSchedule(
@@ -196,8 +199,9 @@ class CultureSchedule {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
@@ -216,7 +220,7 @@ class CultureSector {
   });
 
   factory CultureSector.fromMap(
-    Map<String, dynamic> map, {
+    Map<String, String> map, {
       String? id
     }) {
     return CultureSector(
@@ -226,8 +230,9 @@ class CultureSector {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     return {
+      'id': id as String,
       'name': name,
       'imageUrl': imageUrl,
     };
