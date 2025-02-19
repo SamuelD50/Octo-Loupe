@@ -7,7 +7,7 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class DaySelectionPage extends StatefulWidget {
-  final List<String> selectedDays;
+  final List<Map<String, String>> selectedDays;
   final bool isSport;
 
   const DaySelectionPage({
@@ -21,38 +21,18 @@ class DaySelectionPage extends StatefulWidget {
 }
 
 class DaySelectionPageState extends State<DaySelectionPage> {
-  late List<String> selectedDays;
-  late Future<List<SportDay>> sportDaysFunction;
-  late Future<List<CultureDay>> cultureDaysFunction;
+  late List<Map<String, String>> selectedDays;
+  late Future<List<SportDay>> sportDaysReceiver;
+  late Future<List<CultureDay>> cultureDaysReceiver;
   
 
   @override
   void initState() {
     super.initState();
     selectedDays = List.from(widget.selectedDays);
-    sportDaysFunction = SportFilterService().getSportDays();
-    cultureDaysFunction = CultureFilterService().getCultureDays();
+    sportDaysReceiver = SportFilterService().getSportDays();
+    cultureDaysReceiver = CultureFilterService().getCultureDays();
   }
-
-  /* final List<Map<String, String>> sportDays =[
-    {"name": "Lundi", "image": "assets/images/ballon.jpg"},
-    {"name": "Mardi", "image": "assets/images/nautique.jpg"},
-    {"name": "Mercredi", "image": "assets/images/combat.jpg"},
-    {"name": "Jeudi", "image": "assets/images/athlétisme.jpg"},
-    {"name": "Vendredi", "image": "assets/images/raquette.jpg"},
-    {"name": "Samedi", "image": "assets/images/collectif.jpg"},
-    {"name": "Dimanche", "image": "assets/images/individuel.jpg"},
-  ];
-
-  final List<Map<String, String>> cultureDays =[
-    {"name": "Lundi", "image": "assets/images/ballon.jpg"},
-    {"name": "Mardi", "image": "assets/images/nautique.jpg"},
-    {"name": "Mercredi", "image": "assets/images/combat.jpg"},
-    {"name": "Jeudi", "image": "assets/images/athlétisme.jpg"},
-    {"name": "Vendredi", "image": "assets/images/raquette.jpg"},
-    {"name": "Samedi", "image": "assets/images/collectif.jpg"},
-    {"name": "Dimanche", "image": "assets/images/individuel.jpg"},
-  ]; */
 
   @override
   Widget build(
@@ -86,7 +66,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                 children: [ 
                   widget.isSport ?
                   FutureBuilder<List<SportDay>>(
-                    future: sportDaysFunction,
+                    future: sportDaysReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -135,18 +115,25 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         ),
                         itemCount: sportDays.length,
                         itemBuilder: (context, index) {
-                          final dayName = sportDays[index].name;
-                          final isSelected = selectedDays.contains(dayName);
+                          final day = sportDays[index];
+                          final isSelected = selectedDays.any((selected) =>
+                            selected['id'] == day.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedDays.remove(dayName);
-                                  debugPrint('Désélectionné: $dayName');
+                                  selectedDays.removeWhere((selected) =>
+                                    selected['id'] == day.id);
+                                  debugPrint('Désélectionné: ${day.name}');
                                 } else {
-                                  selectedDays.add(dayName);
-                                  debugPrint('Sélectionné: $dayName');
+                                  if (day.id != null) {
+                                    selectedDays.add({
+                                      'id': day.id!,
+                                      'name': day.name,
+                                    });
+                                    debugPrint('Sélectionné: ${day.name}');
+                                  }
                                 }
                               });
                             },
@@ -178,7 +165,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sportDays[index].imageUrl,
+                                        day.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -189,7 +176,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          dayName,
+                                          day.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -209,7 +196,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                     },
                   )
                   : FutureBuilder<List<CultureDay>>(
-                    future: cultureDaysFunction,
+                    future: cultureDaysReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -260,18 +247,25 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         ),
                         itemCount: cultureDays.length,
                         itemBuilder: (context, index) {
-                          final dayName = cultureDays[index].name;
-                          final isSelected = selectedDays.contains(dayName);
+                          final day = cultureDays[index];
+                          final isSelected = selectedDays.any((selected) =>
+                            selected['id'] == day.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedDays.remove(dayName);
-                                  debugPrint('Désélectionné: $dayName');
+                                  selectedDays.removeWhere((selected) =>
+                                    selected['id'] == day.id);
+                                  debugPrint('Désélectionné: ${day.id}');
                                 } else {
-                                  selectedDays.add(dayName);
-                                  debugPrint('Sélectionné: $dayName');
+                                  if (day.id != null) {
+                                    selectedDays.add({
+                                      'id': day.id!,
+                                      'name': day.name,
+                                    });
+                                    debugPrint('Sélectionné: ${day.name}');
+                                  }
                                 }
                               });
                             },
@@ -304,7 +298,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        cultureDays[index].imageUrl,
+                                        day.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -315,7 +309,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          dayName,
+                                          day.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,

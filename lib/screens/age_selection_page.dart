@@ -7,7 +7,7 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class AgeSelectionPage extends StatefulWidget {
-  final List<String> selectedAges;
+  final List<Map<String, String>> selectedAges;
   final bool isSport;
 
   const AgeSelectionPage({
@@ -21,16 +21,16 @@ class AgeSelectionPage extends StatefulWidget {
 }
 
 class AgeSelectionPageState extends State<AgeSelectionPage> {
-  late List<String> selectedAges;
-  late Future<List<SportAge>> sportAgesFunction;
-  late Future<List<CultureAge>> cultureAgesFunction;
+  late List<Map<String, String>> selectedAges;
+  late Future<List<SportAge>> sportAgesReceiver;
+  late Future<List<CultureAge>> cultureAgesReceiver;
 
   @override
   void initState() {
     super.initState();
     selectedAges = List.from(widget.selectedAges);
-    sportAgesFunction = SportFilterService().getSportAges();
-    cultureAgesFunction = CultureFilterService().getCultureAges();
+    sportAgesReceiver = SportFilterService().getSportAges();
+    cultureAgesReceiver = CultureFilterService().getCultureAges();
   }
 
   List<T> sortAges<T>(List<T> ages) {
@@ -58,20 +58,6 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
 
     return ages;
   }
-
-  /* final List<Map<String, String>> sportAges = [
-    {"name": "3-7 ans", "image": "assets/images/ballon.jpg"},
-    {"name": "8-11 ans", "image": "assets/images/nautique.jpg"},
-    {"name": "12-17 ans", "image": "assets/images/combat.jpg"},
-    {"name": "18 ans et +", "image": "assets/images/athlétisme.jpg"},
-  ];
-
-  final List<Map<String, String>> cultureAges = [
-    {"name": "3-7 ans", "image": "assets/images/ballon.jpg"},
-    {"name": "8-11 ans", "image": "assets/images/nautique.jpg"},
-    {"name": "12-17 ans", "image": "assets/images/combat.jpg"},
-    {"name": "18 ans et +", "image": "assets/images/athlétisme.jpg"},
-  ]; */
 
   @override
   Widget build(
@@ -105,7 +91,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                 children: [
                   widget.isSport ?
                   FutureBuilder<List<SportAge>>(
-                    future: sportAgesFunction,
+                    future: sportAgesReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -140,18 +126,23 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                         ),
                         itemCount: sortedAges.length,
                         itemBuilder: (context, index) {
-                          final ageName = sortedAges[index].name;
-                          final isSelected = selectedAges.contains(ageName);
+                          final age = sortedAges[index];
+                          final isSelected = selectedAges.any((selected) =>
+                            selected['id'] == age.id);
 
                         return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedAges.remove(ageName);
-                                  debugPrint('Désélectionné: $ageName');
+                                  selectedAges.removeWhere((selected) =>
+                                    selected['id'] == age.id);
                                 } else {
-                                  selectedAges.add(ageName);
-                                  debugPrint('Sélectionné: $ageName');
+                                  if (age.id != null) {
+                                    selectedAges.add({
+                                      'id': age.id!,
+                                      'name': age.name,
+                                    });
+                                  }
                                 }
                               });
                             },
@@ -182,7 +173,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sortedAges[index].imageUrl,
+                                        age.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -193,7 +184,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          ageName,
+                                          age.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -213,7 +204,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                     },
                   )
                   : FutureBuilder<List<CultureAge>>(
-                    future: cultureAgesFunction,
+                    future: cultureAgesReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -248,18 +239,26 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                         ),
                         itemCount: sortedAges.length,
                         itemBuilder: (context, index) {
-                          final ageName = sortedAges[index].name;
-                          final isSelected = selectedAges.contains(ageName);
+                          final age = sortedAges[index];
+                          final isSelected = selectedAges.any((selected) =>
+                            selected['id'] == age.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedAges.remove(ageName);
-                                  debugPrint('Désélectionné: $ageName');
+                                  selectedAges.removeWhere((selected) =>
+                                    selected['id'] == age.id);
+                                  debugPrint('Désélectionné: ${age.name}');
                                 } else {
-                                  selectedAges.add(ageName);
-                                  debugPrint('Sélectionné: $ageName');
+                                  if (age.id != null) {
+                                    selectedAges.add({
+                                      'id': age.id!,
+                                      'name': age.name,
+                                    });
+                                    debugPrint('Sélectionné: ${age.name}');
+                                  }
+                                  
                                 }
                               });
                             },
@@ -290,7 +289,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sortedAges[index].imageUrl,
+                                        age.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -301,7 +300,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          ageName,
+                                          age.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,

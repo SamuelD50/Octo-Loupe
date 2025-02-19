@@ -100,7 +100,7 @@ class CultureCategory {
       String? id
     }) {
     return CultureCategory(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -131,7 +131,7 @@ class CultureAge {
       String? id
     }) {
     return CultureAge(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -162,7 +162,7 @@ class CultureDay {
       String? id
     }) {
     return CultureDay(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -193,7 +193,7 @@ class CultureSchedule {
       String? id
     }) {
     return CultureSchedule(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -224,7 +224,7 @@ class CultureSector {
       String? id
     }) {
     return CultureSector(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );

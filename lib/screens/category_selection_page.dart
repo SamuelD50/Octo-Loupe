@@ -7,7 +7,7 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class CategorySelectionPage extends StatefulWidget {
-  final List<String> selectedCategories;
+  final List<Map<String, String>> selectedCategories;
   final bool isSport;
 
   const CategorySelectionPage({
@@ -21,17 +21,16 @@ class CategorySelectionPage extends StatefulWidget {
 }
 
 class CategorySelectionPageState extends State<CategorySelectionPage> {
-  late List<String> selectedCategories;
-  late Future<List<SportCategory>> sportCategoriesFunction;
-  late Future<List<CultureCategory>> cultureCategoriesFunction;
-
+  late List<Map<String, String>> selectedCategories;
+  late Future<List<SportCategory>> sportCategoriesReceiver;
+  late Future<List<CultureCategory>> cultureCategoriesReceiver;
 
   @override
   void initState() {
     super.initState();
     selectedCategories = List.from(widget.selectedCategories);
-    sportCategoriesFunction = SportFilterService().getSportCategories();
-    cultureCategoriesFunction = CultureFilterService().getCultureCategories();
+    sportCategoriesReceiver = SportFilterService().getSportCategories();
+    cultureCategoriesReceiver = CultureFilterService().getCultureCategories();
   }
 
   @override
@@ -66,7 +65,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                 children: [ 
                   widget.isSport ?
                   FutureBuilder<List<SportCategory>>(
-                    future: sportCategoriesFunction,
+                    future: sportCategoriesReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -103,18 +102,27 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                         ),
                         itemCount: sportCategories.length,
                         itemBuilder: (context, index) {
-                          final categoryName = sportCategories[index].name;
-                          final isSelected = selectedCategories.contains(categoryName);
+                          final category = sportCategories[index];
+                          final isSelected = selectedCategories.any((selected) =>
+                            selected['id'] == category.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedCategories.remove(categoryName);
-                                  debugPrint('Désélectionné: $categoryName');
+                                  selectedCategories.removeWhere((selected) =>
+                                    selected['id'] == category.id);
+                                  debugPrint('Désélectionné: ${category.name}');
+                                  debugPrint('Désélectionné: ${category.id}');
                                 } else {
-                                  selectedCategories.add(categoryName);
-                                  debugPrint('Sélectionné: $categoryName');
+                                  if (category.id != null) {
+                                    selectedCategories.add({
+                                      'id': category.id!,
+                                      'name': category.name,
+                                    });
+                                    debugPrint('Sélectionné: ${category.name}');
+                                    debugPrint('Sélectionné: ${category.id}');
+                                  }
                                 }
                               });
                             },
@@ -146,7 +154,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sportCategories[index].imageUrl,
+                                        category.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -157,7 +165,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          categoryName,
+                                          category.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -177,7 +185,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                     },
                   )
                   : FutureBuilder<List<CultureCategory>>(
-                    future: cultureCategoriesFunction,
+                    future: cultureCategoriesReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -214,18 +222,25 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                         ),
                         itemCount: cultureCategories.length,
                         itemBuilder: (context, index) {
-                          final categoryName = cultureCategories[index].name;
-                          final isSelected = selectedCategories.contains(categoryName);
+                          final category = cultureCategories[index];
+                          final isSelected = selectedCategories.any((selected) =>
+                            selected['id'] == category.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedCategories.remove(categoryName);
-                                  debugPrint('Désélectionné: $categoryName');
+                                  selectedCategories.removeWhere((selected) =>
+                                    selected['id'] == category.id);
+                                  debugPrint('Désélectionné: ${category.name}');
                                 } else {
-                                  selectedCategories.add(categoryName);
-                                  debugPrint('Sélectionné: $categoryName');
+                                  if (category.id != null) {
+                                    selectedCategories.add({
+                                      'id': category.id!,
+                                      'name': category.name,
+                                    });
+                                    debugPrint('Sélectionné: ${category.name}');
+                                  }
                                 }
                               });
                             },
@@ -257,7 +272,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        cultureCategories[index].imageUrl,
+                                        category.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -268,7 +283,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          categoryName,
+                                          category.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,

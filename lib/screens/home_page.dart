@@ -1,12 +1,18 @@
-import 'dart:developer';
+import 'package:flutter/material.dart';
+// Components
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/snackbar.dart';
-import 'package:flutter/material.dart';
-import 'category_selection_page.dart';
-import 'age_selection_page.dart';
-import 'day_selection_page.dart';
-import 'schedule_selection_page.dart';
-import 'sector_selection_page.dart';
+// Models
+import 'package:octoloupe/model/sport_filters_model.dart';
+import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/model/activity_model.dart';
+// Pages
+import 'package:octoloupe/screens/category_selection_page.dart';
+import 'package:octoloupe/screens/age_selection_page.dart';
+import 'package:octoloupe/screens/day_selection_page.dart';
+import 'package:octoloupe/screens/schedule_selection_page.dart';
+import 'package:octoloupe/screens/sector_selection_page.dart';
+import 'package:octoloupe/screens/activity_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,32 +27,72 @@ class HomePageState extends State<HomePage> {
   void _resetFilters() {
     setState(() {
       if (_selectedSection == 0) {
-        selectedCategoriesSport = [];
-        selectedAgesSport = [];
-        selectedDaysSport = [];
-        selectedSchedulesSport = [];
-        selectedSectorsSport = [];
+        selectedSportCategories = [];
+        selectedSportAges = [];
+        selectedSportDays = [];
+        selectedSportSchedules = [];
+        selectedSportSectors = [];
       } else {
-        selectedCategoriesCulture = [];
-        selectedAgesCulture = [];
-        selectedDaysCulture = [];
-        selectedSchedulesCulture = [];
-        selectedSectorsCulture = [];
+        selectedCultureCategories = [];
+        selectedCultureAges = [];
+        selectedCultureDays = [];
+        selectedCultureSchedules = [];
+        selectedCultureSectors = [];
       }
     });
   }
 
- List <String> selectedCategoriesSport = [];
- List <String> selectedAgesSport = [];
- List <String> selectedDaysSport = [];
- List <String> selectedSchedulesSport = [];
- List <String> selectedSectorsSport = [];
+  List<SportCategory> selectedSportCategories = [];
+  List<SportAge> selectedSportAges = [];
+  List<SportDay> selectedSportDays = [];
+  List<SportSchedule> selectedSportSchedules = [];
+  List<SportSector> selectedSportSectors = [];
 
- List <String> selectedCategoriesCulture = [];
- List <String> selectedAgesCulture = [];
- List <String> selectedDaysCulture = [];
- List <String> selectedSchedulesCulture = [];
- List <String> selectedSectorsCulture = []; 
+  List<CultureCategory> selectedCultureCategories = [];
+  List<CultureAge> selectedCultureAges = [];
+  List<CultureDay> selectedCultureDays = [];
+  List<CultureSchedule> selectedCultureSchedules = [];
+  List<CultureSector> selectedCultureSectors = []; 
+
+  Map<String, List<Map<String, String>>> filters = {};
+
+  void collectFilters() {
+    filters.clear();
+    
+    if (_selectedSection == 0) {
+      if (selectedSportCategories.isNotEmpty) {
+        filters['categories'] = selectedSportCategories.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedSportAges.isNotEmpty) {
+        filters['ages'] = selectedSportAges.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedSportDays.isNotEmpty) {
+        filters['days'] = selectedSportDays.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedSportSchedules.isNotEmpty) {
+        filters['schedules'] = selectedSportSchedules.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedSportSectors.isNotEmpty) {
+        filters['sectors'] = selectedSportSectors.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+    } else {
+      if (selectedCultureCategories.isNotEmpty) {
+        filters['categories'] = selectedCultureCategories.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedCultureAges.isNotEmpty) {
+        filters['ages'] = selectedCultureAges.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedCultureDays.isNotEmpty) {
+        filters['days'] = selectedCultureDays.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedCultureSchedules.isNotEmpty) {
+        filters['schedules'] = selectedCultureSchedules.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+      if (selectedCultureSectors.isNotEmpty) {
+        filters['sectors'] = selectedCultureSectors.map((e) => {'id': e.id!, 'name': e.name}).toList();
+      }
+    }
+  }
 
   @override
   Widget build(
@@ -155,26 +201,30 @@ class HomePageState extends State<HomePage> {
                             Icons.category,
                             'Par catégorie',
                             () async {
-                              final List<String>? categories = await Navigator.push(
+                              final List<Map<String, String>> selectedCategories = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: 
-                                  (context) => CategorySelectionPage(
+                                  builder: (context) => CategorySelectionPage(
                                     selectedCategories: _selectedSection == 0 ?
-                                      selectedCategoriesSport : selectedCategoriesCulture,
+                                      selectedSportCategories.map((category) => {
+                                        'id': category.id ?? '',
+                                        'name': category.name,
+                                      }).toList()
+                                    : selectedCultureCategories.map((category) => {
+                                      'id': category.id ?? '',
+                                      'name': category.name,
+                                    }).toList(),
                                     isSport: _selectedSection == 0,
                                   )
                                 ),
                               );
-                              if (categories != null) {
-                                setState(() {
-                                  if (_selectedSection == 0) {
-                                    selectedCategoriesSport = categories;
-                                  } else {
-                                    selectedCategoriesCulture = categories;
-                                  }
-                                });
-                              }
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  selectedSportCategories = selectedCategories.map((category) => SportCategory.fromMap(category)).toList();
+                                } else {
+                                  selectedCultureCategories = selectedCategories.map((category) => CultureCategory.fromMap(category)).toList();
+                                }
+                              });
                             },
                             isSport: _selectedSection == 0,
                           ),
@@ -186,25 +236,30 @@ class HomePageState extends State<HomePage> {
                             Icons.accessibility_new,
                             'Par âge',
                             () async {
-                              final List<String>? ages = await Navigator.push(
+                              final List<Map<String, String>> selectedAges = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => AgeSelectionPage(
                                     selectedAges: _selectedSection == 0 ?
-                                      selectedAgesSport : selectedAgesCulture,
+                                      selectedSportAges.map((age) => {
+                                        'id': age.id ?? '',
+                                        'name': age.name,
+                                      }).toList()
+                                    : selectedCultureAges.map((age) => {
+                                        'id': age.id ?? '',
+                                        'name': age.name,
+                                      }).toList(),
                                     isSport: _selectedSection == 0,
                                   )
                                 ),
                               );
-                              if (ages != null) {
-                                setState(() {
-                                  if (_selectedSection == 0) {
-                                    selectedAgesSport = ages;
-                                  } else {
-                                    selectedAgesCulture = ages;
-                                  }
-                                });
-                              }
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  selectedSportAges = selectedAges.map((age) => SportAge.fromMap(age)).toList();
+                                } else {
+                                  selectedCultureAges = selectedAges.map((age) => CultureAge.fromMap(age)).toList();
+                                }
+                              });
                             },
                             isSport: _selectedSection == 0,
                           ),
@@ -216,25 +271,30 @@ class HomePageState extends State<HomePage> {
                             Icons.date_range,
                             'Par jour',
                             () async {
-                              final List<String>? days = await Navigator.push(
+                              final List<Map<String, String>> selectedDays = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => DaySelectionPage(
                                     selectedDays: _selectedSection == 0 ?
-                                      selectedDaysSport : selectedDaysCulture,
+                                      selectedSportDays.map((day) => {
+                                        'id': day.id ?? '',
+                                        'name': day.name,
+                                      }).toList()
+                                    : selectedCultureDays.map((day) => {
+                                        'id': day.id ?? '',
+                                        'name': day.name,
+                                      }).toList(),
                                   isSport: _selectedSection == 0,
                                   )
                                 ),
                               );
-                              if (days != null) {
-                                setState(() {
-                                  if (_selectedSection == 0) {
-                                    selectedDaysSport = days;
-                                  } else {
-                                    selectedDaysCulture = days;
-                                  }
-                                });
-                              }
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  selectedSportDays = selectedDays.map((day) => SportDay.fromMap(day)).toList();
+                                } else {
+                                  selectedCultureDays = selectedDays.map((day) => CultureDay.fromMap(day)).toList();
+                                }
+                              });
                             },
                             isSport: _selectedSection == 0,
                           ),
@@ -246,25 +306,30 @@ class HomePageState extends State<HomePage> {
                             Icons.access_time,
                             'Par horaire',
                             () async {
-                              final List<String>? schedules = await Navigator.push(
+                              final List<Map<String, String>> selectedSchedules = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ScheduleSelectionPage(
                                     selectedSchedules: _selectedSection == 0 ?
-                                      selectedSchedulesSport : selectedSchedulesCulture,
+                                      selectedSportSchedules.map((schedule) => {
+                                        'id': schedule.id ?? '',
+                                        'name': schedule.name,
+                                      }).toList()
+                                    : selectedCultureSchedules.map((schedule) => {
+                                        'id': schedule.id ?? '',
+                                        'name': schedule.name,
+                                      }).toList(),
                                     isSport: _selectedSection == 0,
                                   )
                                 ),
                               );
-                              if (schedules != null) {
-                                setState(() {
-                                  if (_selectedSection == 0) {
-                                    selectedSchedulesSport = schedules;
-                                  } else {
-                                    selectedSchedulesCulture = schedules;
-                                  }
-                                });
-                              }
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  selectedSportSchedules = selectedSchedules.map((schedule) => SportSchedule.fromMap(schedule)).toList();
+                                } else {
+                                  selectedCultureSchedules = selectedSchedules.map((schedule) => CultureSchedule.fromMap(schedule)).toList();
+                                }
+                              });
                             },
                             isSport: _selectedSection == 0,
                           ),
@@ -276,25 +341,30 @@ class HomePageState extends State<HomePage> {
                             Icons.apartment_rounded,
                             'Par secteur',
                             () async {
-                              final List<String>? sectors = await Navigator.push(
+                              final List<Map<String, String>> selectedSectors = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => SectorSelectionPage(
                                     selectedSectors: _selectedSection == 0 ?
-                                      selectedSectorsSport : selectedSectorsCulture,
+                                      selectedSportSectors.map((sector) => {
+                                        'id': sector.id ?? '',
+                                        'name': sector.name,
+                                      }).toList()
+                                    : selectedCultureSectors.map((sector) => {
+                                        'id': sector.id ?? '',
+                                        'name': sector.name,
+                                      }).toList(),
                                     isSport: _selectedSection == 0,
                                   )
                                 ),
                               );
-                              if (sectors != null) {
-                                setState(() {
-                                  if (_selectedSection == 0) {
-                                    selectedSectorsSport = sectors;
-                                  } else {
-                                    selectedSectorsCulture = sectors;
-                                  }
-                                });
-                              }
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  selectedSportSectors = selectedSectors.map((sector) => SportSector.fromMap(sector)).toList();
+                                } else {
+                                  selectedCultureSectors = selectedSectors.map((sector) => CultureSector.fromMap(sector)).toList();
+                                }
+                              });
                             },
                             isSport: _selectedSection == 0,
                           ),
@@ -302,17 +372,17 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  if (_selectedSection == 0 && selectedCategoriesSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSportCategories.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedCategoriesSport.map((category) {
+                        children: selectedSportCategories.map((category) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(category.name),
                             onDeleted: () {
                               setState(() {
-                                selectedCategoriesSport.remove(category);
+                                selectedSportCategories.remove(category);
                               });
                             },
                           );
@@ -320,17 +390,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 1 && selectedCategoriesCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedCultureCategories.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedCategoriesCulture.map((category) {
+                        children: selectedCultureCategories.map((category) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(category.name),
                             onDeleted: () {
                               setState(() {
-                                selectedCategoriesCulture.remove(category);
+                                selectedCultureCategories.remove(category);
                               });
                             },
                           );
@@ -338,17 +408,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 0 && selectedAgesSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSportAges.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedAgesSport.map((category) {
+                        children: selectedSportAges.map((age) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(age.name),
                             onDeleted: () {
                               setState(() {
-                                selectedAgesSport.remove(category);
+                                selectedSportAges.remove(age);
                               });
                             },
                           );
@@ -356,17 +426,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 1 && selectedAgesCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedCultureAges.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedAgesCulture.map((category) {
+                        children: selectedCultureAges.map((age) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(age.name),
                             onDeleted: () {
                               setState(() {
-                                selectedAgesCulture.remove(category);
+                                selectedCultureAges.remove(age);
                               });
                             },
                           );
@@ -374,17 +444,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 0 && selectedDaysSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSportDays.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedDaysSport.map((category) {
+                        children: selectedSportDays.map((day) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(day.name),
                             onDeleted: () {
                               setState(() {
-                                selectedDaysSport.remove(category);
+                                selectedSportDays.remove(day);
                               });
                             },
                           );
@@ -392,17 +462,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 1 && selectedDaysCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedCultureDays.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedDaysCulture.map((category) {
+                        children: selectedCultureDays.map((day) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(day.name),
                             onDeleted: () {
                               setState(() {
-                                selectedDaysCulture.remove(category);
+                                selectedCultureDays.remove(day);
                               });
                             },
                           );
@@ -410,17 +480,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 0 && selectedSchedulesSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSportSchedules.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedSchedulesSport.map((category) {
+                        children: selectedSportSchedules.map((schedule) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(schedule.name),
                             onDeleted: () {
                               setState(() {
-                                selectedSchedulesSport.remove(category);
+                                selectedSportSchedules.remove(schedule);
                               });
                             },
                           );
@@ -428,17 +498,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 1 && selectedSchedulesCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedCultureSchedules.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedSchedulesCulture.map((category) {
+                        children: selectedCultureSchedules.map((schedule) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(schedule.name),
                             onDeleted: () {
                               setState(() {
-                                selectedSchedulesCulture.remove(category);
+                                selectedCultureSchedules.remove(schedule);
                               });
                             },
                           );
@@ -446,17 +516,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 0 && selectedSectorsSport.isNotEmpty) ...[
+                  if (_selectedSection == 0 && selectedSportSectors.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedSectorsSport.map((category) {
+                        children: selectedSportSectors.map((sector) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(sector.name),
                             onDeleted: () {
                               setState(() {
-                                selectedSectorsSport.remove(category);
+                                selectedSportSectors.remove(sector);
                               });
                             },
                           );
@@ -464,17 +534,17 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                  if (_selectedSection == 1 && selectedSectorsCulture.isNotEmpty) ...[
+                  if (_selectedSection == 1 && selectedCultureSectors.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Wrap(
                         spacing: 8.0,
-                        children: selectedSectorsCulture.map((category) {
+                        children: selectedCultureSectors.map((sector) {
                           return Chip(
-                            label: Text(category),
+                            label: Text(sector.name),
                             onDeleted: () {
                               setState(() {
-                                selectedSectorsCulture.remove(category);
+                                selectedCultureSectors.remove(sector);
                               });
                             },
                           );
@@ -497,9 +567,18 @@ class HomePageState extends State<HomePage> {
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
                               ),
-                              onPressed: () {
-                                debugPrint("Bouton rechercher");
-                                log('Rechercher');
+                              onPressed: () async {
+                                collectFilters();
+                                debugPrint(filters.toString());
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ActivityPage(
+                                      filters: filters,
+                                    )
+                                  )
+                                );
                               },
                               child: Text('Rechercher'),
                             ),
@@ -515,10 +594,10 @@ class HomePageState extends State<HomePage> {
                               ),
                               onPressed: () {
                                 _resetFilters();
-                                /* CustomSnackBar(
+                                CustomSnackBar(
                                   message: 'Filtres réinitialisés !',
                                   backgroundColor: Colors.amber,
-                                ).showSnackBar(context); */
+                                ).showSnackBar(context);
                               },
                               child: Text('Réinitialiser'),
                             ),
@@ -553,10 +632,10 @@ class HomePageState extends State<HomePage> {
                               ),
                               onPressed: () {
                                 _resetFilters();
-                                /* CustomSnackBar(
+                                CustomSnackBar(
                                   message: 'Filtres réinitialisés !',
                                   backgroundColor: Colors.amber,
-                                ).showSnackBar(context); */
+                                ).showSnackBar(context);
                               },
                               child: Text('Réinitialiser'),
                             ),

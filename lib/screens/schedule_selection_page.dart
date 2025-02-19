@@ -7,7 +7,7 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class ScheduleSelectionPage extends StatefulWidget {
-  final List<String> selectedSchedules;
+  final List<Map<String, String>> selectedSchedules;
   final bool isSport;
 
   const ScheduleSelectionPage({
@@ -21,16 +21,16 @@ class ScheduleSelectionPage extends StatefulWidget {
 }
 
 class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
-  late List<String> selectedSchedules;
-  late Future<List<SportSchedule>> sportSchedulesFunction;
-  late Future<List<CultureSchedule>> cultureSchedulesFunction;
+  late List<Map<String, String>> selectedSchedules;
+  late Future<List<SportSchedule>> sportSchedulesReceiver;
+  late Future<List<CultureSchedule>> cultureSchedulesReceiver;
 
   @override
   void initState() {
     super.initState();
     selectedSchedules = List.from(widget.selectedSchedules);
-    sportSchedulesFunction = SportFilterService().getSportSchedules();
-    cultureSchedulesFunction = CultureFilterService().getCultureSchedules();
+    sportSchedulesReceiver = SportFilterService().getSportSchedules();
+    cultureSchedulesReceiver = CultureFilterService().getCultureSchedules();
   }
 
   List<T> sortSchedules<T>(
@@ -59,20 +59,6 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
     });
     return schedules;
   }
-
-  /* final List<Map<String, String>> sportSchedules = [
-    {"name": "8h-12h", "image": "assets/images/ballon.jpg"},
-    {"name": "12h-14h", "image": "assets/images/nautique.jpg"},
-    {"name": "14h-17h", "image": "assets/images/combat.jpg"},
-    {"name": "17h-22h", "image": "assets/images/athlétisme.jpg"},
-  ];
-
-  final List<Map<String, String>> cultureSchedules = [
-    {"name": "8h-12h", "image": "assets/images/ballon.jpg"},
-    {"name": "12h-14h", "image": "assets/images/nautique.jpg"},
-    {"name": "14h-17h", "image": "assets/images/combat.jpg"},
-    {"name": "17h-22h", "image": "assets/images/athlétisme.jpg"},
-  ]; */
 
   @override
   Widget build(
@@ -107,7 +93,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                 children: [ 
                   widget.isSport ?
                   FutureBuilder<List<SportSchedule>>(
-                    future: sportSchedulesFunction,
+                    future: sportSchedulesReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -142,18 +128,25 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                         ),
                         itemCount: sortedSchedules.length,
                         itemBuilder: (context, index) {
-                          final scheduleName = sortedSchedules[index].name;
-                          final isSelected = selectedSchedules.contains(scheduleName);
+                          final schedule = sortedSchedules[index];
+                          final isSelected = selectedSchedules.any((selected) =>
+                            selected['id'] == schedule.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedSchedules.remove(scheduleName);
-                                  debugPrint('Désélectionné: $scheduleName');
+                                  selectedSchedules.removeWhere((selected) =>
+                                    selected['id'] == schedule.id);
+                                  debugPrint('Désélectionné: ${schedule.name}');
                                 } else {
-                                  selectedSchedules.add(scheduleName);
-                                  debugPrint('Sélectionné: $scheduleName');
+                                  if (schedule.id != null) {
+                                    selectedSchedules.add({
+                                      'id': schedule.id!,
+                                      'name': schedule.name,
+                                    });
+                                    debugPrint('Sélectionné: ${schedule.name}');
+                                  }
                                 }
                               });
                             },
@@ -185,7 +178,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sortedSchedules[index].imageUrl,
+                                        schedule.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -196,7 +189,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          scheduleName,
+                                          schedule.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -216,7 +209,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                     },
                   )
                   : FutureBuilder<List<CultureSchedule>>(
-                    future: cultureSchedulesFunction,
+                    future: cultureSchedulesReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -251,18 +244,25 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                         ),
                         itemCount: sortedSchedules.length,
                         itemBuilder: (context, index) {
-                          final scheduleName = sortedSchedules[index].name;
-                          final isSelected = selectedSchedules.contains(scheduleName);
+                          final schedule = sortedSchedules[index];
+                          final isSelected = selectedSchedules.any((selected) =>
+                            selected['id'] == schedule.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedSchedules.remove(scheduleName);
-                                  debugPrint('Désélectionné: $scheduleName');
+                                  selectedSchedules.removeWhere((selected) =>
+                                    selected['id'] == schedule.id);
+                                  debugPrint('Désélectionné: ${schedule.name}');
                                 } else {
-                                  selectedSchedules.add(scheduleName);
-                                  debugPrint('Sélectionné: $scheduleName');
+                                  if (schedule.id != null) {
+                                    selectedSchedules.add({
+                                      'id': schedule.id!,
+                                      'name': schedule.name,
+                                    });
+                                    debugPrint('Sélectionné: ${schedule.name}');
+                                  }
                                 }
                               });
                             },
@@ -295,7 +295,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sortedSchedules[index].imageUrl,
+                                        schedule.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -306,7 +306,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          scheduleName,
+                                          schedule.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,

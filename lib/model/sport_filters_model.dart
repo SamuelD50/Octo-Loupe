@@ -102,7 +102,7 @@ class SportCategory {
       String? id
     }) {
     return SportCategory(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -133,7 +133,7 @@ class SportAge {
       String? id
     }) {
     return SportAge(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -164,7 +164,7 @@ class SportDay {
       String? id
     }) {
     return SportDay(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );
@@ -195,7 +195,7 @@ class SportSchedule {
       String? id
     }) {
     return SportSchedule(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
     );

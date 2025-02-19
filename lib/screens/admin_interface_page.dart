@@ -590,7 +590,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            side: BorderSide(
+                              color: Color(0xFF5B59B4)
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -604,48 +606,108 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                               readSubFilters();
                             });
                           },
-                          child: Icon(Icons.add, size: 30, color: Colors.white),
+                          child: Icon(
+                            Icons.add,
+                            size: 30,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(width: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: _currentMode == SubFilterMode.editing ?
+                            [
+                              BoxShadow(
+                                color: Colors.blueAccent,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ] :
+                            [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentMode = SubFilterMode.editing;
+                              selectedFilter = 'Par catégorie';
+                              subFilters = [];
+                              readSubFilters();
+                            });
+                          },
+                          child: Icon(
+                            Icons.edit,
+                            size: 30,
+                            color: Colors.white,
                           ),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _currentMode = SubFilterMode.editing;
-                            selectedFilter = 'Par catégorie';
-                            subFilters = [];
-                            readSubFilters();
-                          });
-                        },
-                        child: Icon(Icons.edit, size: 30, color: Colors.white),
                       ),
                       SizedBox(width: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(color: Color(0xFF5B59B4)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: _currentMode == SubFilterMode.deleting ?
+                            [
+                              BoxShadow(
+                                color: Colors.blueAccent,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ] :
+                            [
+                              BoxShadow(
+                                color: Colors.black54,
+                                offset: Offset(8, 8),
+                                blurRadius: 6,
+                              ),
+                            ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentMode = SubFilterMode.deleting;
+                              selectedFilter = 'Par catégorie';
+                              subFilters = [];
+                              readSubFilters();
+                            });
+                          },
+                          child: Icon(
+                            Icons.remove,
+                            size: 30,
+                            color: Colors.white,
                           ),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _currentMode = SubFilterMode.deleting;
-                            selectedFilter = 'Par catégorie';
-                            subFilters = [];
-                            readSubFilters();
-                          });
-                        },
-                        child: Icon(Icons.remove, size: 30, color: Colors.white),
                       ),
                     ], 
                   ),

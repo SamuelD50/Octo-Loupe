@@ -437,28 +437,37 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       setState(() {
         isLoading = true;
       });
-      
-      if (selectedSection == 0) {
-        await sportActivityService.deleteSportActivities(
-          activityIds,
-        );
+
+      if (activityIds.isNotEmpty) {
+        if (selectedSection == 0) {
+          await sportActivityService.deleteSportActivities(
+            activityIds,
+          );
+        } else {
+          await cultureActivityService.deleteCultureActivities(
+            activityIds,
+          );
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
+        setState(() {
+          isLoading = false;
+        });
+
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Activité(s) supprimée(s)',
+            backgroundColor: Colors.green,
+          ).showSnackBar(context);
+        }
       } else {
-        await cultureActivityService.deleteCultureActivities(
-          activityIds,
-        );
-      }
-
-      await Future.delayed(Duration(milliseconds: 25));
-
-      setState(() {
-        isLoading = false;
-      });
-
-      if (context.mounted) {
-        CustomSnackBar(
-          message: 'Activité(s) supprimée(s)',
-          backgroundColor: Colors.green,
-        ).showSnackBar(context);
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Veuillez sélectionner au moins une activité à supprimer',
+            backgroundColor: Colors.red,
+          ).showSnackBar(context);
+        }
       }
     } catch (e) {
       debugPrint('Error deleting activity(ies): $e');
@@ -797,7 +806,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            side: BorderSide(
+                              color: Color(0xFF5B59B4)
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -835,7 +846,11 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               addProfilePricing();
                             });
                           },
-                          child: Icon(Icons.add, size: 30, color: Colors.white),
+                          child: Icon(
+                            Icons.add,
+                            size: 30,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(width: 16),
@@ -876,6 +891,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               _currentMode = ActivityMode.editing;
                               isEditing = false;
                               readActivities();
+                              readSubFilters();
                               activityId = '';
                               newDisciplineController.clear();
                               newInformationControllers.clear();
@@ -902,7 +918,11 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               newSelectedSubFiltersBySectors.clear();
                             });
                           },
-                          child: Icon(Icons.edit, size: 30, color: Colors.white),
+                          child: Icon(
+                            Icons.edit,
+                            size: 30,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(width: 16),
@@ -1569,7 +1589,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     }
 
                     final regex = RegExp(
-                      r'^(\+33\s?\d{1}\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|\d{10})$'
+                      r'^(?:\+33[\s]?[1-9](?:[\s]?\d{2}){4}|\d{10}|\d{2}[\s]?\d{2}[\s]?\d{2}[\s]?\d{2}[\s]?\d{2})$',
+                      caseSensitive: false,
                     );
                     if (!regex.hasMatch(value)) {
                       return 'Veuillez entrer un numéro de téléphone valide';
@@ -2584,7 +2605,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       }
 
                       final regex = RegExp(
-                        r'^(\+33\s?\d{1}\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|\d{10})$'
+                        r'^(?:\+33[\s]?[1-9](?:[\s]?\d{2}){4}|\d{10}|\d{2}[\s]?\d{2}[\s]?\d{2}[\s]?\d{2}[\s]?\d{2})$',
+                        caseSensitive: false,
                       );
                       if (!regex.hasMatch(value)) {
                         return 'Veuillez entrer un numéro de téléphone valide';
@@ -2997,8 +3019,6 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   updateActivity(
                     context: context,
                   );
-                  isEditing = false;
-                  readActivities();
                   activityId = '';
                   newDisciplineController.clear();
                   newInformationControllers.clear();
@@ -3023,6 +3043,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   newSelectedSubFiltersByDays.clear();
                   newSelectedSubFiltersBySchedules.clear();
                   newSelectedSubFiltersBySectors.clear();
+                  readActivities();
+                  isEditing = false;
                 }
               },
               child: Text('Modifier l\'activité'),
@@ -3083,6 +3105,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               setState(() {
                 selectedSection = section;
                 readActivities();
+                readSubFilters();
               });
             },
             color: Colors.black,

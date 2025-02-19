@@ -7,7 +7,7 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class SectorSelectionPage extends StatefulWidget {
-  final List<String> selectedSectors;
+  final List<Map<String, String>> selectedSectors;
   final bool isSport;
 
   const SectorSelectionPage({
@@ -21,31 +21,17 @@ class SectorSelectionPage extends StatefulWidget {
 }
 
 class SectorSelectionPageState extends State<SectorSelectionPage> {
-  late List<String> selectedSectors;
-  late Future<List<SportSector>> sportSectorsFunction;
-  late Future<List<CultureSector>> cultureSectorsFunction;
+  late List<Map<String, String>> selectedSectors;
+  late Future<List<SportSector>> sportSectorsReceiver;
+  late Future<List<CultureSector>> cultureSectorsReceiver;
 
   @override
   void initState() {
     super.initState();
     selectedSectors = List.from(widget.selectedSectors);
-    sportSectorsFunction = SportFilterService().getSportSectors();
-    cultureSectorsFunction = CultureFilterService().getCultureSectors();
+    sportSectorsReceiver = SportFilterService().getSportSectors();
+    cultureSectorsReceiver = CultureFilterService().getCultureSectors();
   }
-
-/*   final List<Map<String, String>> sportSectors = [
-    {"name": "Equeurdreville-Haineville", "image": "assets/images/ballon.jpg"},
-    {"name": "Cherbourg-Centre", "image": "assets/images/nautique.jpg"},
-    {"name": "Tourlaville", "image": "assets/images/combat.jpg"},
-    {"name": "Querqueville", "image": "assets/images/athlétisme.jpg"},
-  ];
-
-  final List<Map<String, String>> cultureSectors = [
-    {"name": "Equeurdreville-Haineville", "image": "assets/images/ballon.jpg"},
-    {"name": "Cherbourg-Centre", "image": "assets/images/nautique.jpg"},
-    {"name": "Tourlaville", "image": "assets/images/combat.jpg"},
-    {"name": "Querqueville", "image": "assets/images/athlétisme.jpg"},
-  ]; */
 
   @override
   Widget build(
@@ -80,7 +66,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                 children: [ 
                   widget.isSport ?
                   FutureBuilder<List<SportSector>>(
-                    future: sportSectorsFunction,
+                    future: sportSectorsReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -117,18 +103,25 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                         ),
                         itemCount: sportSectors.length,
                         itemBuilder: (context, index) {
-                          final sectorName = sportSectors[index].name;
-                          final isSelected = selectedSectors.contains(sectorName);
+                          final sector = sportSectors[index];
+                          final isSelected = selectedSectors.any((selected) =>
+                            selected['id'] == sector.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedSectors.remove(sectorName);
-                                  debugPrint('Désélectionné: $sectorName');
+                                  selectedSectors.removeWhere((selected) =>
+                                    selected['id'] == sector.id);
+                                  debugPrint('Désélectionné: ${sector.name}');
                                 } else {
-                                  selectedSectors.add(sectorName);
-                                  debugPrint('Sélectionné: $sectorName');
+                                  if (sector.id != null) {
+                                    selectedSectors.add({
+                                      'id': sector.id!,
+                                      'name': sector.name,
+                                    });
+                                    debugPrint('Sélectionné: ${sector.name}');
+                                  }
                                 }
                               });
                             },
@@ -161,7 +154,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        sportSectors[index].imageUrl,
+                                        sector.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -172,7 +165,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          sectorName,
+                                          sector.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -192,7 +185,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                     },
                   )
                   : FutureBuilder<List<CultureSector>>(
-                    future: cultureSectorsFunction,
+                    future: cultureSectorsReceiver,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -229,18 +222,24 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                         ),
                         itemCount: cultureSectors.length,
                         itemBuilder: (context, index) {
-                          final sectorName = cultureSectors[index].name;
-                          final isSelected = selectedSectors.contains(sectorName);
+                          final sector = cultureSectors[index];
+                          final isSelected = selectedSectors.any((selected) =>
+                            selected['id'] == sector.id);
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedSectors.remove(sectorName);
-                                  debugPrint('Désélectionné: $sectorName');
+                                  selectedSectors.removeWhere((selected) =>
+                                    selected['id'] == sector.id);
                                 } else {
-                                  selectedSectors.add(sectorName);
-                                  debugPrint('Sélectionné: $sectorName');
+                                  if (sector.id != null) {
+                                    selectedSectors.add({
+                                      'id': sector.id!,
+                                      'name': sector.name,
+                                    });
+                                    debugPrint('Sélectionné: ${sector.name}');
+                                  }
                                 }
                               });
                             },
@@ -272,7 +271,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: Image.network(
-                                        cultureSectors[index].imageUrl,
+                                        sector.imageUrl,
                                         fit:BoxFit.cover,
                                       ),
                                     ),
@@ -283,7 +282,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          sectorName,
+                                          sector.name,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
