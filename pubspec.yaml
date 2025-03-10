@@ -12,8 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_map: ^7.0.2
-  flutter_map_cancellable_tile_provider: ^3.0.2
   latlong2: ^0.9.1
+  flutter_map_cancellable_tile_provider: ^3.0.2
   url_launcher: ^6.0.20
   http: ^1.2.2
   mailer: ^6.2.0
@@ -33,6 +33,7 @@ dependencies:
   firebase_crashlytics: ^4.2.0
   firebase_analytics: ^11.3.6
   firebase_performance: ^0.10.0+11
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +51,20 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
-    - assets/icons/
-    - assets/images/Octoloupe.png
+    - assets/fonts/GreatVibes-Regular.ttf
+    - assets/fonts/Poppins-Regular.ttf
+    - assets\fonts\Satisfy-Regular.ttf
+    - assets/images/Octoloupe.webp
     - assets/images/
+  fonts:
+    - family: 'GreatVibes'
+      fonts:
+        - asset: assets/fonts/GreatVibes-Regular.ttf
+
+    - family: 'Poppins-Regular'
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+
+    - family: 'Satisfy-Regular'
+      fonts:
+        - asset: assets/fonts/Satisfy-Regular.ttf

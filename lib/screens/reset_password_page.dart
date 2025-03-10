@@ -32,14 +32,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -60,7 +53,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -89,6 +82,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),

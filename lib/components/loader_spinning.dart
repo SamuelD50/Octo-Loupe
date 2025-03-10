@@ -13,19 +13,12 @@ class Loading extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Center(
             child: SpinKitSpinningLines(
-              color: Colors.white,
+              color: Colors.black,
               size: 60.0,
             ),
           ),

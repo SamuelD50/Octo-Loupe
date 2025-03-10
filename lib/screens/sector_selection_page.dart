@@ -47,14 +47,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -71,7 +64,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: SpinKitSpinningLines(
-                            color: Colors.white,
+                            color: Colors.black,
                             size: 60,
                           ),
                         );
@@ -91,96 +84,124 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                         (a, b) => a.name.compareTo(b.name)
                       );
 
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                            1 : MediaQuery.of(context).size.width < 600 ?
-                              2 : 3, // Deux colonnes
-                          crossAxisSpacing: 12.0,
-                          mainAxisSpacing: 12.0,
-                        ),
-                        itemCount: sportSectors.length,
-                        itemBuilder: (context, index) {
-                          final sector = sportSectors[index];
-                          final isSelected = selectedSectors.any((selected) =>
-                            selected['id'] == sector.id);
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(2.0),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                                1 : MediaQuery.of(context).size.width < 600 ?
+                                  2 : 3, // Deux colonnes
+                              crossAxisSpacing: 2.0,
+                              mainAxisSpacing: 2.0,
+                            ),
+                            itemCount: sportSectors.length,
+                            itemBuilder: (context, index) {
+                              final sector = sportSectors[index];
+                              final isSelected = selectedSectors.any((selected) =>
+                                selected['id'] == sector.id);
 
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (isSelected) {
-                                  selectedSectors.removeWhere((selected) =>
-                                    selected['id'] == sector.id);
-                                  debugPrint('Désélectionné: ${sector.name}');
-                                } else {
-                                  if (sector.id != null) {
-                                    selectedSectors.add({
-                                      'id': sector.id!,
-                                      'name': sector.name,
-                                    });
-                                    debugPrint('Sélectionné: ${sector.name}');
-                                  }
-                                }
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInOut,
-                              decoration: BoxDecoration(
-                                color: isSelected ?
-                                  Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: isSelected
-                                  ? []
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black54,
-                                        offset: Offset(2, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                              ),
-                              child: Card(
-                                elevation: isSelected ?
-                                  2 : 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    ClipRRect(
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      selectedSectors.removeWhere((selected) =>
+                                        selected['id'] == sector.id);
+                                      debugPrint('Désélectionné: ${sector.name}');
+                                    } else {
+                                      if (sector.id != null) {
+                                        selectedSectors.add({
+                                          'id': sector.id!,
+                                          'name': sector.name,
+                                        });
+                                        debugPrint('Sélectionné: ${sector.name}');
+                                      }
+                                    }
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ?
+                                      Colors.blueAccent : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: isSelected
+                                      ? []
+                                      : [
+                                          BoxShadow(
+                                            color: Colors.black54,
+                                            offset: Offset(2, 2),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                  ),
+                                  child: Card(
+                                    elevation: isSelected ?
+                                      2 : 4,
+                                    shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Image.network(
-                                        sector.imageUrl,
-                                        fit:BoxFit.cover,
-                                      ),
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          sector.name,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: fontSize,
-                                            fontWeight: FontWeight.bold,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(16),
+                                          child: Image.network(
+                                            sector.imageUrl,
+                                            fit:BoxFit.cover,
                                           ),
                                         ),
-                                      ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black54,
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              sector.name,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          if (sportSectors.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF5B59B4),
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Color(0xFF5B59B4)),
+                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context, selectedSectors);
+                                },
+                                child: Text('Valider',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
                             ),
-                          );
-                        },
+                        ],
                       );
                     },
                   )
@@ -190,7 +211,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: SpinKitSpinningLines(
-                            color: Colors.white,
+                            color: Colors.black,
                             size: 60,
                           ),
                         );
@@ -210,113 +231,125 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                         (a, b) => a.name.compareTo(b.name)
                       );
 
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                            1 : MediaQuery.of(context).size.width < 600 ?
-                              2 : 3, // Deux colonnes
-                          crossAxisSpacing: 12.0,
-                          mainAxisSpacing: 12.0,
-                        ),
-                        itemCount: cultureSectors.length,
-                        itemBuilder: (context, index) {
-                          final sector = cultureSectors[index];
-                          final isSelected = selectedSectors.any((selected) =>
-                            selected['id'] == sector.id);
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(2.0),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                                1 : MediaQuery.of(context).size.width < 600 ?
+                                  2 : 3, // Deux colonnes
+                              crossAxisSpacing: 2.0,
+                              mainAxisSpacing: 2.0,
+                            ),
+                            itemCount: cultureSectors.length,
+                            itemBuilder: (context, index) {
+                              final sector = cultureSectors[index];
+                              final isSelected = selectedSectors.any((selected) =>
+                                selected['id'] == sector.id);
 
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (isSelected) {
-                                  selectedSectors.removeWhere((selected) =>
-                                    selected['id'] == sector.id);
-                                } else {
-                                  if (sector.id != null) {
-                                    selectedSectors.add({
-                                      'id': sector.id!,
-                                      'name': sector.name,
-                                    });
-                                    debugPrint('Sélectionné: ${sector.name}');
-                                  }
-                                }
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInOut,
-                              decoration: BoxDecoration(
-                                color: isSelected ?
-                                  Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: isSelected
-                                  ? []
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black54,
-                                        offset: Offset(2, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                              ),
-                              child: Card(
-                                elevation: isSelected ? 2 : 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    ClipRRect(
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      selectedSectors.removeWhere((selected) =>
+                                        selected['id'] == sector.id);
+                                    } else {
+                                      if (sector.id != null) {
+                                        selectedSectors.add({
+                                          'id': sector.id!,
+                                          'name': sector.name,
+                                        });
+                                        debugPrint('Sélectionné: ${sector.name}');
+                                      }
+                                    }
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ?
+                                      Colors.blueAccent : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: isSelected
+                                      ? []
+                                      : [
+                                          BoxShadow(
+                                            color: Colors.black54,
+                                            offset: Offset(2, 2),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                  ),
+                                  child: Card(
+                                    elevation: isSelected ? 2 : 4,
+                                    shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Image.network(
-                                        sector.imageUrl,
-                                        fit:BoxFit.cover,
-                                      ),
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          sector.name,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: fontSize,
-                                            fontWeight: FontWeight.bold,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(16),
+                                          child: Image.network(
+                                            sector.imageUrl,
+                                            fit:BoxFit.cover,
                                           ),
                                         ),
-                                      ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black54,
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              sector.name,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          if (cultureSectors.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF5B59B4),
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Color(0xFF5B59B4)),
+                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context, selectedSectors);
+                                },
+                                child: Text('Valider',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
                             ),
-                          );
-                        },
+                        ],
                       );
                     },
-                  ),
-                  SizedBox(height:8),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF5B59B4),
-                      foregroundColor: Colors.white,
-                      side: BorderSide(color: Color(0xFF5B59B4)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context, selectedSectors);
-                    },
-                    child: Text('Valider'),
-                  ),
-                  SizedBox(height:8), 
+                  ), 
                 ],
               ),
             ),

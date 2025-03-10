@@ -47,14 +47,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -71,7 +64,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: SpinKitSpinningLines(
-                            color: Colors.white,
+                            color: Colors.black,
                             size: 60,
                           ),
                         );
@@ -103,95 +96,123 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         return indexA.compareTo(indexB);
                       });
 
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                          1 : MediaQuery.of(context).size.width < 600 ?
-                          2 : 3, // Deux colonnes
-                          crossAxisSpacing: 12.0,
-                          mainAxisSpacing: 12.0,
-                        ),
-                        itemCount: sportDays.length,
-                        itemBuilder: (context, index) {
-                          final day = sportDays[index];
-                          final isSelected = selectedDays.any((selected) =>
-                            selected['id'] == day.id);
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(2.0),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                              1 : MediaQuery.of(context).size.width < 600 ?
+                              2 : 3, // Deux colonnes
+                              crossAxisSpacing: 2.0,
+                              mainAxisSpacing: 2.0,
+                            ),
+                            itemCount: sportDays.length,
+                            itemBuilder: (context, index) {
+                              final day = sportDays[index];
+                              final isSelected = selectedDays.any((selected) =>
+                                selected['id'] == day.id);
 
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (isSelected) {
-                                  selectedDays.removeWhere((selected) =>
-                                    selected['id'] == day.id);
-                                  debugPrint('Désélectionné: ${day.name}');
-                                } else {
-                                  if (day.id != null) {
-                                    selectedDays.add({
-                                      'id': day.id!,
-                                      'name': day.name,
-                                    });
-                                    debugPrint('Sélectionné: ${day.name}');
-                                  }
-                                }
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInOut,
-                              decoration: BoxDecoration(
-                                color: isSelected ?
-                                  Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: isSelected
-                                  ? []
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black54,
-                                        offset: Offset(2, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                              ),
-                              child: Card(
-                                elevation: isSelected ? 2 : 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    ClipRRect(
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      selectedDays.removeWhere((selected) =>
+                                        selected['id'] == day.id);
+                                      debugPrint('Désélectionné: ${day.name}');
+                                    } else {
+                                      if (day.id != null) {
+                                        selectedDays.add({
+                                          'id': day.id!,
+                                          'name': day.name,
+                                        });
+                                        debugPrint('Sélectionné: ${day.name}');
+                                      }
+                                    }
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ?
+                                      Colors.blueAccent : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: isSelected
+                                      ? []
+                                      : [
+                                          BoxShadow(
+                                            color: Colors.black54,
+                                            offset: Offset(2, 2),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                  ),
+                                  child: Card(
+                                    elevation: isSelected ? 2 : 4,
+                                    shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Image.network(
-                                        day.imageUrl,
-                                        fit:BoxFit.cover,
-                                      ),
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          day.name,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: fontSize,
-                                            fontWeight: FontWeight.bold,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(16),
+                                          child: Image.network(
+                                            day.imageUrl,
+                                            fit:BoxFit.cover,
                                           ),
                                         ),
-                                      ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black54,
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              day.name,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          if (sportDays.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF5B59B4),
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Color(0xFF5B59B4)),
+                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context, selectedDays);
+                                },
+                                child: Text('Valider',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
                             ),
-                          );
-                        },
+                        ],
                       );
                     },
                   )
@@ -201,7 +222,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: SpinKitSpinningLines(
-                            color: Colors.white,
+                            color: Colors.black,
                             size: 60,
                           ),
                         );
@@ -235,115 +256,127 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         }
                       );
 
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                          1 : MediaQuery.of(context).size.width < 600 ?
-                          2 : 3, // Deux colonnes
-                          crossAxisSpacing: 12.0,
-                          mainAxisSpacing: 12.0,
-                        ),
-                        itemCount: cultureDays.length,
-                        itemBuilder: (context, index) {
-                          final day = cultureDays[index];
-                          final isSelected = selectedDays.any((selected) =>
-                            selected['id'] == day.id);
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(2.0),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: MediaQuery.of(context).size.width < 250 ?
+                              1 : MediaQuery.of(context).size.width < 600 ?
+                              2 : 3, // Deux colonnes
+                              crossAxisSpacing: 2.0,
+                              mainAxisSpacing: 2.0,
+                            ),
+                            itemCount: cultureDays.length,
+                            itemBuilder: (context, index) {
+                              final day = cultureDays[index];
+                              final isSelected = selectedDays.any((selected) =>
+                                selected['id'] == day.id);
 
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (isSelected) {
-                                  selectedDays.removeWhere((selected) =>
-                                    selected['id'] == day.id);
-                                  debugPrint('Désélectionné: ${day.id}');
-                                } else {
-                                  if (day.id != null) {
-                                    selectedDays.add({
-                                      'id': day.id!,
-                                      'name': day.name,
-                                    });
-                                    debugPrint('Sélectionné: ${day.name}');
-                                  }
-                                }
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInOut,
-                              decoration: BoxDecoration(
-                                color: isSelected ?
-                                  Colors.blueAccent : Colors.transparent,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: isSelected
-                                  ? []
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black54,
-                                        offset: Offset(2, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                              ),
-                              child: Card(
-                                elevation: isSelected ?
-                                  2 : 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    ClipRRect(
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      selectedDays.removeWhere((selected) =>
+                                        selected['id'] == day.id);
+                                      debugPrint('Désélectionné: ${day.id}');
+                                    } else {
+                                      if (day.id != null) {
+                                        selectedDays.add({
+                                          'id': day.id!,
+                                          'name': day.name,
+                                        });
+                                        debugPrint('Sélectionné: ${day.name}');
+                                      }
+                                    }
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ?
+                                      Colors.blueAccent : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: isSelected
+                                      ? []
+                                      : [
+                                          BoxShadow(
+                                            color: Colors.black54,
+                                            offset: Offset(2, 2),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                  ),
+                                  child: Card(
+                                    elevation: isSelected ?
+                                      2 : 4,
+                                    shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Image.network(
-                                        day.imageUrl,
-                                        fit:BoxFit.cover,
-                                      ),
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          day.name,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: fontSize,
-                                            fontWeight: FontWeight.bold,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(16),
+                                          child: Image.network(
+                                            day.imageUrl,
+                                            fit:BoxFit.cover,
                                           ),
                                         ),
-                                      ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black54,
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              day.name,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          if (cultureDays.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF5B59B4),
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Color(0xFF5B59B4)),
+                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context, selectedDays);
+                                },
+                                child: Text('Valider',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
                             ),
-                          );
-                        },
+                        ],
                       );
                     },
                   ),
-                  SizedBox(height: 8),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF5B59B4),
-                      foregroundColor: Colors.white,
-                      side: BorderSide(color: Color(0xFF5B59B4)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context, selectedDays);
-                    },
-                    child: Text('Valider'),
-                  ),
-                  SizedBox(height: 8),
                 ],
               ),
             ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:octoloupe/CRUD/contact_crud.dart';
+import 'package:octoloupe/components/loader_spinning.dart';
+import 'package:octoloupe/components/snackbar.dart';
+import 'package:octoloupe/services/contact_service.dart';
 
 /* Mailtrap */
 
@@ -16,79 +18,36 @@ class ContactPage extends StatefulWidget {
 class ContactPageState extends State<ContactPage> {
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _subjectController = TextEditingController();
-  final TextEditingController _messageController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController subjectController = TextEditingController();
+  final TextEditingController bodyController = TextEditingController();
+  
 
-  final List<String> _titles = ['Mademoiselle', 'Madame', 'Monsieur'];
-  String? _selectedTitle;
+  final List<String> titles = ['Mlle', 'Mme', 'M.'];
+  String? selectedTitle;
+  bool loading = false;
 
-  //
-  //https://www.youtube.com/watch?v=RDwst9icjAY
- /*  Future sendEmail() async {
-    final email = 'octoloupe@gmail.com';
-    final token = ''
-
-    final smtpServer = gmailSaslXoauth2(email, accessToken);
-    final message = Message()
-      ..from = Address(email, 'Application Octoloupe Info Service')
-      ..recipients = ['duflos.samuel@gmail.com']
-      ..subject = $subject
-      ..text = 'Titre: $title\nPrénom: $firstName\nNom: $name\nEmail: $email\n\nMessage:\n$body';
-  } */
-
-  //
-
-  Future<void> sendEmail(
-    String title,
-    String firstName,
-    String name,
-    String email,
-    String subject,
-    String body
-  ) async {
-    final smtpServer = gmailSaslXoauth2(
-      dotenv.env['EMAIL'] ?? '',
-      dotenv.env['PASSWORD'] ?? ''
-    );
-    final message = Message()
-      ..from = Address(dotenv.env['EMAIL']!, 'Application Info Service')
-      ..recipients.add('samuel-50100@hotmail.fr')
-      ..subject = subject
-      ..text = 'Titre: $title\nPrénom: $firstName\nNom: $name\nEmail: $email\n\nMessage:\n$body'
-      ..html = "<p>Titre: $title</p><p>Prénom: $firstName</p><p>Nom: $name</p><p>Email: $email</p><p>Message:</p><p>$body</p>";
-
-    try {
-      final sendReport = await send(message, smtpServer);
-      debugPrint('Message sent: ${sendReport.toString()}');
-    } on MailerException catch (e) {
-      debugPrint('Message not sent.');
-      for (var p in e.problems) {
-        debugPrint('Problem: ${p.code}: ${p.msg}');
-      }
-    }
+  void setLoading(bool value) {
+    setState(() {
+      loading = value;
+    });
   }
 
   @override
   Widget build(
     BuildContext context
   ) {
-    return Scaffold(
+    return loading ? Loading() :
+    Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -107,7 +66,7 @@ class ContactPageState extends State<ContactPage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -125,9 +84,9 @@ class ContactPageState extends State<ContactPage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child:DropdownButtonFormField<String>(
-                        value: _selectedTitle,
+                        value: selectedTitle,
                         hint: Text('Titre'),
-                        items: _titles.map((String title) {
+                        items: titles.map((String title) {
                           return DropdownMenuItem<String>(
                             value: title,
                             child: Text(title),
@@ -135,7 +94,8 @@ class ContactPageState extends State<ContactPage> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           setState(() {
-                            _selectedTitle = newValue;
+                            selectedTitle = newValue;
+                            titleController.text = newValue ?? '';
                           });
                         },
                         decoration: const InputDecoration(
@@ -150,7 +110,7 @@ class ContactPageState extends State<ContactPage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: TextFormField(
-                        controller: _firstNameController,
+                        controller: firstNameController,
                         decoration: const InputDecoration(
                           labelText: 'Prénom',
                           border: OutlineInputBorder(),
@@ -165,7 +125,7 @@ class ContactPageState extends State<ContactPage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: TextFormField(
-                        controller: _nameController,
+                        controller: nameController,
                         decoration: const InputDecoration(
                           labelText: 'Nom',
                           border: OutlineInputBorder(),
@@ -180,7 +140,7 @@ class ContactPageState extends State<ContactPage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child:TextFormField(
-                        controller: _emailController,
+                        controller: emailController,
                         decoration: const InputDecoration(
                           labelText: 'Email',
                           hintText: 'Ex: abc@exemple.com',
@@ -206,7 +166,7 @@ class ContactPageState extends State<ContactPage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child:TextFormField(
-                        controller: _subjectController,
+                        controller: subjectController,
                         decoration: const InputDecoration(
                           labelText: 'Objet',
                           hintText: 'Ex: Modification du lieu d\'activité',
@@ -226,7 +186,7 @@ class ContactPageState extends State<ContactPage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child:TextFormField(
-                        controller: _messageController,
+                        controller: bodyController,
                         decoration: const InputDecoration(
                           labelText: 'Message',
                           hintText: 'Ex: Bonjour, le lieu de l\'activité a changé...',
@@ -248,31 +208,44 @@ class ContactPageState extends State<ContactPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
-                        side: BorderSide(color: Color(0xFF5B59B4)),
+                        side: BorderSide(
+                          color: Color(0xFF5B59B4),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          String title = _selectedTitle ?? '';
-                          String firstName = _firstNameController.text;
-                          String name = _nameController.text;
-                          String email = _emailController.text;
-                          String subject = _subjectController.text;
-                          String message = _messageController.text;
-
-                          sendEmail(
-                            title,
-                            firstName,
-                            name,
-                            email,
-                            subject,
-                            message
+                          ContactService().sendMessage(
+                            null,
+                            titleController.text,
+                            firstNameController.text,
+                            nameController.text,
+                            emailController.text,
+                            subjectController.text,
+                            bodyController.text,
+                            DateTime.now(),
+                            context: context,
+                            setLoading: setLoading,
                           );
+                          titleController.clear();
+                          selectedTitle = null;
+                          firstNameController.clear();
+                          nameController.clear();
+                          emailController.clear();
+                          subjectController.clear();
+                          bodyController.clear();
                         }
                       },
-                      child: Text('Envoyer'),
+                      child: Text(
+                        'Envoyer',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 32),

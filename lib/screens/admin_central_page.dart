@@ -3,6 +3,7 @@ import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/screens/admin_activity_page.dart';
 import 'package:octoloupe/screens/admin_add_admin_page.dart';
 import 'package:octoloupe/screens/admin_interface_page.dart';
+import 'package:octoloupe/screens/admin_contact_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 
 class AdminCentralPage extends StatefulWidget {
@@ -33,14 +34,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -59,6 +53,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           backgroundColor: Color(0xFF5B59B4),
                           foregroundColor: Colors.white,
                           side: BorderSide(color: Color(0xFF5B59B4)),
+                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           )
@@ -71,7 +66,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                             ),
                           );
                         },
-                        child: Text('Gérer l\'interface de l\'application'),
+                        child: Text('Gérer l\'interface de l\'application',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -83,6 +83,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -95,7 +96,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           ),
                         );
                       },
-                      child: Text('Gérer les activités de l\'application'),
+                      child: Text('Gérer les activités de l\'application',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -106,6 +112,36 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AdminContactPage()
+                          ),
+                        );
+                      },
+                      child: Text('Lire les messages du formulaire de contact',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF5B59B4),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Color(0xFF5B59B4)),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -120,7 +156,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           );
                         ); */
                       },
-                      child: Text('Mon profil utilisateur'),
+                      child: Text('Mon profil utilisateur',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -131,6 +172,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -143,7 +185,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           ),
                         );
                       },
-                      child: Text('Ajouter un profil administrateur'),
+                      child: Text('Ajouter un profil administrateur',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -154,6 +201,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -164,7 +212,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           setLoading: setLoading,
                         );
                       },
-                      child: Text('Supprimer mon compte utilisateur'),
+                      child: Text('Supprimer mon compte utilisateur',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -175,6 +228,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Colors.red, 
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Colors.red),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -185,7 +239,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           setLoading: setLoading,
                         );
                       },
-                      child: Text('Se déconnecter'),
+                      child: Text('Se déconnecter',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
                   Padding(

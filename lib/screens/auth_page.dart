@@ -31,6 +31,8 @@ class AuthPageState extends State<AuthPage> {
   int _selectedIndex = 0;
   bool _isPasswordVisible = false;
   bool _isNewPasswordVisible = false;
+  int failedAttempts = 0;
+  bool isButtonDisabled = false;
 
   final AuthService _authService = AuthService();
 
@@ -68,14 +70,7 @@ class AuthPageState extends State<AuthPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ), 
           Align(
@@ -92,7 +87,7 @@ class AuthPageState extends State<AuthPage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -145,7 +140,7 @@ class AuthPageState extends State<AuthPage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child: TextFormField(
                             controller: emailController,
                             decoration: const InputDecoration(
@@ -168,7 +163,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child: TextFormField(
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
@@ -196,7 +191,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         /* const SizedBox(height: 2), */
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child: Align(
                             alignment: Alignment.bottomRight,
                             child: TextButton(
@@ -214,11 +209,14 @@ class AuthPageState extends State<AuthPage> {
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: isButtonDisabled ?
+                            null :
+                            () {
                             if (_formSignInKey.currentState?.validate() ?? false) {
                               _authService.signIn(
                                 emailController.text,
@@ -228,7 +226,12 @@ class AuthPageState extends State<AuthPage> {
                               );
                             }
                           },
-                          child: Text('Se connecter'),
+                          child: Text('Se connecter',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -238,7 +241,7 @@ class AuthPageState extends State<AuthPage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child:TextFormField(
                             controller: firstNameController,
                             decoration: const InputDecoration(
@@ -257,7 +260,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child: TextFormField(
                             controller: nameController,
                             decoration: const InputDecoration(
@@ -276,7 +279,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child:TextFormField(
                             controller: newEmailController,
                             decoration: const InputDecoration(
@@ -301,7 +304,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.95,
                           child: TextFormField(
                             controller: newPasswordController,
                             obscureText: !_isNewPasswordVisible,
@@ -335,6 +338,7 @@ class AuthPageState extends State<AuthPage> {
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -351,7 +355,12 @@ class AuthPageState extends State<AuthPage> {
                               );
                             }
                           },
-                          child: Text('Créer un compte'),
+                          child: Text('Créer un compte',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       ],
                     ),

@@ -81,6 +81,7 @@ class SportActivityService {
   try {
     var activitiesData = await activitiesCRUD.getActivities('sports');
     return activitiesData.map((docSnapshot) {
+      /* debugPrint('ActivitiesData: ${docSnapshot.data()}'); */
       final activityId = docSnapshot.id;
       final discipline = docSnapshot['discipline'];
       final information = (docSnapshot['information'] is List) ?

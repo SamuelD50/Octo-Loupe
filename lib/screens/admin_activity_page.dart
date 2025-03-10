@@ -235,6 +235,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           .map((item) => (item).toMap())
           .toList();
       }
+
+      debugPrint('ReadActivities: $activities');
       
       await Future.delayed(Duration(milliseconds: 25));
 
@@ -717,14 +719,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           children: [
             Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  colors: [
-                    Color(0xFF5D71FF),
-                    Color(0xFFF365C7),
-                  ],
-                ),
+                color: Colors.white24,
               ),
             ),
             Align(
@@ -732,7 +727,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               child: SingleChildScrollView(
                 child: Center(
                   child: SpinKitSpinningLines(
-                    color: Colors.white,
+                    color: Colors.black,
                     size: 60,
                   ),
                 )
@@ -747,14 +742,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -771,7 +759,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -1206,7 +1194,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             'Par catégorie',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: 4),
@@ -1218,7 +1206,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   subFilter['name']!,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
                 ),
                 deleteIcon: Icon(
@@ -1249,7 +1238,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             'Par âge',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: 4),
@@ -1261,7 +1250,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   subFilter['name']!,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
                 ),
                 deleteIcon: Icon(
@@ -1292,7 +1282,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             'Par jour',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: 4),
@@ -1304,6 +1294,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   subFilter['name']!,
                   style: TextStyle(
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
@@ -1335,7 +1326,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             'Par horaire',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: 4),
@@ -1347,6 +1338,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   subFilter['name']!,
                   style: TextStyle(
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
@@ -1378,7 +1370,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             'Par secteur',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: 4),
@@ -1390,6 +1382,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   subFilter['name']!,
                   style: TextStyle(
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
@@ -1458,7 +1451,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
-                        side: BorderSide(color: Colors.red),
+                        side: BorderSide(
+                          color: Colors.red,
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -1466,7 +1462,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       onPressed: () {
                         removeInformationField(infoIndex);
                       },
-                      child: Text('Supprimer cette information'),
+                      child: Text('Supprimer cette information',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   if (informationControllers.length > 1)
                     SizedBox(height: 16),
@@ -1478,13 +1479,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
-              side: BorderSide(color: Colors.lightGreen),
+              side: BorderSide(
+                color: Colors.lightGreen,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
             ),
             onPressed: addInformationField,
-            child: Text('Ajouter une information'),
+            child: Text('Ajouter une information',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -1506,7 +1515,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             isLoading ?
               Center(
                 child: SpinKitSpinningLines(
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 60,
                 ),
               )
@@ -1528,7 +1537,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Contact',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             children: [
@@ -1632,7 +1641,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Lieu',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             children: [
@@ -1763,7 +1772,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Horaires',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             children: [
@@ -1796,7 +1805,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.red),
+                            side: BorderSide(
+                              color: Colors.red,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -1804,7 +1816,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           onPressed: () {
                             removeDayField(dayIndex);
                           },
-                          child: Text('Supprimer cette journée'),
+                          child: Text(
+                            'Supprimer cette journée',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       if (dayControllers.length > 1)
                         SizedBox(height: 16),
@@ -1855,7 +1873,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.redAccent,
                                     foregroundColor: Colors.white,
-                                    side: BorderSide(color: Colors.red),
+                                    side: BorderSide(
+                                      color: Colors.red,
+                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20.0),
                                     ),
@@ -1863,7 +1884,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   onPressed: () {
                                     removeTimeSlotForDay(dayIndex, timeSlotIndex);
                                   },
-                                  child: Text('Supprimer ce créneau'),
+                                  child: Text('Supprimer ce créneau',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                 ),
                               if (startHourControllersPerDay[dayIndex].length > 1)
                                 SizedBox(height: 16),
@@ -1875,7 +1901,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.lightGreen),
+                            side: BorderSide(
+                              color: Colors.lightGreen,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -1883,7 +1912,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         onPressed: () {
                           addTimeSlotForDay(dayIndex);
                         },
-                        child: Text('Ajouter un créneau'),
+                        child: Text('Ajouter un créneau',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 16),
                     ],
@@ -1894,7 +1928,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.lightGreen),
+                  side: BorderSide(
+                    color: Colors.lightGreen,
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
@@ -1902,7 +1939,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 onPressed: () {
                   addDayField();
                 },
-                child: Text('Ajouter une journée'),
+                child: Text('Ajouter une journée',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
               ),
               SizedBox(height: 16),
             ],
@@ -1912,7 +1954,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Tarifs et profils',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             children: [
@@ -1963,7 +2005,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.red),
+                            side: BorderSide(
+                              color: Colors.red,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -1971,7 +2016,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           onPressed: () {
                             removeProfilePricing(index);
                           },
-                          child: Text('Supprimer ce tarif par profil'),
+                          child: Text('Supprimer ce tarif par profil',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       if (profileControllers.length > 1)
                         SizedBox(height: 16),
@@ -1983,13 +2033,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.lightGreen),
+                  side: BorderSide(
+                    color: Colors.lightGreen,
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
                 onPressed: addProfilePricing,
-                child: Text('Ajouter un tarif par profil'),
+                child: Text('Ajouter un tarif par profil',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
               ),
               SizedBox(height: 16),
             ],
@@ -1999,7 +2057,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
-              side: BorderSide(color: Color(0xFF5B59B4)),
+              side: BorderSide(
+                color: Color(0xFF5B59B4),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -2038,7 +2099,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 addProfilePricing();
               }
             },
-            child: Text('Ajouter l\'activité'),
+            child: Text('Ajouter l\'activité',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 32),
@@ -2200,7 +2266,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Par catégorie',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 4),
@@ -2212,7 +2278,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     subFilter['name']!,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
                     ),
                   ),
                   deleteIcon: Icon(
@@ -2243,7 +2310,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Par âge',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 4),
@@ -2255,7 +2322,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     subFilter['name']!,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
                     ),
                   ),
                   deleteIcon: Icon(
@@ -2286,7 +2354,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Par jour',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 4),
@@ -2298,7 +2366,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     subFilter['name']!,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
                     ),
                   ),
                   deleteIcon: Icon(
@@ -2329,7 +2398,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Par horaire',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 4),
@@ -2341,7 +2410,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     subFilter['name']!,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
                     ),
                   ),
                   deleteIcon: Icon(
@@ -2372,7 +2442,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               'Par secteur',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 4),
@@ -2384,7 +2454,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     subFilter['name']!,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
                     ),
                   ),
                   deleteIcon: Icon(
@@ -2415,11 +2486,13 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF5B59B4),
                 foregroundColor: Colors.white,
-                side: BorderSide(color: Color(0xFF5B59B4)),
+                side: BorderSide(
+                  color: Color(0xFF5B59B4)
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               ),
               onPressed: () async {
                 updateSelectedSubFilters();
@@ -2430,7 +2503,8 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   'Mettre à jour les filtres',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
                 ),
             ),
@@ -2475,7 +2549,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
-                        side: BorderSide(color: Colors.red),
+                        side: BorderSide(
+                          color: Colors.red,
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -2483,7 +2560,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       onPressed: () {
                         removeNewInformationField(newInfoIndex);
                       },
-                      child: Text('Supprimer cette information'),
+                      child: Text('Supprimer cette information',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                     SizedBox(height: 16),
                   ],
@@ -2494,13 +2576,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
-                side: BorderSide(color: Colors.lightGreen),
+                side: BorderSide(
+                  color: Colors.lightGreen,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
               ),
               onPressed: addNewInformationField,
-              child: Text('Ajouter une information'),
+              child: Text('Ajouter une information',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -2522,7 +2612,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               isLoading ?
                 Center(
                   child: SpinKitSpinningLines(
-                    color: Colors.white,
+                    color: Colors.black,
                     size: 60,
                   ),
                 )
@@ -2544,7 +2634,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 'Contact',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               children: [
@@ -2648,7 +2738,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 'Lieu',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               children: [
@@ -2779,7 +2869,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 'Horaires',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               children: [
@@ -2811,7 +2901,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.red),
+                            side: BorderSide(
+                              color: Colors.red,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -2819,7 +2912,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           onPressed: () {
                             removeNewDayField(newDayIndex);
                           },
-                          child: Text('Supprimer cette journée'),
+                          child: Text('Supprimer cette journée',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                         SizedBox(height: 16),
                         ListView.builder(
@@ -2868,7 +2966,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.redAccent,
                                     foregroundColor: Colors.white,
-                                    side: BorderSide(color: Colors.red),
+                                    side: BorderSide(
+                                      color: Colors.red,
+                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20.0),
                                     ),
@@ -2876,7 +2977,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   onPressed: () {
                                     removeNewTimeSlotForDay(newDayIndex, newTimeSlotIndex);
                                   },
-                                  child: Text('Supprimer ce créneau'),
+                                  child: Text('Supprimer ce créneau',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(height: 16),
                               ],
@@ -2887,7 +2993,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
-                              side: BorderSide(color: Colors.lightGreen),
+                              side: BorderSide(
+                                color: Colors.lightGreen,
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
@@ -2895,7 +3004,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           onPressed: () {
                             addNewTimeSlotForDay(newDayIndex);
                           },
-                          child: Text('Ajouter un créneau'),
+                          child: Text('Ajouter un créneau',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                         SizedBox(height: 16),
                       ],
@@ -2906,7 +3020,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
-                    side: BorderSide(color: Colors.lightGreen),
+                    side: BorderSide(
+                      color: Colors.lightGreen,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -2914,7 +3031,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   onPressed: () {
                     addNewDayField();
                   },
-                  child: Text('Ajouter une journée'),
+                  child: Text('Ajouter une journée',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16),
               ],
@@ -2924,7 +3046,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 'Tarifs et profils',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               children: [
@@ -2974,7 +3096,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.red),
+                            side: BorderSide(
+                              color: Colors.red,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -2982,7 +3107,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           onPressed: () {
                             removeNewProfilePricing(newIndex);
                           },
-                          child: Text('Supprimer ce tarif par profil'),
+                          child: Text('Supprimer ce tarif par profil',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                         SizedBox(height: 16),
                       ],
@@ -2993,13 +3123,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
-                    side: BorderSide(color: Colors.lightGreen),
+                    side: BorderSide(
+                      color: Colors.lightGreen,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
                   onPressed: addNewProfilePricing,
-                  child: Text('Ajouter un tarif par profil'),
+                  child: Text('Ajouter un tarif par profil',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16),
               ],
@@ -3009,7 +3147,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF5B59B4),
                 foregroundColor: Colors.white,
-                side: BorderSide(color: Color(0xFF5B59B4)),
+                side: BorderSide(
+                  color: Color(0xFF5B59B4),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
@@ -3047,14 +3188,22 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   isEditing = false;
                 }
               },
-              child: Text('Modifier l\'activité'),
+              child: Text('Modifier l\'activité',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF5B59B4),
                 foregroundColor: Colors.white,
-                side: BorderSide(color: Color(0xFF5B59B4)),
+                side: BorderSide(
+                  color: Color(0xFF5B59B4),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
@@ -3089,7 +3238,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   newSelectedSubFiltersBySectors.clear();
                 });
               },
-              child: Text('Retour à la liste'),
+              child: Text('Retour à la liste',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 32),
@@ -3353,7 +3507,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
-              side: BorderSide(color: Color(0xFF5B59B4)),
+              side: BorderSide(
+                color: Color(0xFF5B59B4),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -3368,7 +3525,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 selectedActivityIds.clear();
               }
             },
-            child: Text('Supprimer l\'activité'),
+            child: Text('Supprimer l\'activité',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 16),

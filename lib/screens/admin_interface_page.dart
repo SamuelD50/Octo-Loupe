@@ -531,14 +531,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -555,7 +548,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -794,7 +787,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             isLoading ?
               Center(
                 child: SpinKitSpinningLines(
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 60,
                 ),
               ) :
@@ -852,6 +845,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
               side: BorderSide(color: Color(0xFF5B59B4)),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -868,7 +862,12 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                 readSubFilters();
               }
             },
-            child: Text('Ajouter le sous-filtre'),
+            child: Text('Ajouter le sous-filtre',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 32),
@@ -991,7 +990,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             isLoading ?
               Center(
                 child: SpinKitSpinningLines(
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 60,
                 ),
               ) :
@@ -1049,6 +1048,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
               side: BorderSide(color: Color(0xFF5B59B4)),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -1066,7 +1066,12 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                 readSubFilters();
               }
             },
-            child: Text('Modifier le sous-filtre'),
+            child: Text('Modifier le sous-filtre',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 32),
@@ -1169,7 +1174,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             isLoading ?
               Center(
                 child: SpinKitSpinningLines(
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 60,
                 ),
               ) :
@@ -1198,7 +1203,10 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
-              side: BorderSide(color: Color(0xFF5B59B4)),
+              side: BorderSide(
+                color: Color(0xFF5B59B4)
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -1212,7 +1220,12 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               subFilters = [];
               readSubFilters();
             },
-            child: Text('Supprimer le sous-filtre'),
+            child: Text('Supprimer le sous-filtre',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 32),

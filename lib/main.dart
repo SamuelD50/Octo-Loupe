@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
 import 'package:octoloupe/screens/auth_page.dart';
 import 'package:octoloupe/screens/contact_page.dart';
@@ -13,7 +15,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
-  
+  await dotenv.load();
   runApp(
     const MyApp()
   );
@@ -28,7 +30,72 @@ class MyApp extends StatelessWidget {
   ) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true),
+      showSemanticsDebugger: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        textTheme: TextTheme(
+          displaySmall: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          displayMedium: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          displayLarge: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          headlineSmall: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          headlineMedium: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          headlineLarge: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          titleSmall: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          titleMedium: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          titleLarge: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          bodySmall: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          bodyMedium: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          bodyLarge: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          labelSmall: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          labelMedium: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+          labelLarge: TextStyle(
+            fontFamily: 'Poppins-Regular',
+            color: Colors.black,
+          ),
+        ),  
+      ),
       home: const MainPage(),
       initialRoute: '/',
       routes: {

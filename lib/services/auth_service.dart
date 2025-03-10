@@ -6,7 +6,7 @@ import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
 import 'package:octoloupe/screens/auth_page.dart';
-import 'package:octoloupe/screens/home_page.dart';
+import 'package:octoloupe/screens/user_central_page.dart';
 import '../components/loader_spinning.dart';
 
 class AuthService {
@@ -179,6 +179,9 @@ class AuthService {
     }
   }
 
+  int failedAttempts = 0;
+  bool isButtonDisabled = false;
+
 /* https://github.com/Nayangadhiya/Firebase-AuthServices-Flutter/blob/main/lib/screens/login_screen.dart */
   //SignIn with email and password
   Future<UserCredential> signIn(
@@ -188,6 +191,15 @@ class AuthService {
       required Function(bool) setLoading
     }
   ) async {
+    if (failedAttempts >= 5) {
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Trop de tentatives échouées. Réessayez plus tard',
+          backgroundColor: Colors.red,
+        ).showSnackBar(context);
+        return Future.error('Too many attempts');
+      }
+    }
     try {
       setLoading(true);
 
@@ -209,7 +221,7 @@ class AuthService {
               MaterialPageRoute(
                 builder: (context) => userDoc!.role == 'admin'
                   ? AdminCentralPage()
-                  : HomePage(),
+                  : UserCentralPage(),
               ),
             );
           }
@@ -226,10 +238,12 @@ class AuthService {
           }
         }
       }
+      failedAttempts = 0;
       return userCredential;
     } on FirebaseAuthException catch (e) {
 
       setLoading(false);
+      failedAttempts++;
 
       if (context.mounted) {
         CustomSnackBar(

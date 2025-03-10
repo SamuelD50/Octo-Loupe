@@ -11,44 +11,39 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class CustomAppBarState extends State<CustomAppBar> {
-  bool notificationsEnabled = true;
-
-  void _toggleNotifications(
-    BuildContext context
-  ) {
-    setState(() {
-      notificationsEnabled = !notificationsEnabled;
-    });
-
-    final snackBar = SnackBar(
-      content: Text(notificationsEnabled ?
-        'Notifications activées' : 'Notifications désactivées'
-      ),
-      duration: const Duration(seconds: 5),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    debugPrint(notificationsEnabled ?
-      'Notifications activées' : 'Notifications désactivées'
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leading: ModalRoute.of(context)!.canPop ?
+        IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          tooltip: 'Retour',
+        ) :
+        Padding(
+          padding: EdgeInsets.only(left: 10)
+        ),
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('images/Octoloupe.png'),
+            backgroundImage: AssetImage('images/Octoloupe.webp'),
             backgroundColor: const Color(0xFF5B59B4),
             radius: 25,
           ),
-          const SizedBox(width: 10),
-          const Text(
+          const SizedBox(width: 5),
+          Text(
             'Octo\'Loupe',
             style: TextStyle(
+              fontFamily: 'GreatVibes',
               color: Colors.white,
-
+              fontSize: 35,
             ),
           ),
         ],
@@ -56,23 +51,7 @@ class CustomAppBarState extends State<CustomAppBar> {
       backgroundColor: const Color(0xFF5B59B4),
       toolbarHeight: 70,
       actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.amber,
-            ),
-            child: IconButton(
-              icon: Icon(
-                notificationsEnabled ?
-                  Icons.notifications_active : Icons.notifications_off,
-                color: Colors.white,
-              ),
-              onPressed: () => _toggleNotifications(context),
-            ),
-          ),
-        ),
+        
       ],
     );
   }

@@ -6,6 +6,9 @@ import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/model/activity_model.dart';
+// Services
+import 'package:octoloupe/services/culture_activity_service.dart';
+import 'package:octoloupe/services/sport_activity_service.dart';
 // Pages
 import 'package:octoloupe/screens/category_selection_page.dart';
 import 'package:octoloupe/screens/age_selection_page.dart';
@@ -94,6 +97,221 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  List<Map<String, dynamic>> activities = [];
+  SportActivityService sportActivityService = SportActivityService();
+  CultureActivityService cultureActivityService = CultureActivityService();
+  bool isLoading = false;
+
+  Future<void> readActivities() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (_selectedSection == 0) {
+        activities = (await sportActivityService.getSportActivities())
+          .map((item) => (item).toMap())
+          .toList();
+      } else {
+        activities = (await cultureActivityService.getCultureActivities())
+          .map((item) => (item).toMap())
+          .toList();
+      }
+
+      await Future.delayed(Duration(milliseconds: 25));
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching activity: $e');
+    }
+  }
+
+  List<Map<String, dynamic>> filteredActivities = [];
+
+  Future<List<Map<String, dynamic>>> sortActivities(
+    Map<String, List<Map<String, String>>> filters,
+    List<Map<String, dynamic>> activities,
+  ) async {
+    List<Map<String, String>> categories = [];
+    List<Map<String, String>> ages = [];
+    List<Map<String, String>> days = [];
+    List<Map<String, String>> schedules = [];
+    List<Map<String, String>> sectors = [];
+
+    if (filters.containsKey('categories')) {
+      debugPrint('categories');
+      categories = filters['categories']!.map((category) {
+        return {
+          'id': category['id']!,
+          'name': category['name']!,
+        };
+      }).toList();
+    }
+    
+    if (filters.containsKey('ages')) {
+      debugPrint('ages');
+      ages = filters['ages']!.map((age) {
+        return {
+          'id': age['id']!,
+          'name': age['name']!,
+        };
+      }).toList();
+    }
+
+    if (filters.containsKey('days')) {
+      debugPrint('days');
+      days = filters['days']!.map((day) {
+        return {
+          'id': day['id']!,
+          'name': day['name']!,
+        };
+      }).toList();
+    }
+
+    if (filters.containsKey('schedules')) {
+      debugPrint('schedules');
+      schedules = filters['schedules']!.map((schedule) {
+        return {
+          'id': schedule['id']!,
+          'name': schedule['name']!,
+        };
+      }).toList();
+    }
+
+    if (filters.containsKey('sectors')) {
+      debugPrint('sectors');
+      sectors = filters['sectors']!.map((sector) {
+        return {
+          'id': sector['id']!,
+          'name': sector['name']!,
+        };
+      }).toList();
+    }
+
+    List<Map<String, dynamic>> filteredActivities = [];
+
+    for (var activity in activities) {
+      List<Map<String, dynamic>> categoriesId = (activity['filters']?['categoriesId'] as List?)
+        ?.map((categoryId) {
+          return {
+            'id': categoryId['id'] ?? '',
+            'name': categoryId['name'] ?? '',
+          };
+        }).toList() ?? [];
+
+      List<Map<String, dynamic>> agesId = (activity['filters']?['agesId'] as List?)
+        ?.map((ageId) {
+          return {
+            'id': ageId['id'] ?? '',
+            'name': ageId['name'] ?? '',
+          };
+        }).toList() ?? [];
+
+      List<Map<String, dynamic>> daysId = (activity['filters']?['daysId'] as List?)
+        ?.map((dayId) {
+          return {
+            'id': dayId['id'] ?? '',
+            'name': dayId['name'] ?? '',
+          };
+        }).toList() ?? [];
+
+      List<Map<String, dynamic>> schedulesId = (activity['filters']?['schedulesId'] as List?)
+        ?.map((scheduleId) {
+          return {
+            'id': scheduleId['id'] ?? '',
+            'name': scheduleId['name'] ?? '',
+          };
+        }).toList() ?? [];
+
+      List<Map<String, dynamic>> sectorsId = (activity['filters']?['sectorsId'] as List?)
+        ?.map((sectorId) {
+          return {
+            'id': sectorId['id'] ?? '',
+            'name': sectorId['name'] ?? '',
+          };
+        }).toList() ?? [];
+
+      /* bool matchesCategory = categoriesId.any((categoryId) {
+        return categories.any((category) {
+          return category['id']!.compareTo(categoryId['id']) == 0;
+        });
+      });
+
+      bool matchesAge = agesId.any((ageId) {
+        return ages.any((age) {
+          return age['id']!.compareTo(ageId['id']) == 0;
+        });
+      });
+
+      bool matchesDay = daysId.any((dayId) {
+        return days.any((day) {
+          return day['id']!.compareTo(dayId['id']) == 0;
+        });
+      });
+
+      bool matchesSchedule = schedulesId.any((scheduleId) {
+        return schedules.any((schedule) {
+          return schedule['id']!.compareTo(scheduleId['id']) == 0;
+        });
+      });
+
+      bool matchesSector = sectorsId.any((sectorId) {
+        return sectors.any((sector) {
+          return sector['id']!.compareTo(sectorId['id']) == 0;
+        });
+      });
+
+      if (matchesCategory || matchesAge || matchesDay || matchesSchedule || matchesSector) {
+        filteredActivities.add(activity);
+      } */
+
+       bool matchesCategory = categories.isEmpty || categories.every((category) {
+            return categoriesId.any((categoryId) {
+                return category['id'] == categoryId['id'];
+            });
+        });
+
+        bool matchesAge = ages.isEmpty || ages.every((age) {
+            return agesId.any((ageId) {
+                return age['id'] == ageId['id'];
+            });
+        });
+
+        bool matchesDay = days.isEmpty || days.every((day) {
+            return daysId.any((dayId) {
+                return day['id'] == dayId['id'];
+            });
+        });
+
+        bool matchesSchedule = schedules.isEmpty || schedules.every((schedule) {
+            return schedulesId.any((scheduleId) {
+                return schedule['id'] == scheduleId['id'];
+            });
+        });
+
+        bool matchesSector = sectors.isEmpty || sectors.every((sector) {
+            return sectorsId.any((sectorId) {
+                return sector['id'] == sectorId['id'];
+            });
+        });
+
+        // Si l'activité correspond à **tous les critères sélectionnés**, même si certains sont vides
+        if (matchesCategory && matchesAge && matchesDay && matchesSchedule && matchesSector) {
+            filteredActivities.add(activity);
+        }
+    }
+    
+    return filteredActivities;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readActivities();
+  }
+
   @override
   Widget build(
     BuildContext context
@@ -104,13 +322,11 @@ class HomePageState extends State<HomePage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
+              /* color: Colors.white24, */
+              image: DecorationImage(
+                image: NetworkImage('https://images.unsplash.com/photo-1509849809433-36d5c609f0ee?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGVjdW1lJTIwbWVyfGVufDB8fDB8fHww'),
+                fit: BoxFit.cover,
+                opacity: 0.5,
               ),
             ),
           ),
@@ -128,7 +344,7 @@ class HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -191,183 +407,168 @@ class HomePageState extends State<HomePage> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Column(
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: _buildCriteriaTile(
-                            context,
-                            Icons.category,
-                            'Par catégorie',
-                            () async {
-                              final List<Map<String, String>> selectedCategories = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CategorySelectionPage(
-                                    selectedCategories: _selectedSection == 0 ?
-                                      selectedSportCategories.map((category) => {
-                                        'id': category.id ?? '',
-                                        'name': category.name,
-                                      }).toList()
-                                    : selectedCultureCategories.map((category) => {
+                        _buildCriteriaTile(
+                          context,
+                          Icons.category,
+                          'Par catégorie',
+                          () async {
+                            final List<Map<String, String>> selectedCategories = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CategorySelectionPage(
+                                  selectedCategories: _selectedSection == 0 ?
+                                    selectedSportCategories.map((category) => {
                                       'id': category.id ?? '',
                                       'name': category.name,
-                                    }).toList(),
-                                    isSport: _selectedSection == 0,
-                                  )
-                                ),
-                              );
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSportCategories = selectedCategories.map((category) => SportCategory.fromMap(category)).toList();
-                                } else {
-                                  selectedCultureCategories = selectedCategories.map((category) => CultureCategory.fromMap(category)).toList();
-                                }
-                              });
-                            },
-                            isSport: _selectedSection == 0,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: _buildCriteriaTile(
-                            context,
-                            Icons.accessibility_new,
-                            'Par âge',
-                            () async {
-                              final List<Map<String, String>> selectedAges = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AgeSelectionPage(
-                                    selectedAges: _selectedSection == 0 ?
-                                      selectedSportAges.map((age) => {
-                                        'id': age.id ?? '',
-                                        'name': age.name,
-                                      }).toList()
-                                    : selectedCultureAges.map((age) => {
-                                        'id': age.id ?? '',
-                                        'name': age.name,
-                                      }).toList(),
-                                    isSport: _selectedSection == 0,
-                                  )
-                                ),
-                              );
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSportAges = selectedAges.map((age) => SportAge.fromMap(age)).toList();
-                                } else {
-                                  selectedCultureAges = selectedAges.map((age) => CultureAge.fromMap(age)).toList();
-                                }
-                              });
-                            },
-                            isSport: _selectedSection == 0,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: _buildCriteriaTile(
-                            context,
-                            Icons.date_range,
-                            'Par jour',
-                            () async {
-                              final List<Map<String, String>> selectedDays = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DaySelectionPage(
-                                    selectedDays: _selectedSection == 0 ?
-                                      selectedSportDays.map((day) => {
-                                        'id': day.id ?? '',
-                                        'name': day.name,
-                                      }).toList()
-                                    : selectedCultureDays.map((day) => {
-                                        'id': day.id ?? '',
-                                        'name': day.name,
-                                      }).toList(),
+                                    }).toList()
+                                  : selectedCultureCategories.map((category) => {
+                                    'id': category.id ?? '',
+                                    'name': category.name,
+                                  }).toList(),
                                   isSport: _selectedSection == 0,
-                                  )
-                                ),
-                              );
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSportDays = selectedDays.map((day) => SportDay.fromMap(day)).toList();
-                                } else {
-                                  selectedCultureDays = selectedDays.map((day) => CultureDay.fromMap(day)).toList();
-                                }
-                              });
-                            },
-                            isSport: _selectedSection == 0,
-                          ),
+                                )
+                              ),
+                            );
+                            setState(() {
+                              if (_selectedSection == 0) {
+                                selectedSportCategories = selectedCategories.map((category) => SportCategory.fromMap(category)).toList();
+                              } else {
+                                selectedCultureCategories = selectedCategories.map((category) => CultureCategory.fromMap(category)).toList();
+                              }
+                            });
+                          },
+                          isSport: _selectedSection == 0,
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: _buildCriteriaTile(
-                            context,
-                            Icons.access_time,
-                            'Par horaire',
-                            () async {
-                              final List<Map<String, String>> selectedSchedules = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ScheduleSelectionPage(
-                                    selectedSchedules: _selectedSection == 0 ?
-                                      selectedSportSchedules.map((schedule) => {
-                                        'id': schedule.id ?? '',
-                                        'name': schedule.name,
-                                      }).toList()
-                                    : selectedCultureSchedules.map((schedule) => {
-                                        'id': schedule.id ?? '',
-                                        'name': schedule.name,
-                                      }).toList(),
-                                    isSport: _selectedSection == 0,
-                                  )
-                                ),
-                              );
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSportSchedules = selectedSchedules.map((schedule) => SportSchedule.fromMap(schedule)).toList();
-                                } else {
-                                  selectedCultureSchedules = selectedSchedules.map((schedule) => CultureSchedule.fromMap(schedule)).toList();
-                                }
-                              });
-                            },
-                            isSport: _selectedSection == 0,
-                          ),
+                        _buildCriteriaTile(
+                          context,
+                          Icons.accessibility_new,
+                          'Par âge',
+                          () async {
+                            final List<Map<String, String>> selectedAges = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AgeSelectionPage(
+                                  selectedAges: _selectedSection == 0 ?
+                                    selectedSportAges.map((age) => {
+                                      'id': age.id ?? '',
+                                      'name': age.name,
+                                    }).toList()
+                                  : selectedCultureAges.map((age) => {
+                                      'id': age.id ?? '',
+                                      'name': age.name,
+                                    }).toList(),
+                                  isSport: _selectedSection == 0,
+                                )
+                              ),
+                            );
+                            setState(() {
+                              if (_selectedSection == 0) {
+                                selectedSportAges = selectedAges.map((age) => SportAge.fromMap(age)).toList();
+                              } else {
+                                selectedCultureAges = selectedAges.map((age) => CultureAge.fromMap(age)).toList();
+                              }
+                            });
+                          },
+                          isSport: _selectedSection == 0,
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: _buildCriteriaTile(
-                            context,
-                            Icons.apartment_rounded,
-                            'Par secteur',
-                            () async {
-                              final List<Map<String, String>> selectedSectors = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SectorSelectionPage(
-                                    selectedSectors: _selectedSection == 0 ?
-                                      selectedSportSectors.map((sector) => {
-                                        'id': sector.id ?? '',
-                                        'name': sector.name,
-                                      }).toList()
-                                    : selectedCultureSectors.map((sector) => {
-                                        'id': sector.id ?? '',
-                                        'name': sector.name,
-                                      }).toList(),
-                                    isSport: _selectedSection == 0,
-                                  )
-                                ),
-                              );
-                              setState(() {
-                                if (_selectedSection == 0) {
-                                  selectedSportSectors = selectedSectors.map((sector) => SportSector.fromMap(sector)).toList();
-                                } else {
-                                  selectedCultureSectors = selectedSectors.map((sector) => CultureSector.fromMap(sector)).toList();
-                                }
-                              });
-                            },
-                            isSport: _selectedSection == 0,
-                          ),
+                        _buildCriteriaTile(
+                          context,
+                          Icons.date_range,
+                          'Par jour',
+                          () async {
+                            final List<Map<String, String>> selectedDays = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DaySelectionPage(
+                                  selectedDays: _selectedSection == 0 ?
+                                    selectedSportDays.map((day) => {
+                                      'id': day.id ?? '',
+                                      'name': day.name,
+                                    }).toList()
+                                  : selectedCultureDays.map((day) => {
+                                      'id': day.id ?? '',
+                                      'name': day.name,
+                                    }).toList(),
+                                isSport: _selectedSection == 0,
+                                )
+                              ),
+                            );
+                            setState(() {
+                              if (_selectedSection == 0) {
+                                selectedSportDays = selectedDays.map((day) => SportDay.fromMap(day)).toList();
+                              } else {
+                                selectedCultureDays = selectedDays.map((day) => CultureDay.fromMap(day)).toList();
+                              }
+                            });
+                          },
+                          isSport: _selectedSection == 0,
+                        ),
+                        _buildCriteriaTile(
+                          context,
+                          Icons.access_time,
+                          'Par horaire',
+                          () async {
+                            final List<Map<String, String>> selectedSchedules = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ScheduleSelectionPage(
+                                  selectedSchedules: _selectedSection == 0 ?
+                                    selectedSportSchedules.map((schedule) => {
+                                      'id': schedule.id ?? '',
+                                      'name': schedule.name,
+                                    }).toList()
+                                  : selectedCultureSchedules.map((schedule) => {
+                                      'id': schedule.id ?? '',
+                                      'name': schedule.name,
+                                    }).toList(),
+                                  isSport: _selectedSection == 0,
+                                )
+                              ),
+                            );
+                            setState(() {
+                              if (_selectedSection == 0) {
+                                selectedSportSchedules = selectedSchedules.map((schedule) => SportSchedule.fromMap(schedule)).toList();
+                              } else {
+                                selectedCultureSchedules = selectedSchedules.map((schedule) => CultureSchedule.fromMap(schedule)).toList();
+                              }
+                            });
+                          },
+                          isSport: _selectedSection == 0,
+                        ),
+                        _buildCriteriaTile(
+                          context,
+                          Icons.apartment_rounded,
+                          'Par secteur',
+                          () async {
+                            final List<Map<String, String>> selectedSectors = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SectorSelectionPage(
+                                  selectedSectors: _selectedSection == 0 ?
+                                    selectedSportSectors.map((sector) => {
+                                      'id': sector.id ?? '',
+                                      'name': sector.name,
+                                    }).toList()
+                                  : selectedCultureSectors.map((sector) => {
+                                      'id': sector.id ?? '',
+                                      'name': sector.name,
+                                    }).toList(),
+                                  isSport: _selectedSection == 0,
+                                )
+                              ),
+                            );
+                            setState(() {
+                              if (_selectedSection == 0) {
+                                selectedSportSectors = selectedSectors.map((sector) => SportSector.fromMap(sector)).toList();
+                              } else {
+                                selectedCultureSectors = selectedSectors.map((sector) => CultureSector.fromMap(sector)).toList();
+                              }
+                            });
+                          },
+                          isSport: _selectedSection == 0,
                         ),
                       ],
                     ),
@@ -563,24 +764,42 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
                               ),
                               onPressed: () async {
                                 collectFilters();
-                                debugPrint(filters.toString());
+                                debugPrint('Filters: ${filters.toString()}');
+                                readActivities();
+                                debugPrint('Activities: $activities');
+                                
+                                List<Map<String, dynamic>> filteredActivities = await sortActivities(filters, activities);
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ActivityPage(
-                                      filters: filters,
+                                if (filteredActivities.isNotEmpty) {
+                                  setState(() {
+                                    this.filteredActivities = filteredActivities;
+                                  });
+
+                                  debugPrint('FilteredActivities: ${filteredActivities.toString()}');
+                                  
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ActivityPage(
+                                        filteredActivities: filteredActivities,
+                                      )
                                     )
-                                  )
-                                );
+                                  );
+                                }
                               },
-                              child: Text('Rechercher'),
+                              child: Text('Rechercher',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                             SizedBox(width: 32),
                             ElevatedButton(
@@ -588,6 +807,7 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
@@ -599,7 +819,12 @@ class HomePageState extends State<HomePage> {
                                   backgroundColor: Colors.amber,
                                 ).showSnackBar(context);
                               },
-                              child: Text('Réinitialiser'),
+                              child: Text('Réinitialiser',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                           ],
                         ) :
@@ -611,14 +836,42 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
                               ),
-                              onPressed: () {
-                                debugPrint("Bouton rechercher");
+                              onPressed: () async {
+                                collectFilters();
+                                debugPrint('Filters: ${filters.toString()}');
+                                readActivities();
+                                debugPrint('Activities: $activities');
+                                
+                                List<Map<String, dynamic>> filteredActivities = await sortActivities(filters, activities);
+
+                                if (filteredActivities.isNotEmpty) {
+                                  setState(() {
+                                    this.filteredActivities = filteredActivities;
+                                  });
+
+                                  debugPrint('FilteredActivities: ${filteredActivities.toString()}');
+                                  
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ActivityPage(
+                                        filteredActivities: filteredActivities,
+                                      )
+                                    )
+                                  );
+                                }
                               },
-                              child: Text('Rechercher'),
+                              child: Text('Rechercher',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                             SizedBox(width: 16),
                             ElevatedButton(
@@ -626,6 +879,7 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
@@ -637,7 +891,12 @@ class HomePageState extends State<HomePage> {
                                   backgroundColor: Colors.amber,
                                 ).showSnackBar(context);
                               },
-                              child: Text('Réinitialiser'),
+                              child: Text('Réinitialiser',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                           ],
                         );
@@ -662,64 +921,83 @@ class HomePageState extends State<HomePage> {
     Future<void> Function() pageBuilder,
     {required bool isSport}
   ) {
-    return GestureDetector(
-      onTap: pageBuilder,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: isSport ?
-            MainAxisAlignment.start : MainAxisAlignment.end,
-          children: [
-            if (isSport) ...[
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF5B59B4),
-                ),
-                padding: EdgeInsets.all(10),
-                child: Icon(
-                  icon,
-                  color: Colors.white
-                ),
-              ),
-              SizedBox(width: 15),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.5,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+              side: BorderSide(
+                color: Color(0xFF5B59B4),
+                width: 2,
+              )
+            ),
+            padding: EdgeInsets.zero,
+          ),
+          onPressed: () {
+            pageBuilder();
+          },
+          child: Row(
+            children: [
+              if (isSport) ...[
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF5B59B4),
                   ),
-                  textAlign: TextAlign.left,
-                ), 
-              ),
-            ] else ... [
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18
+                  child: Icon(
+                    icon,
+                    color: Colors.white
                   ),
-                  textAlign: TextAlign.right,
                 ),
-              ),
-              SizedBox(width: 15),
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF5B59B4),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                padding: const EdgeInsets.all(10),
-                child: Icon(
-                  icon,
-                  color: Colors.white
+              ] else ...[
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
+                SizedBox(width: 15),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF5B59B4),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white
+                  ),
+                ),
+              ]
             ],
-          ],
+          ),
+          
         ),
       ),
     );
   }
+
 }

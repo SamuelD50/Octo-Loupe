@@ -40,14 +40,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF5D71FF),
-                  Color(0xFFF365C7),
-                ],
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -68,7 +61,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -172,7 +165,10 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
+                            side: BorderSide(
+                              color: Color(0xFF5B59B4),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -195,7 +191,12 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               ),
                             );
                           },
-                          child: Text('Créer un compte'),
+                          child: Text('Créer un compte',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 32),
