@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:octoloupe/CRUD/contact_crud.dart';
 import 'package:octoloupe/model/contact_model.dart';
 import 'package:octoloupe/components/snackbar.dart';

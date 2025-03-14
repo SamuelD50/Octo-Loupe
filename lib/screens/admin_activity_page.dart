@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:octoloupe/components/activity_card.dart';
-import 'package:octoloupe/components/activity_map.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:octoloupe/components/loader_spinning.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/activity_model.dart';
-import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_activity_service.dart';

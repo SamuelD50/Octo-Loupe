@@ -1,12 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:octoloupe/CRUD/contact_crud.dart';
 import 'package:octoloupe/components/contact_card.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/services/contact_service.dart';
-import 'package:octoloupe/model/contact_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AdminContactPage extends StatefulWidget {
@@ -21,7 +18,7 @@ class AdminContactPage extends StatefulWidget {
 class AdminContactPageState extends State<AdminContactPage> {
 
   bool isLoading = false;
-  ContactMode _currentMode = ContactMode.reading;
+  /* final ContactMode _currentMode = ContactMode.reading; */
   bool isOpen = false;
   String messageId = '';
   Map<String, dynamic>? selectedMessage;

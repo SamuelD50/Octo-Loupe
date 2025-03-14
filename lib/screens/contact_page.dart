@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:octoloupe/CRUD/contact_crud.dart';
 import 'package:octoloupe/components/loader_spinning.dart';
-import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/services/contact_service.dart';
 
 /* Mailtrap */

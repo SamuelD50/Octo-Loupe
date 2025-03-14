@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/components/activity_card.dart';
@@ -20,7 +18,7 @@ class ActivityPage extends StatefulWidget {
 
 class ActivityPageState extends State<ActivityPage> {
   bool isLoading = false;
-  int _selectedSection = 0;
+  final int _selectedSection = 0;
   List<Map<String, dynamic>> activities = [];
     SportActivityService sportActivityService = SportActivityService();
   CultureActivityService cultureActivityService = CultureActivityService();
@@ -56,7 +54,6 @@ class ActivityPageState extends State<ActivityPage> {
   }
 
   List<Map<String, dynamic>> markers = [];
-
 
   @override
   void initState() {
@@ -200,7 +197,7 @@ class ActivityPageState extends State<ActivityPage> {
                 ),
               ),
             ); 
-          }).toList(),
+          }),
         ],
       );
     }

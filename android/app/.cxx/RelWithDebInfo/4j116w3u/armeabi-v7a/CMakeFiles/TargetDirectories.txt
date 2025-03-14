@@ -1,0 +1,2 @@
+C:/Users/stesc/octoloupe/android/app/.cxx/RelWithDebInfo/4j116w3u/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/stesc/octoloupe/android/app/.cxx/RelWithDebInfo/4j116w3u/armeabi-v7a/CMakeFiles/rebuild_cache.dir

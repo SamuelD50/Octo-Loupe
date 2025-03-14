@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:octoloupe/screens/admin_central_page.dart';
 import 'package:octoloupe/screens/auth_page.dart';
 import 'package:octoloupe/screens/user_central_page.dart';
-import '../components/loader_spinning.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;

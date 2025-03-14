@@ -5,7 +5,6 @@ import 'package:octoloupe/components/snackbar.dart';
 // Models
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-import 'package:octoloupe/model/activity_model.dart';
 // Services
 import 'package:octoloupe/services/culture_activity_service.dart';
 import 'package:octoloupe/services/sport_activity_service.dart';
@@ -320,6 +319,13 @@ class HomePageState extends State<HomePage> {
       appBar: const CustomAppBar(),
       body: Stack(
         children: [
+          TextButton(
+            onPressed: () {
+              debugPrint('Pressed');
+              throw Exception();
+            },
+            child: const Text("Throw Exception from Emulator"),
+          ),
           Container(
             decoration: BoxDecoration(
               /* color: Colors.white24, */
