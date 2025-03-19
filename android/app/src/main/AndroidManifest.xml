@@ -1,8 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<<<<<<< HEAD
     <application
         android:label="octoloupe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+=======
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    
+    <application
+        android:label="Octoloupe"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+
+>>>>>>> bce10623d5c3192bb11c87b1aa2eca55e8891d1c
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,7 +44,23 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+<<<<<<< HEAD
     </application>
+=======
+
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+>>>>>>> bce10623d5c3192bb11c87b1aa2eca55e8891d1c
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
@@ -41,5 +71,14 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+<<<<<<< HEAD
     </queries>
+=======
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
+
+>>>>>>> bce10623d5c3192bb11c87b1aa2eca55e8891d1c
 </manifest>

@@ -52,7 +52,11 @@ flutter:
   assets:
     - assets/fonts/GreatVibes-Regular.ttf
     - assets/fonts/Poppins-Regular.ttf
+<<<<<<< HEAD
     - assets/fonts/Satisfy-Regular.ttf
+=======
+    - assets\fonts\Satisfy-Regular.ttf
+>>>>>>> bce10623d5c3192bb11c87b1aa2eca55e8891d1c
     - assets/images/Octoloupe.webp
     - assets/images/
     - assets/icons/
