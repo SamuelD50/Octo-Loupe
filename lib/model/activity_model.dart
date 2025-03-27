@@ -207,7 +207,7 @@ class Contact {
   });
 
   factory Contact.fromMap(
-    Map<String, String> map
+    Map<String, String?> map
   ) {
     return Contact(
       structureName: map['structureName'] ?? '',

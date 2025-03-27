@@ -7,6 +7,7 @@ import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 // Services
 import 'package:octoloupe/services/culture_activity_service.dart';
+import 'package:octoloupe/services/notification_service.dart';
 import 'package:octoloupe/services/sport_activity_service.dart';
 // Pages
 import 'package:octoloupe/screens/category_selection_page.dart';
@@ -309,6 +310,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     readActivities();
+    NotificationService().initNotification();
   }
 
   @override
@@ -319,13 +321,6 @@ class HomePageState extends State<HomePage> {
       appBar: const CustomAppBar(),
       body: Stack(
         children: [
-          TextButton(
-            onPressed: () {
-              debugPrint('Pressed');
-              throw Exception();
-            },
-            child: const Text("Throw Exception from Emulator"),
-          ),
           Container(
             decoration: BoxDecoration(
               /* color: Colors.white24, */
@@ -421,7 +416,7 @@ class HomePageState extends State<HomePage> {
                           Icons.category,
                           'Par catégorie',
                           () async {
-                            final List<Map<String, String>> selectedCategories = await Navigator.push(
+                            final List<Map<String, String>>? selectedCategories = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => CategorySelectionPage(
@@ -439,10 +434,12 @@ class HomePageState extends State<HomePage> {
                               ),
                             );
                             setState(() {
-                              if (_selectedSection == 0) {
-                                selectedSportCategories = selectedCategories.map((category) => SportCategory.fromMap(category)).toList();
-                              } else {
-                                selectedCultureCategories = selectedCategories.map((category) => CultureCategory.fromMap(category)).toList();
+                              if (selectedCategories != null) {
+                                if (_selectedSection == 0) {
+                                  selectedSportCategories = selectedCategories.map((category) => SportCategory.fromMap(category)).toList();
+                                } else {
+                                  selectedCultureCategories = selectedCategories.map((category) => CultureCategory.fromMap(category)).toList();
+                                }
                               }
                             });
                           },
@@ -453,7 +450,7 @@ class HomePageState extends State<HomePage> {
                           Icons.accessibility_new,
                           'Par âge',
                           () async {
-                            final List<Map<String, String>> selectedAges = await Navigator.push(
+                            final List<Map<String, String>>? selectedAges = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AgeSelectionPage(
@@ -471,10 +468,12 @@ class HomePageState extends State<HomePage> {
                               ),
                             );
                             setState(() {
-                              if (_selectedSection == 0) {
-                                selectedSportAges = selectedAges.map((age) => SportAge.fromMap(age)).toList();
-                              } else {
-                                selectedCultureAges = selectedAges.map((age) => CultureAge.fromMap(age)).toList();
+                              if (selectedAges != null) {
+                                if (_selectedSection == 0) {
+                                  selectedSportAges = selectedAges.map((age) => SportAge.fromMap(age)).toList();
+                                } else {
+                                  selectedCultureAges = selectedAges.map((age) => CultureAge.fromMap(age)).toList();
+                                }
                               }
                             });
                           },
@@ -485,7 +484,7 @@ class HomePageState extends State<HomePage> {
                           Icons.date_range,
                           'Par jour',
                           () async {
-                            final List<Map<String, String>> selectedDays = await Navigator.push(
+                            final List<Map<String, String>>? selectedDays = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DaySelectionPage(
@@ -503,10 +502,12 @@ class HomePageState extends State<HomePage> {
                               ),
                             );
                             setState(() {
-                              if (_selectedSection == 0) {
-                                selectedSportDays = selectedDays.map((day) => SportDay.fromMap(day)).toList();
-                              } else {
-                                selectedCultureDays = selectedDays.map((day) => CultureDay.fromMap(day)).toList();
+                              if (selectedDays != null) {
+                                if (_selectedSection == 0) {
+                                  selectedSportDays = selectedDays.map((day) => SportDay.fromMap(day)).toList();
+                                } else {
+                                  selectedCultureDays = selectedDays.map((day) => CultureDay.fromMap(day)).toList();
+                                }
                               }
                             });
                           },
@@ -517,7 +518,7 @@ class HomePageState extends State<HomePage> {
                           Icons.access_time,
                           'Par horaire',
                           () async {
-                            final List<Map<String, String>> selectedSchedules = await Navigator.push(
+                            final List<Map<String, String>>? selectedSchedules = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ScheduleSelectionPage(
@@ -535,10 +536,12 @@ class HomePageState extends State<HomePage> {
                               ),
                             );
                             setState(() {
-                              if (_selectedSection == 0) {
-                                selectedSportSchedules = selectedSchedules.map((schedule) => SportSchedule.fromMap(schedule)).toList();
-                              } else {
-                                selectedCultureSchedules = selectedSchedules.map((schedule) => CultureSchedule.fromMap(schedule)).toList();
+                              if (selectedSchedules != null) {
+                                if (_selectedSection == 0) {
+                                  selectedSportSchedules = selectedSchedules.map((schedule) => SportSchedule.fromMap(schedule)).toList();
+                                } else {
+                                  selectedCultureSchedules = selectedSchedules.map((schedule) => CultureSchedule.fromMap(schedule)).toList();
+                                }
                               }
                             });
                           },
@@ -549,7 +552,7 @@ class HomePageState extends State<HomePage> {
                           Icons.apartment_rounded,
                           'Par secteur',
                           () async {
-                            final List<Map<String, String>> selectedSectors = await Navigator.push(
+                            final List<Map<String, String>>? selectedSectors = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SectorSelectionPage(
@@ -567,10 +570,12 @@ class HomePageState extends State<HomePage> {
                               ),
                             );
                             setState(() {
-                              if (_selectedSection == 0) {
-                                selectedSportSectors = selectedSectors.map((sector) => SportSector.fromMap(sector)).toList();
-                              } else {
-                                selectedCultureSectors = selectedSectors.map((sector) => CultureSector.fromMap(sector)).toList();
+                              if (selectedSectors != null) {
+                                if (_selectedSection == 0) {
+                                  selectedSportSectors = selectedSectors.map((sector) => SportSector.fromMap(sector)).toList();
+                                } else {
+                                  selectedCultureSectors = selectedSectors.map((sector) => CultureSector.fromMap(sector)).toList();
+                                }
                               }
                             });
                           },
@@ -777,9 +782,7 @@ class HomePageState extends State<HomePage> {
                               ),
                               onPressed: () async {
                                 collectFilters();
-                                debugPrint('Filters: ${filters.toString()}');
-                                readActivities();
-                                debugPrint('Activities: $activities');
+                                await readActivities();
                                 
                                 List<Map<String, dynamic>> filteredActivities = await sortActivities(filters, activities);
 
@@ -787,17 +790,17 @@ class HomePageState extends State<HomePage> {
                                   setState(() {
                                     this.filteredActivities = filteredActivities;
                                   });
-
-                                  debugPrint('FilteredActivities: ${filteredActivities.toString()}');
                                   
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ActivityPage(
-                                        filteredActivities: filteredActivities,
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ActivityPage(
+                                          filteredActivities: filteredActivities,
+                                        )
                                       )
-                                    )
-                                  );
+                                    );
+                                  }
                                 }
                               },
                               child: Text('Rechercher',
@@ -849,9 +852,7 @@ class HomePageState extends State<HomePage> {
                               ),
                               onPressed: () async {
                                 collectFilters();
-                                debugPrint('Filters: ${filters.toString()}');
                                 readActivities();
-                                debugPrint('Activities: $activities');
                                 
                                 List<Map<String, dynamic>> filteredActivities = await sortActivities(filters, activities);
 
@@ -860,16 +861,16 @@ class HomePageState extends State<HomePage> {
                                     this.filteredActivities = filteredActivities;
                                   });
 
-                                  debugPrint('FilteredActivities: ${filteredActivities.toString()}');
-                                  
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ActivityPage(
-                                        filteredActivities: filteredActivities,
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ActivityPage(
+                                          filteredActivities: filteredActivities,
+                                        )
                                       )
-                                    )
-                                  );
+                                    );
+                                  }
                                 }
                               },
                               child: Text('Rechercher',

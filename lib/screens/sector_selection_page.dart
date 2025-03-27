@@ -7,12 +7,12 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class SectorSelectionPage extends StatefulWidget {
-  final List<Map<String, String>> selectedSectors;
+  final List<Map<String, String>>? selectedSectors;
   final bool isSport;
 
   const SectorSelectionPage({
     super.key,
-    required this.selectedSectors,
+    this.selectedSectors,
     required this.isSport,
   });
 
@@ -28,7 +28,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
   @override
   void initState() {
     super.initState();
-    selectedSectors = List.from(widget.selectedSectors);
+    selectedSectors = List.from(widget.selectedSectors ?? []);
     sportSectorsReceiver = SportFilterService().getSportSectors();
     cultureSectorsReceiver = CultureFilterService().getCultureSectors();
   }
@@ -88,6 +88,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -108,14 +109,12 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                     if (isSelected) {
                                       selectedSectors.removeWhere((selected) =>
                                         selected['id'] == sector.id);
-                                      debugPrint('Désélectionné: ${sector.name}');
                                     } else {
                                       if (sector.id != null) {
                                         selectedSectors.add({
                                           'id': sector.id!,
                                           'name': sector.name,
                                         });
-                                        debugPrint('Sélectionné: ${sector.name}');
                                       }
                                     }
                                   });
@@ -235,6 +234,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -261,7 +261,6 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                                           'id': sector.id!,
                                           'name': sector.name,
                                         });
-                                        debugPrint('Sélectionné: ${sector.name}');
                                       }
                                     }
                                   });

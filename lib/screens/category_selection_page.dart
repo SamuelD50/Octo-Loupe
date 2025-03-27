@@ -7,12 +7,12 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class CategorySelectionPage extends StatefulWidget {
-  final List<Map<String, String>> selectedCategories;
+  final List<Map<String, String>>? selectedCategories;
   final bool isSport;
 
   const CategorySelectionPage({
     super.key,
-    required this.selectedCategories,
+    this.selectedCategories,
     required this.isSport,
   });
 
@@ -28,7 +28,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
   @override
   void initState() {
     super.initState();
-    selectedCategories = List.from(widget.selectedCategories);
+    selectedCategories = List.from(widget.selectedCategories ?? []);
     sportCategoriesReceiver = SportFilterService().getSportCategories();
     cultureCategoriesReceiver = CultureFilterService().getCultureCategories();
   }
@@ -87,6 +87,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -107,16 +108,12 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                     if (isSelected) {
                                       selectedCategories.removeWhere((selected) =>
                                         selected['id'] == category.id);
-                                      debugPrint('Désélectionné: ${category.name}');
-                                      debugPrint('Désélectionné: ${category.id}');
                                     } else {
                                       if (category.id != null) {
                                         selectedCategories.add({
                                           'id': category.id!,
                                           'name': category.name,
                                         });
-                                        debugPrint('Sélectionné: ${category.name}');
-                                        debugPrint('Sélectionné: ${category.id}');
                                       }
                                     }
                                   });
@@ -235,6 +232,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -249,78 +247,76 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               final isSelected = selectedCategories.any((selected) =>
                                 selected['id'] == category.id);
 
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (isSelected) {
-                                      selectedCategories.removeWhere((selected) =>
-                                        selected['id'] == category.id);
-                                      debugPrint('Désélectionné: ${category.name}');
-                                    } else {
-                                      if (category.id != null) {
-                                        selectedCategories.add({
-                                          'id': category.id!,
-                                          'name': category.name,
-                                        });
-                                        debugPrint('Sélectionné: ${category.name}');
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (isSelected) {
+                                        selectedCategories.removeWhere((selected) =>
+                                          selected['id'] == category.id);
+                                      } else {
+                                        if (category.id != null) {
+                                          selectedCategories.add({
+                                            'id': category.id!,
+                                            'name': category.name,
+                                          });
+                                        }
                                       }
-                                    }
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: isSelected
-                                      ? []
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black54,
-                                            offset: Offset(2, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                  ),
-                                  child: Card(
-                                    elevation: isSelected ?
-                                      2 : 4,
-                                    shape: RoundedRectangleBorder(
+                                    });
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeInOut,
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? Colors.blueAccent : Colors.transparent,
                                       borderRadius: BorderRadius.circular(16),
+                                      boxShadow: isSelected
+                                        ? []
+                                        : [
+                                            BoxShadow(
+                                              color: Colors.black54,
+                                              offset: Offset(2, 2),
+                                              blurRadius: 4,
+                                            ),
+                                          ],
                                     ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Image.network(
-                                            category.imageUrl,
-                                            fit:BoxFit.cover,
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
+                                    child: Card(
+                                      elevation: isSelected ?
+                                        2 : 4,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          ClipRRect(
                                             borderRadius: BorderRadius.circular(16),
+                                            child: Image.network(
+                                              category.imageUrl,
+                                              fit:BoxFit.cover,
+                                            ),
                                           ),
-                                          child: Center(
-                                            child: Text(
-                                              category.name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.black54,
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                category.name,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                               );
+                                );
                             },
                           ),
                           if (cultureCategories.isNotEmpty)

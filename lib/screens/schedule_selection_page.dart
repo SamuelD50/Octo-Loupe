@@ -7,12 +7,12 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class ScheduleSelectionPage extends StatefulWidget {
-  final List<Map<String, String>> selectedSchedules;
+  final List<Map<String, String>>? selectedSchedules;
   final bool isSport;
 
   const ScheduleSelectionPage({
     super.key,
-    required this.selectedSchedules,
+    this.selectedSchedules,
     required this.isSport,
   });
 
@@ -28,7 +28,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
   @override
   void initState() {
     super.initState();
-    selectedSchedules = List.from(widget.selectedSchedules);
+    selectedSchedules = List.from(widget.selectedSchedules ?? []);
     sportSchedulesReceiver = SportFilterService().getSportSchedules();
     cultureSchedulesReceiver = CultureFilterService().getCultureSchedules();
   }
@@ -113,6 +113,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -133,14 +134,12 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     if (isSelected) {
                                       selectedSchedules.removeWhere((selected) =>
                                         selected['id'] == schedule.id);
-                                      debugPrint('Désélectionné: ${schedule.name}');
                                     } else {
                                       if (schedule.id != null) {
                                         selectedSchedules.add({
                                           'id': schedule.id!,
                                           'name': schedule.name,
                                         });
-                                        debugPrint('Sélectionné: ${schedule.name}');
                                       }
                                     }
                                   });
@@ -257,6 +256,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -277,14 +277,12 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     if (isSelected) {
                                       selectedSchedules.removeWhere((selected) =>
                                         selected['id'] == schedule.id);
-                                      debugPrint('Désélectionné: ${schedule.name}');
                                     } else {
                                       if (schedule.id != null) {
                                         selectedSchedules.add({
                                           'id': schedule.id!,
                                           'name': schedule.name,
                                         });
-                                        debugPrint('Sélectionné: ${schedule.name}');
                                       }
                                     }
                                   });

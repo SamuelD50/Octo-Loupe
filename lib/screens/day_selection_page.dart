@@ -7,12 +7,12 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class DaySelectionPage extends StatefulWidget {
-  final List<Map<String, String>> selectedDays;
+  final List<Map<String, String>>? selectedDays;
   final bool isSport;
 
   const DaySelectionPage({
     super.key,
-    required this.selectedDays,
+    this.selectedDays,
     required this.isSport,
   });
 
@@ -29,7 +29,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
   @override
   void initState() {
     super.initState();
-    selectedDays = List.from(widget.selectedDays);
+    selectedDays = List.from(widget.selectedDays ?? []);
     sportDaysReceiver = SportFilterService().getSportDays();
     cultureDaysReceiver = CultureFilterService().getCultureDays();
   }
@@ -100,6 +100,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -120,14 +121,12 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     if (isSelected) {
                                       selectedDays.removeWhere((selected) =>
                                         selected['id'] == day.id);
-                                      debugPrint('Désélectionné: ${day.name}');
                                     } else {
                                       if (day.id != null) {
                                         selectedDays.add({
                                           'id': day.id!,
                                           'name': day.name,
                                         });
-                                        debugPrint('Sélectionné: ${day.name}');
                                       }
                                     }
                                   });
@@ -260,6 +259,7 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -280,14 +280,12 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                                     if (isSelected) {
                                       selectedDays.removeWhere((selected) =>
                                         selected['id'] == day.id);
-                                      debugPrint('Désélectionné: ${day.id}');
                                     } else {
                                       if (day.id != null) {
                                         selectedDays.add({
                                           'id': day.id!,
                                           'name': day.name,
                                         });
-                                        debugPrint('Sélectionné: ${day.name}');
                                       }
                                     }
                                   });

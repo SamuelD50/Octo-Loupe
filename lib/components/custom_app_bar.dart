@@ -20,6 +20,7 @@ class CustomAppBarState extends State<CustomAppBar> {
           icon: Icon(
             Icons.arrow_back_ios_rounded,
             color: Colors.white,
+            size: 30,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -27,26 +28,29 @@ class CustomAppBarState extends State<CustomAppBar> {
           tooltip: 'Retour',
         ) :
         Padding(
-          padding: EdgeInsets.only(left: 10)
+          padding: EdgeInsets.only(left: 5)
         ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage('images/Octoloupe.webp'),
-            backgroundColor: const Color(0xFF5B59B4),
-            radius: 25,
-          ),
-          const SizedBox(width: 5),
-          Text(
-            'Octo\'Loupe',
-            style: TextStyle(
-              fontFamily: 'GreatVibes',
-              color: Colors.white,
-              fontSize: 35,
+      title: Padding(
+        padding: const EdgeInsets.only(right: 55),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundImage: AssetImage('assets/images/Octoloupe.webp'),
+              backgroundColor: const Color(0xFF5B59B4),
+              radius: 25,
             ),
-          ),
-        ],
+            const SizedBox(width: 5),
+            Text(
+              'Octo\'Loupe',
+              style: TextStyle(
+                fontFamily: 'GreatVibes',
+                color: Colors.white,
+                fontSize: 30,
+              ),
+            ),
+          ],
+        ),
       ),
       backgroundColor: const Color(0xFF5B59B4),
       toolbarHeight: 70,

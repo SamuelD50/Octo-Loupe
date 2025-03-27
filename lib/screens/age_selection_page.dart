@@ -7,12 +7,12 @@ import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 
 class AgeSelectionPage extends StatefulWidget {
-  final List<Map<String, String>> selectedAges;
+  final List<Map<String, String>>? selectedAges;
   final bool isSport;
 
   const AgeSelectionPage({
     super.key,
-    required this.selectedAges,
+    this.selectedAges,
     required this.isSport,
   });
 
@@ -28,7 +28,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
   @override
   void initState() {
     super.initState();
-    selectedAges = List.from(widget.selectedAges);
+    selectedAges = List.from(widget.selectedAges ?? []);
     sportAgesReceiver = SportFilterService().getSportAges();
     cultureAgesReceiver = CultureFilterService().getCultureAges();
   }
@@ -111,6 +111,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -126,73 +127,73 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                 selected['id'] == age.id);
 
                             return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (isSelected) {
-                                      selectedAges.removeWhere((selected) =>
-                                        selected['id'] == age.id);
-                                    } else {
-                                      if (age.id != null) {
-                                        selectedAges.add({
-                                          'id': age.id!,
-                                          'name': age.name,
-                                        });
-                                      }
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    selectedAges.removeWhere((selected) =>
+                                      selected['id'] == age.id);
+                                  } else {
+                                    if (age.id != null) {
+                                      selectedAges.add({
+                                        'id': age.id!,
+                                        'name': age.name,
+                                      });
                                     }
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: isSelected
-                                      ? []
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black54,
-                                            offset: Offset(2, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                  ),
-                                  child: Card(
-                                    elevation: isSelected ? 2 : 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Image.network(
-                                            age.imageUrl,
-                                            fit:BoxFit.cover,
-                                          ),
+                                  }
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeInOut,
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.blueAccent : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: isSelected
+                                    ? []
+                                    : [
+                                        BoxShadow(
+                                          color: Colors.black54,
+                                          offset: Offset(2, 2),
+                                          blurRadius: 4,
                                         ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              age.name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      ],
+                                ),
+                                child: Card(
+                                  elevation: isSelected ? 2 : 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Image.network(
+                                          age.imageUrl,
+                                          fit:BoxFit.cover,
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black54,
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            age.name,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: fontSize,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                              ),
                               );
                             },
                           ),
@@ -252,6 +253,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(2.0),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: MediaQuery.of(context).size.width < 250 ?
@@ -272,14 +274,12 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                     if (isSelected) {
                                       selectedAges.removeWhere((selected) =>
                                         selected['id'] == age.id);
-                                      debugPrint('Désélectionné: ${age.name}');
                                     } else {
                                       if (age.id != null) {
                                         selectedAges.add({
                                           'id': age.id!,
                                           'name': age.name,
                                         });
-                                        debugPrint('Sélectionné: ${age.name}');
                                       }
                                       
                                     }
