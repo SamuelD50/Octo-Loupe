@@ -59,6 +59,7 @@ class HomePageState extends State<HomePage> {
 
   Map<String, List<Map<String, String>>> filters = {};
 
+  // Collect filters to search for matching activities
   void collectFilters() {
     filters.clear();
     
@@ -97,11 +98,13 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  //List of all activities
   List<Map<String, dynamic>> activities = [];
   SportActivityService sportActivityService = SportActivityService();
   CultureActivityService cultureActivityService = CultureActivityService();
   bool isLoading = false;
 
+  //Get activities
   Future<void> readActivities() async {
     try {
       setState(() {
@@ -128,66 +131,72 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  //List of activities after filtering
   List<Map<String, dynamic>> filteredActivities = [];
 
-  Future<List<Map<String, dynamic>>> sortActivities(
-    Map<String, List<Map<String, String>>> filters,
-    List<Map<String, dynamic>> activities,
-  ) async {
+  Future<List<Map<String, dynamic>>> sortActivities({
+    required List<Map<String, dynamic>> activities,
+    Map<String, List<Map<String, String>>>? filters,
+    List<String>? keywords,
+  }) async {
+
+    //Filter activities by categories, ages, days, schedules and sectors
     List<Map<String, String>> categories = [];
     List<Map<String, String>> ages = [];
     List<Map<String, String>> days = [];
     List<Map<String, String>> schedules = [];
     List<Map<String, String>> sectors = [];
 
-    if (filters.containsKey('categories')) {
-      debugPrint('categories');
-      categories = filters['categories']!.map((category) {
-        return {
-          'id': category['id']!,
-          'name': category['name']!,
-        };
-      }).toList();
-    }
-    
-    if (filters.containsKey('ages')) {
-      debugPrint('ages');
-      ages = filters['ages']!.map((age) {
-        return {
-          'id': age['id']!,
-          'name': age['name']!,
-        };
-      }).toList();
-    }
+    if (filters != null) {
+      if (filters.containsKey('categories')) {
+        debugPrint('categories');
+        categories = filters['categories']!.map((category) {
+          return {
+            'id': category['id']!,
+            'name': category['name']!,
+          };
+        }).toList();
+      }
+      
+      if (filters.containsKey('ages')) {
+        debugPrint('ages');
+        ages = filters['ages']!.map((age) {
+          return {
+            'id': age['id']!,
+            'name': age['name']!,
+          };
+        }).toList();
+      }
 
-    if (filters.containsKey('days')) {
-      debugPrint('days');
-      days = filters['days']!.map((day) {
-        return {
-          'id': day['id']!,
-          'name': day['name']!,
-        };
-      }).toList();
-    }
+      if (filters.containsKey('days')) {
+        debugPrint('days');
+        days = filters['days']!.map((day) {
+          return {
+            'id': day['id']!,
+            'name': day['name']!,
+          };
+        }).toList();
+      }
 
-    if (filters.containsKey('schedules')) {
-      debugPrint('schedules');
-      schedules = filters['schedules']!.map((schedule) {
-        return {
-          'id': schedule['id']!,
-          'name': schedule['name']!,
-        };
-      }).toList();
-    }
+      if (filters.containsKey('schedules')) {
+        debugPrint('schedules');
+        schedules = filters['schedules']!.map((schedule) {
+          return {
+            'id': schedule['id']!,
+            'name': schedule['name']!,
+          };
+        }).toList();
+      }
 
-    if (filters.containsKey('sectors')) {
-      debugPrint('sectors');
-      sectors = filters['sectors']!.map((sector) {
-        return {
-          'id': sector['id']!,
-          'name': sector['name']!,
-        };
-      }).toList();
+      if (filters.containsKey('sectors')) {
+        debugPrint('sectors');
+        sectors = filters['sectors']!.map((sector) {
+          return {
+            'id': sector['id']!,
+            'name': sector['name']!,
+          };
+        }).toList();
+      }
     }
 
     List<Map<String, dynamic>> filteredActivities = [];
@@ -233,77 +242,133 @@ class HomePageState extends State<HomePage> {
           };
         }).toList() ?? [];
 
-      /* bool matchesCategory = categoriesId.any((categoryId) {
-        return categories.any((category) {
-          return category['id']!.compareTo(categoryId['id']) == 0;
+      bool matchesCategory = categories.isEmpty || categories.every((category) {
+        return categoriesId.any((categoryId) {
+          return category['id'] == categoryId['id'];
         });
       });
 
-      bool matchesAge = agesId.any((ageId) {
-        return ages.any((age) {
-          return age['id']!.compareTo(ageId['id']) == 0;
+      bool matchesAge = ages.isEmpty || ages.every((age) {
+        return agesId.any((ageId) {
+          return age['id'] == ageId['id'];
         });
       });
 
-      bool matchesDay = daysId.any((dayId) {
-        return days.any((day) {
-          return day['id']!.compareTo(dayId['id']) == 0;
+      bool matchesDay = days.isEmpty || days.every((day) {
+        return daysId.any((dayId) {
+          return day['id'] == dayId['id'];
         });
       });
 
-      bool matchesSchedule = schedulesId.any((scheduleId) {
-        return schedules.any((schedule) {
-          return schedule['id']!.compareTo(scheduleId['id']) == 0;
+      bool matchesSchedule = schedules.isEmpty || schedules.every((schedule) {
+        return schedulesId.any((scheduleId) {
+          return schedule['id'] == scheduleId['id'];
         });
       });
 
-      bool matchesSector = sectorsId.any((sectorId) {
-        return sectors.any((sector) {
-          return sector['id']!.compareTo(sectorId['id']) == 0;
+      bool matchesSector = sectors.isEmpty || sectors.every((sector) {
+        return sectorsId.any((sectorId) {
+          return sector['id'] == sectorId['id'];
         });
       });
 
-      if (matchesCategory || matchesAge || matchesDay || matchesSchedule || matchesSector) {
+      if (matchesCategory && matchesAge && matchesDay && matchesSchedule && matchesSector) {
         filteredActivities.add(activity);
-      } */
+      }
+    }
+  
+    //Filter activities by keywords
+    if (keywords != null && keywords.isNotEmpty) {
+      filteredActivities = filteredActivities.where((activity) {
+        List<RegExp> regExps = keywords.map((keyword) {
+          return RegExp(r'\b' + RegExp.escape(keyword.toLowerCase()) + r'\b');
+        }).toList();
 
-       bool matchesCategory = categories.isEmpty || categories.every((category) {
-            return categoriesId.any((categoryId) {
-                return category['id'] == categoryId['id'];
-            });
+        String discipline = activity['discipline'] ?? '';
+        List<String>? information = activity['information'] ?? [];
+        String structureName = activity['contact']['structureName'] ?? '';
+        String email = activity['contact']['email'] ?? '';
+        String phoneNumber = activity['contact']['phoneNumber'] ?? '';
+        String webSite = activity['contact']['webSite'] ?? '';
+        String titleAddress = activity['place']['titleAddress'] ?? '';
+        String streetAddress = activity['place']['streetAddress'] ?? '';
+        String postalCode = activity['place']['postalCode']?.toString() ?? '';
+        String city = activity['place']['city'] ?? '';
+
+        bool matchesSchedule = activity['schedules']?.any((schedule) {
+          String day = schedule['day'] ?? '';
+          List<Map<String, dynamic>> timeSlots = schedule['timeSlots'] ?? [];
+
+          bool matchesDay = regExps.any((regExp) => day.toLowerCase().contains(regExp));
+          bool matchesTimeSlots = timeSlots.any((timeSlot) {
+            String startHour = timeSlot['startHour'] ?? '';
+            String endHour = timeSlot['endHour'] ?? '';
+            return regExps.any((regExp) =>
+              startHour.toLowerCase().contains(regExp) ||
+              endHour.toLowerCase().contains(regExp)
+            );
+          });
+
+          return matchesDay || matchesTimeSlots;
+        }) ?? false;
+
+        bool matchesPricing = activity['pricings']?.any((pricing) {
+          String profile = pricing['profile'] ?? '';
+          String pricingValue = pricing['pricing'] ?? '';
+          return regExps.any((regExp) =>
+            profile.toLowerCase().contains(regExp) ||
+            pricingValue.toLowerCase().contains(regExp));
+        }) ?? false;
+        
+        bool matchesKeywords = regExps.every((regExp) {
+          return discipline.toLowerCase().contains(regExp) ||
+          (information != null ? information.join(' ') : '').toLowerCase().contains(regExp) ||
+          structureName.toLowerCase().contains(regExp) ||
+          email.toLowerCase().contains(regExp) ||
+          phoneNumber.toLowerCase().contains(regExp) ||
+          webSite.toLowerCase().contains(regExp) ||
+          titleAddress.toLowerCase().contains(regExp) ||
+          streetAddress.toLowerCase().contains(regExp) ||
+          postalCode.toLowerCase().contains(regExp) ||
+          city.toLowerCase().contains(regExp) ||
+          matchesSchedule ||
+          matchesPricing;
         });
 
-        bool matchesAge = ages.isEmpty || ages.every((age) {
-            return agesId.any((ageId) {
-                return age['id'] == ageId['id'];
-            });
-        });
-
-        bool matchesDay = days.isEmpty || days.every((day) {
-            return daysId.any((dayId) {
-                return day['id'] == dayId['id'];
-            });
-        });
-
-        bool matchesSchedule = schedules.isEmpty || schedules.every((schedule) {
-            return schedulesId.any((scheduleId) {
-                return schedule['id'] == scheduleId['id'];
-            });
-        });
-
-        bool matchesSector = sectors.isEmpty || sectors.every((sector) {
-            return sectorsId.any((sectorId) {
-                return sector['id'] == sectorId['id'];
-            });
-        });
-
-        // Si l'activité correspond à **tous les critères sélectionnés**, même si certains sont vides
-        if (matchesCategory && matchesAge && matchesDay && matchesSchedule && matchesSector) {
-            filteredActivities.add(activity);
-        }
+        return matchesKeywords;
+      }).toList();
     }
     
     return filteredActivities;
+  }
+
+  final keywordsController = TextEditingController();
+
+  //Get all activities before filtering by keyword
+  Future<void> readAllActivities() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      List<Map<String, dynamic>> sportActivities = (await sportActivityService.getSportActivities())
+        .map((item) => (item).toMap())
+        .toList();
+
+      List<Map<String, dynamic>> cultureActivities = (await cultureActivityService.getCultureActivities())
+        .map((item) => (item).toMap())
+        .toList();
+
+      activities = [...sportActivities, ...cultureActivities];
+
+      await Future.delayed(Duration(milliseconds: 25));
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching activities: $e');
+    }
   }
 
   @override
@@ -343,7 +408,8 @@ class HomePageState extends State<HomePage> {
                     child: Text(
                       'Je trouve mon activité',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontFamily: 'Satisfy-Regular',
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -353,20 +419,81 @@ class HomePageState extends State<HomePage> {
                   SizedBox(height: 32),
                   // Barre de recherche
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Je recherche ...',
-                        hintText: 'Ex: Running, Peinture, ...',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.search),
-                      ),
-                      onSubmitted: (value) {
-                        debugPrint(value);
-                      },
-                    ),
+                    width: MediaQuery.of(context).size.width * 0.98,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: keywordsController,
+                            decoration: InputDecoration(
+                              labelText: 'Je recherche ...',
+                              hintText: 'Ex: Running, Peinture, ...',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF5B59B4),
+                            foregroundColor: Colors.white,
+                            side: BorderSide(
+                              color: Color(0xFF5B59B4)
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          onPressed: () async {
+                            filteredActivities.clear();
+
+                            readAllActivities();
+
+                            String searchQuery = keywordsController.text.trim();
+
+                            if (searchQuery.isNotEmpty) {
+                              List<String> keywords = searchQuery.split(' ').map((e) => e.trim()).toList();
+                              debugPrint('Keywords: $keywords');
+
+                              List<Map<String, dynamic>> filteredActivities = await sortActivities(
+                                keywords: keywords,
+                                activities: activities,
+                              );
+
+                              if (filteredActivities.isNotEmpty) {
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ActivityPage(
+                                        filteredActivities: filteredActivities,
+                                      )
+                                    )
+                                  );
+                                }
+                              } else {
+                                CustomSnackBar(
+                                  message: 'Aucune activité trouvée !',
+                                  backgroundColor: Colors.red,
+                                ).showSnackBar(context);
+                              }
+                            }
+                            keywordsController.clear();
+                          },
+                          child: Icon(
+                            Icons.search,
+                            size: 24,
+                          )
+                        )
+                      ],
+                    )
                   ),
                   SizedBox(height: 16),
+                  //Sport or Culture section
                   LayoutBuilder(
                     builder: (context, constraints) {
                       EdgeInsetsGeometry padding;
@@ -411,6 +538,7 @@ class HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Column(
                       children: [
+                        //Filter button by categories
                         _buildCriteriaTile(
                           context,
                           Icons.category,
@@ -445,6 +573,7 @@ class HomePageState extends State<HomePage> {
                           },
                           isSport: _selectedSection == 0,
                         ),
+                        //Filter button by ages
                         _buildCriteriaTile(
                           context,
                           Icons.accessibility_new,
@@ -479,6 +608,7 @@ class HomePageState extends State<HomePage> {
                           },
                           isSport: _selectedSection == 0,
                         ),
+                        //Filter button by days
                         _buildCriteriaTile(
                           context,
                           Icons.date_range,
@@ -513,6 +643,7 @@ class HomePageState extends State<HomePage> {
                           },
                           isSport: _selectedSection == 0,
                         ),
+                        //Filter button by schedules
                         _buildCriteriaTile(
                           context,
                           Icons.access_time,
@@ -547,6 +678,7 @@ class HomePageState extends State<HomePage> {
                           },
                           isSport: _selectedSection == 0,
                         ),
+                        //Filter button by sectors
                         _buildCriteriaTile(
                           context,
                           Icons.apartment_rounded,
@@ -584,186 +716,7 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  if (_selectedSection == 0 && selectedSportCategories.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedSportCategories.map((category) {
-                          return Chip(
-                            label: Text(category.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedSportCategories.remove(category);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 1 && selectedCultureCategories.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedCultureCategories.map((category) {
-                          return Chip(
-                            label: Text(category.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedCultureCategories.remove(category);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 0 && selectedSportAges.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedSportAges.map((age) {
-                          return Chip(
-                            label: Text(age.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedSportAges.remove(age);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 1 && selectedCultureAges.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedCultureAges.map((age) {
-                          return Chip(
-                            label: Text(age.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedCultureAges.remove(age);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 0 && selectedSportDays.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedSportDays.map((day) {
-                          return Chip(
-                            label: Text(day.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedSportDays.remove(day);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 1 && selectedCultureDays.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedCultureDays.map((day) {
-                          return Chip(
-                            label: Text(day.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedCultureDays.remove(day);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 0 && selectedSportSchedules.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedSportSchedules.map((schedule) {
-                          return Chip(
-                            label: Text(schedule.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedSportSchedules.remove(schedule);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 1 && selectedCultureSchedules.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedCultureSchedules.map((schedule) {
-                          return Chip(
-                            label: Text(schedule.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedCultureSchedules.remove(schedule);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 0 && selectedSportSectors.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedSportSectors.map((sector) {
-                          return Chip(
-                            label: Text(sector.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedSportSectors.remove(sector);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                  if (_selectedSection == 1 && selectedCultureSectors.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: selectedCultureSectors.map((sector) {
-                          return Chip(
-                            label: Text(sector.name),
-                            onDeleted: () {
-                              setState(() {
-                                selectedCultureSectors.remove(sector);
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
+                  //Buttons to search for activities or reset filters (Row/Column)
                   LayoutBuilder(
                     builder: (context, constraints) {
                       return constraints.maxWidth > 325 ?
@@ -781,14 +734,19 @@ class HomePageState extends State<HomePage> {
                                 ),
                               ),
                               onPressed: () async {
+                                filteredActivities.clear();
+
                                 collectFilters();
-                                await readActivities();
+                                readActivities();
                                 
-                                List<Map<String, dynamic>> filteredActivities = await sortActivities(filters, activities);
+                                filteredActivities = await sortActivities(
+                                  filters: filters,
+                                  activities: activities,
+                                );
 
                                 if (filteredActivities.isNotEmpty) {
                                   setState(() {
-                                    this.filteredActivities = filteredActivities;
+                                    filteredActivities = filteredActivities;
                                   });
                                   
                                   if (context.mounted) {
@@ -801,11 +759,18 @@ class HomePageState extends State<HomePage> {
                                       )
                                     );
                                   }
+                                } else {
+                                  CustomSnackBar(
+                                    message: 'Aucune activité trouvée !',
+                                    backgroundColor: Colors.red,
+                                  ).showSnackBar(context);
                                 }
+
+                                _resetFilters();
+                                filters.clear();
                               },
                               child: Text('Rechercher',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
                               ),
@@ -830,7 +795,6 @@ class HomePageState extends State<HomePage> {
                               },
                               child: Text('Réinitialiser',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
                               ),
@@ -851,14 +815,19 @@ class HomePageState extends State<HomePage> {
                                 ),
                               ),
                               onPressed: () async {
+                                filteredActivities.clear();
+
                                 collectFilters();
                                 readActivities();
-                                
-                                List<Map<String, dynamic>> filteredActivities = await sortActivities(filters, activities);
+
+                                filteredActivities = await sortActivities(
+                                  filters: filters,
+                                  activities: activities
+                                );
 
                                 if (filteredActivities.isNotEmpty) {
                                   setState(() {
-                                    this.filteredActivities = filteredActivities;
+                                    filteredActivities = filteredActivities;
                                   });
 
                                   if (context.mounted) {
@@ -871,11 +840,18 @@ class HomePageState extends State<HomePage> {
                                       )
                                     );
                                   }
+                                } else {
+                                  CustomSnackBar(
+                                    message: 'Aucune activité trouvée !',
+                                    backgroundColor: Colors.red,
+                                  ).showSnackBar(context);
                                 }
+
+                                _resetFilters();
+                                filters.clear();
                               },
                               child: Text('Rechercher',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
                               ),
@@ -900,7 +876,6 @@ class HomePageState extends State<HomePage> {
                               },
                               child: Text('Réinitialiser',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
                               ),
@@ -921,6 +896,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
+  //Widget buttons to filters
   Widget _buildCriteriaTile(
     BuildContext context,
     IconData icon,
@@ -960,6 +936,7 @@ class HomePageState extends State<HomePage> {
                   ),
                   child: Icon(
                     icon,
+                    size: 24,
                     color: Colors.white
                   ),
                 ),
@@ -995,13 +972,13 @@ class HomePageState extends State<HomePage> {
                   ),
                   child: Icon(
                     icon,
+                    size: 24,
                     color: Colors.white
                   ),
                 ),
               ]
             ],
           ),
-          
         ),
       ),
     );

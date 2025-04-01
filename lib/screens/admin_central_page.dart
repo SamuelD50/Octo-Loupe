@@ -66,16 +66,15 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                             ),
                           );
                         },
-                        child: Text('Gérer l\'interface de l\'application',
+                        child: Text('Gestion de l\'interface',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -96,15 +95,14 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           ),
                         );
                       },
-                      child: Text('Gérer les activités de l\'application',
+                      child: Text('Gestion des activités',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -125,15 +123,14 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           ),
                         );
                       },
-                      child: Text('Lire les messages du formulaire de contact',
+                      child: Text('Formulaire de contact',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -158,13 +155,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       },
                       child: Text('Mon profil utilisateur',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -187,13 +183,12 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       },
                       child: Text('Ajouter un profil administrateur',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
@@ -212,17 +207,16 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           setLoading: setLoading,
                         );
                       },
-                      child: Text('Supprimer mon compte utilisateur',
+                      child: Text('Supprimer mon compte',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.6,
+                    width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red, 
@@ -241,7 +235,6 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       },
                       child: Text('Se déconnecter',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),

@@ -56,7 +56,10 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [ 
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 8)
+                  ),
                   widget.isSport ?
                   FutureBuilder<List<SportSector>>(
                     future: sportSectorsReceiver,
@@ -177,29 +180,30 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                             },
                           ),
                           if (sportSectors.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5B59B4),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFF5B59B4)),
-                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
+                            SizedBox(height: 8),
+                          if (sportSectors.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, selectedSectors);
-                                },
-                                child: Text('Valider',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, selectedSectors);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
+                          ),
                         ],
                       );
                     },
@@ -322,29 +326,30 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                             },
                           ),
                           if (cultureSectors.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5B59B4),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFF5B59B4)),
-                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
+                            SizedBox(height: 8),
+                          if (cultureSectors.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, selectedSectors);
-                                },
-                                child: Text('Valider',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, selectedSectors);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
+                          ),
                         ],
                       );
                     },

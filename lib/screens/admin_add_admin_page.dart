@@ -59,7 +59,8 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           child: Text(
                             'Ajouter un profil administrateur',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontFamily: 'Satisfy-Regular',
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -68,7 +69,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                         ),
                         const SizedBox(height: 32),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: firstNameAdminController,
                             decoration: const InputDecoration(
@@ -87,7 +88,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: nameAdminController,
                             decoration: const InputDecoration(
@@ -106,7 +107,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: newEmailAdminController,
                             decoration: const InputDecoration(
@@ -131,7 +132,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: newPasswordAdminController,
                             obscureText: !_isNewPasswordVisible,
@@ -193,7 +194,6 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           },
                           child: Text('Créer un compte',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
                           ),

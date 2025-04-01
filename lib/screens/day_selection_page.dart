@@ -56,7 +56,10 @@ class DaySelectionPageState extends State<DaySelectionPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [ 
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 8)
+                  ),
                   widget.isSport ?
                   FutureBuilder<List<SportDay>>(
                     future: sportDaysReceiver,
@@ -188,29 +191,30 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                             },
                           ),
                           if (sportDays.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5B59B4),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFF5B59B4)),
-                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
+                            SizedBox(height: 8),
+                          if (sportDays.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, selectedDays);
-                                },
-                                child: Text('Valider',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, selectedDays);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
+                          ),
                         ],
                       );
                     },
@@ -348,29 +352,30 @@ class DaySelectionPageState extends State<DaySelectionPage> {
                             },
                           ),
                           if (cultureDays.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5B59B4),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFF5B59B4)),
-                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
+                            SizedBox(height: 8),
+                          if (cultureDays.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, selectedDays);
-                                },
-                                child: Text('Valider',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, selectedDays);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
+                          ),
                         ],
                       );
                     },

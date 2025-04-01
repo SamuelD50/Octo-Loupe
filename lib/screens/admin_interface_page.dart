@@ -544,9 +544,10 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   Padding(
                     padding: EdgeInsets.only(top: 32),
                     child: Text(
-                      'Gérer l\'interface de l\'application',
+                      'Gestion de l\'interface',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontFamily: 'Satisfy-Regular',
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -589,7 +590,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
                           onPressed: () {
                             setState(() {
@@ -637,7 +638,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
                           onPressed: () {
                             setState(() {
@@ -685,7 +686,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
                           onPressed: () {
                             setState(() {
@@ -804,7 +805,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               ),
           const SizedBox(height: 16),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery.of(context).size.width * 0.98,
             child: TextFormField(
               controller: imageUrlController,
               decoration: InputDecoration(
@@ -821,7 +822,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery.of(context).size.width * 0.98,
             child: TextFormField(
               controller: nameController,
               decoration: InputDecoration(
@@ -864,7 +865,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             },
             child: Text('Ajouter le sous-filtre',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
             ),
@@ -1007,7 +1007,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               ),
           const SizedBox(height: 16),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery.of(context).size.width * 0.98,
             child:TextFormField(
               controller: newImageUrlController,
               decoration: InputDecoration(
@@ -1024,7 +1024,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery.of(context).size.width * 0.98,
             child:TextFormField(
               controller: newNameController,
               decoration: InputDecoration(
@@ -1068,7 +1068,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             },
             child: Text('Modifier le sous-filtre',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
             ),
@@ -1222,7 +1221,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             },
             child: Text('Supprimer le sous-filtre',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
             ),

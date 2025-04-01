@@ -85,7 +85,8 @@ class AuthPageState extends State<AuthPage> {
                     child: Text(
                       'Mon compte',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontFamily: 'Satisfy-Regular',
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -140,7 +141,7 @@ class AuthPageState extends State<AuthPage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: emailController,
                             decoration: const InputDecoration(
@@ -163,7 +164,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
@@ -189,16 +190,22 @@ class AuthPageState extends State<AuthPage> {
                             },
                           ),
                         ),
-                        /* const SizedBox(height: 2), */
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: Align(
                             alignment: Alignment.bottomRight,
                             child: TextButton(
-                              onPressed: _resetPassword,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ResetPasswordPage()
+                                  ),
+                                );
+                              },
                               child: const Text(
                                 'Mot de passe oublié ?',
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
                           ),
@@ -228,7 +235,6 @@ class AuthPageState extends State<AuthPage> {
                           },
                           child: Text('Se connecter',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
                           ),
@@ -241,7 +247,7 @@ class AuthPageState extends State<AuthPage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: firstNameController,
                             decoration: const InputDecoration(
@@ -260,7 +266,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: nameController,
                             decoration: const InputDecoration(
@@ -279,7 +285,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: newEmailController,
                             decoration: const InputDecoration(
@@ -304,7 +310,7 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.95,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: newPasswordController,
                             obscureText: !_isNewPasswordVisible,
@@ -357,7 +363,6 @@ class AuthPageState extends State<AuthPage> {
                           },
                           child: Text('Créer un compte',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
                           ),

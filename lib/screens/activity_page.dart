@@ -22,7 +22,7 @@ class ActivityPageState extends State<ActivityPage> {
   bool isLoading = false;
   final int _selectedSection = 0;
   List<Map<String, dynamic>> activities = [];
-    SportActivityService sportActivityService = SportActivityService();
+  SportActivityService sportActivityService = SportActivityService();
   CultureActivityService cultureActivityService = CultureActivityService();
   List<Map<String, dynamic>> filteredActivities = [];
   late String activityId;
@@ -572,7 +572,7 @@ class ActivityPageState extends State<ActivityPage> {
                         ),
                       ),
                       Text(
-                        '${contact.structureName}',
+                        contact.structureName,
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.white,
@@ -686,7 +686,6 @@ class ActivityPageState extends State<ActivityPage> {
             },
             child: Text('Retour à la liste',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
             ),

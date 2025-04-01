@@ -61,7 +61,8 @@ class ContactPageState extends State<ContactPage> {
                       child: Text(
                         'Contact',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontFamily: 'Satisfy-Regular',
+                          fontSize: 30,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -70,7 +71,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 32),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child: Text(
                         'N\'hésitez pas à nous contacter pour modifier du contenu ou pour toutes autres questions.',
                         style: TextStyle(fontSize: 16),
@@ -79,7 +80,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child:DropdownButtonFormField<String>(
                         value: selectedTitle,
                         hint: Text('Titre'),
@@ -105,7 +106,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child: TextFormField(
                         controller: firstNameController,
                         decoration: const InputDecoration(
@@ -120,7 +121,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child: TextFormField(
                         controller: nameController,
                         decoration: const InputDecoration(
@@ -135,7 +136,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child:TextFormField(
                         controller: emailController,
                         decoration: const InputDecoration(
@@ -161,7 +162,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child:TextFormField(
                         controller: subjectController,
                         decoration: const InputDecoration(
@@ -181,7 +182,7 @@ class ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.98,
                       child:TextFormField(
                         controller: bodyController,
                         decoration: const InputDecoration(
@@ -239,7 +240,6 @@ class ContactPageState extends State<ContactPage> {
                       child: Text(
                         'Envoyer',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                       ),

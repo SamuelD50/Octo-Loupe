@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/screens/auth_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -51,7 +52,8 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                           child: Text(
                             'Réinitialiser son mot de passe',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontFamily: 'Satisfy-Regular',
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -60,7 +62,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         const SizedBox(height: 32),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: emailController,
                             decoration: const InputDecoration(

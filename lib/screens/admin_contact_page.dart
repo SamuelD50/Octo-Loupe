@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:octoloupe/components/contact_card.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/services/contact_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -75,7 +74,8 @@ class AdminContactPageState extends State<AdminContactPage> {
                     child: Text(
                       'Formulaire de contact',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 30,
+                        fontFamily: 'Satisfy-Regular',
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -172,14 +172,114 @@ class AdminContactPageState extends State<AdminContactPage> {
         itemBuilder: (context, index) {
           var message = messages[index];
           
-          return ContactCard(
-            message: message,
-            onTap: () {
-              setState(() {
-                isOpen = true;
-                selectedMessage = message;
-              });
-            },
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  offset: Offset(4, 4),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.98,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isOpen = true;
+                    selectedMessage = message;
+                  });
+                },
+                child: Card(
+                  elevation: 4.0,
+                  color: const Color(0xFF5B59B4),
+                  shadowColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: Colors.red,
+                              child: Text(
+                                _getInitials(message['firstName'], message['name']),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${message['title']} ${message['firstName']} ${message['name']}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${message['subject']}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    message['body'] != null && message['body']!.length > 50 ?
+                                      message['body']!.substring(0, 50)
+                                      : message['body'] ?? 'Pas de corps',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '${message['timestamp']['day'].toString()} ${_getMonthName(message['timestamp']['month'])} ${message['timestamp']['year'].toString()}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                              )
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              '${message['timestamp']['hour'].toString()}:${message['timestamp']['minute'].toString()}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                              )
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
           );
         }
       );
@@ -190,111 +290,118 @@ class AdminContactPageState extends State<AdminContactPage> {
   ) {
     return Column(
       children: [
-        Card(
-          color: Color(0xFF5D71FF),
-          surfaceTintColor: Color(0xFF5B59B4),
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
             decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF5B59B4),
+                  color: Colors.black54,
                   offset: Offset(4, 4),
-                  blurRadius: 4,
+                  blurRadius: 6,
                 ),
               ],
-              borderRadius: BorderRadius.circular(12),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Objet: ${selectedMessage!['subject']}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.98,
+              child: Card(
+                  elevation: 4.0,
+                  color: const Color(0xFF5B59B4),
+                  shadowColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Colors.red,
-                        child: Text(
-                          _getInitials(selectedMessage!['firstName'], selectedMessage!['name']),
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                      'Objet: ${selectedMessage!['subject']}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
-                      SizedBox(width: 25),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${selectedMessage!['title']} ${selectedMessage!['firstName']} ${selectedMessage!['name']}',
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            _getInitials(selectedMessage!['firstName'], selectedMessage!['name']),
                             style: TextStyle(
+                              fontSize: 20,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              final String emailUrlString = 'mailto:${selectedMessage!['email']}?subject=Re: ${Uri.encodeComponent(selectedMessage!['subject'])}';
+                        ),
+                        SizedBox(width: 25),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${selectedMessage!['title']} ${selectedMessage!['firstName']} ${selectedMessage!['name']}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                final String emailUrlString = 'mailto:${selectedMessage!['email']}?subject=Re: ${Uri.encodeComponent(selectedMessage!['subject'])}';
 
-                              if (Platform.isAndroid || Platform.isIOS) {
-                                try {
-                                  final Uri emailUrl = Uri.parse(emailUrlString);
-                                  launchUrl(emailUrl);
-                                } catch (e) {
-                                  debugPrint('Error: $e');
+                                if (Platform.isAndroid || Platform.isIOS) {
+                                  try {
+                                    final Uri emailUrl = Uri.parse(emailUrlString);
+                                    launchUrl(emailUrl);
+                                  } catch (e) {
+                                    debugPrint('Error: $e');
+                                  }
                                 }
-                              }
-                            },
-                            child: Text(
-                              '${selectedMessage!['email']}',
+                              },
+                              child: Text(
+                                '${selectedMessage!['email']}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Le ${selectedMessage!['timestamp']['day'].toString()} ${_getMonthName(selectedMessage!['timestamp']['month'])} ${selectedMessage!['timestamp']['year'].toString()} à ${selectedMessage!['timestamp']['hour'].toString()}:${selectedMessage!['timestamp']['minute'].toString()}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
-                              ),
+                              )
                             ),
-                          ),
-                          Text(
-                            'Le ${selectedMessage!['timestamp']['day'].toString()} ${_getMonthName(selectedMessage!['timestamp']['month'])} ${selectedMessage!['timestamp']['year'].toString()} à ${selectedMessage!['timestamp']['hour'].toString()}:${selectedMessage!['timestamp']['minute'].toString()}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            )
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  SingleChildScrollView(
-                    child: Text(
-                      selectedMessage!['body'] ?? 'Pas de corps de message',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    SingleChildScrollView(
+                      child: Text(
+                        selectedMessage!['body'] ?? 'Pas de corps de message',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
+            )
+          ),
         ),
         SizedBox(height: 20),
         ElevatedButton(
@@ -318,7 +425,6 @@ class AdminContactPageState extends State<AdminContactPage> {
           },
           child: Text('Supprimer ce message',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
               fontSize: 15,
             ),
           ),
@@ -343,7 +449,6 @@ class AdminContactPageState extends State<AdminContactPage> {
           child: Text(
             'Revenir à la liste',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
               fontSize: 15,
             ),
           ),

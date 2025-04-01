@@ -82,6 +82,9 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 8)
+                  ),
                   widget.isSport ?
                   FutureBuilder<List<SportAge>>(
                     future: sportAgesReceiver,
@@ -198,29 +201,30 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                             },
                           ),
                           if (sportAges.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5B59B4),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFF5B59B4)),
-                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
+                            SizedBox(height: 8),
+                          if (sportAges.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, selectedAges);
-                                },
-                                child: Text('Valider',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, selectedAges);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
+                          ),
                         ],
                       );
                     },
@@ -341,29 +345,30 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                             },
                           ),
                           if (cultureAges.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5B59B4),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Color(0xFF5B59B4)),
-                                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
+                            SizedBox(height: 8),
+                          if (cultureAges.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, selectedAges);
-                                },
-                                child: Text('Valider',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, selectedAges);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
+                          ),
                         ],
                       );
                     },
