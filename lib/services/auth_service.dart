@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:octoloupe/components/snackbar.dart';
-import 'package:octoloupe/constants/error.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:flutter/material.dart';
@@ -88,11 +87,11 @@ class AuthService {
       }
 
       if (e.code == 'weak-password') {
-        throw Exception(ErrorMessages.weakPassword);
+        throw Exception('The password provided is too weak');
       } else if (e.code == 'email-already-in-use') {
-        throw Exception(ErrorMessages.emailAlreadyInUse);
+        throw Exception('The account already exists for that email');
       } else {
-        throw Exception('Erreur: ${e.message}');
+        throw Exception('Error creating user: ${e.message}');
       }
     }
   }
@@ -169,11 +168,11 @@ class AuthService {
       }
 
       if (e.code == 'weak-password') {
-        throw Exception(ErrorMessages.weakPassword);
+        throw Exception('The password provided is to weak');
       } else if (e.code == 'email-already-in-use') {
-        throw Exception(ErrorMessages.emailAlreadyInUse);
+        throw Exception('The accounts already exists for that email');
       } else {
-        throw Exception('Erreur: ${e.message}');
+        throw Exception('Error creating user: ${e.message}');
       }
     }
   }
@@ -252,11 +251,11 @@ class AuthService {
       }
 
       if (e.code == 'user-not-found') {
-        throw Exception(ErrorMessages.userNotFound);
+        throw Exception('No user found for that email');
       } else if (e.code == 'wrong-password') {
-        throw Exception(ErrorMessages.wrongPassword);
+        throw Exception('Wrong password provided for that user');
       } else {
-        throw Exception('Erreur: ${e.message}');
+        throw Exception('Error during connection: ${e.message}');
       }
     }
   }
@@ -310,11 +309,11 @@ class AuthService {
       }
 
       if (e.code == 'invalid-email') {
-        throw Exception(ErrorMessages.invalidEmail);
+        throw Exception('The email address is invalid');
       } else if (e.code == 'user-not-found') {
-        throw Exception(ErrorMessages.noUserFound);
+        throw Exception('No user found for that email');
       } else {
-        throw Exception('Erreur: ${e.message}');
+        throw Exception('Error reseting password: ${e.message}');
       }
     }
   }
@@ -357,7 +356,8 @@ class AuthService {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
-      debugPrint('Error during disconnection: $e');
+
+      throw Exception('Error during disconnection: $e');
     } 
   }
 
@@ -402,7 +402,7 @@ class AuthService {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
-      throw Exception('Erreur: $e');
+      throw Exception('Error deleting user: $e');
     }
   }
 
@@ -462,7 +462,7 @@ class AuthService {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
-      throw Exception('Erreur: $e');
+      throw Exception('Error updating password: $e');
     }
   }
 }

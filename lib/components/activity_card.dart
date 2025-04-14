@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 import 'package:octoloupe/model/activity_model.dart';
 
 class ActivityCard extends StatelessWidget {
@@ -19,6 +21,15 @@ class ActivityCard extends StatelessWidget {
     required this.onTap,
   });
 
+  Future<bool> checkImageValidity(String imageUrl) async {
+    try {
+      final response = await http.head(Uri.parse(imageUrl));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(
     BuildContext context
@@ -30,7 +41,7 @@ class ActivityCard extends StatelessWidget {
         color: const Color(0xFF5B59B4),
         shadowColor: Colors.black,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(30),
         ),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -39,26 +50,54 @@ class ActivityCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      width: 125,
-                      height: 125,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 4,
+                  FutureBuilder(
+                    future: checkImageValidity(imageUrl),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            width: 125,
+                            height: 125,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 4,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(25),
+                              child: Image.asset(
+                                'assets/images/ActivityByDefault.webp',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Container(
+                          width: 125,
+                          height: 125,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 4,
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -151,128 +190,4 @@ class ActivityCard extends StatelessWidget {
       ),
     );  
   }
-/*  @override
-Widget build(BuildContext context) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Card(
-      elevation: 4.0,
-      color: const Color(0xFF5B59B4),
-      shadowColor: Colors.black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(  // Utilisation de Column pour organiser les éléments verticalement
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                // Image circulaire en haut à gauche
-                ClipOval(
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Discipline
-                      Text(
-                        discipline,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Adresse compactée
-                      Text(
-                        '${place.titleAddress}, ${place.streetAddress}, ${place.postalCode} ${place.city}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Horaires
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: schedules.map((schedule) {
-                          return Row(
-                            children: [
-                              Text(
-                                '${schedule.day} :',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              // Compacter l'affichage des créneaux horaires
-                              ...schedule.timeSlots.map((timeSlot) {
-                                if (timeSlot.startHour?.isNotEmpty == true && timeSlot.endHour?.isNotEmpty == true) {
-                                  return Text(
-                                    'De ${timeSlot.startHour} à ${timeSlot.endHour}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.white70,
-                                    ),
-                                  );
-                                } else if (timeSlot.startHour?.isNotEmpty == true) {
-                                  return Text(
-                                    'A partir de ${timeSlot.startHour}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.white70,
-                                    ),
-                                  );
-                                } else if (timeSlot.endHour?.isNotEmpty == true) {
-                                  return Text(
-                                    'Jusqu\'à ${timeSlot.endHour}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.white70,
-                                    ),
-                                  );
-                                }
-                                return Container();  // Pas de texte si les deux heures sont vides
-                              }).toList(),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 8),
-                      // Tarification
-                      ...pricings.map((pricing) {
-                        return Text(
-                          '${pricing.profile} : ${pricing.pricing}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.white70,
-                          ),
-                        );
-                      }).toList(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
- */
-
 }

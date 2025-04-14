@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/components/filter_card.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
@@ -105,7 +106,11 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               final isSelected = selectedCategories.any((selected) =>
                                 selected['id'] == category.id);
 
-                              return GestureDetector(
+                              return FilterCard(
+                                name: category.name,
+                                imageUrl: category.imageUrl,
+                                isSelected: isSelected,
+                                fontSize: fontSize,
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
@@ -121,59 +126,6 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                     }
                                   });
                                 },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: isSelected
-                                      ? []
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black54,
-                                            offset: Offset(2, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                  ),
-                                  child: Card(
-                                    elevation: isSelected ?
-                                      2 : 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Image.network(
-                                            category.imageUrl,
-                                            fit:BoxFit.cover,
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              category.name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                               );
                             },
                           ),
@@ -185,9 +137,9 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -196,6 +148,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               child: Text('Valider',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -251,7 +204,11 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               final isSelected = selectedCategories.any((selected) =>
                                 selected['id'] == category.id);
 
-                                return GestureDetector(
+                                return FilterCard(
+                                  name: category.name,
+                                  imageUrl: category.imageUrl,
+                                  isSelected: isSelected,
+                                  fontSize: fontSize,
                                   onTap: () {
                                     setState(() {
                                       if (isSelected) {
@@ -267,59 +224,6 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                       }
                                     });
                                   },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    curve: Curves.easeInOut,
-                                    decoration: BoxDecoration(
-                                      color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(16),
-                                      boxShadow: isSelected
-                                        ? []
-                                        : [
-                                            BoxShadow(
-                                              color: Colors.black54,
-                                              offset: Offset(2, 2),
-                                              blurRadius: 4,
-                                            ),
-                                          ],
-                                    ),
-                                    child: Card(
-                                      elevation: isSelected ?
-                                        2 : 4,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Stack(
-                                        fit: StackFit.expand,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(16),
-                                            child: Image.network(
-                                              category.imageUrl,
-                                              fit:BoxFit.cover,
-                                            ),
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.black54,
-                                              borderRadius: BorderRadius.circular(16),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                category.name,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: fontSize,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
                                 );
                             },
                           ),
@@ -331,9 +235,9 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -342,6 +246,7 @@ class CategorySelectionPageState extends State<CategorySelectionPage> {
                               child: Text('Valider',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),

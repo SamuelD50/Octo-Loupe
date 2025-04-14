@@ -65,10 +65,12 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: emailController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Email',
                               hintText: 'Ex: abc@exemple.com',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -84,9 +86,9 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () {
@@ -98,7 +100,12 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                               );
                             }  
                           },
-                          child: Text('Envoyer un email de réinitilisation'),
+                          child: Text(
+                            'Envoyer un email de réinitilisation',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            )
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 32),

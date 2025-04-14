@@ -374,7 +374,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    readActivities();
+    /* readActivities(); */
     NotificationService().initNotification();
   }
 
@@ -388,12 +388,7 @@ class HomePageState extends State<HomePage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              /* color: Colors.white24, */
-              image: DecorationImage(
-                image: NetworkImage('https://images.unsplash.com/photo-1509849809433-36d5c609f0ee?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGVjdW1lJTIwbWVyfGVufDB8fDB8fHww'),
-                fit: BoxFit.cover,
-                opacity: 0.5,
-              ),
+              color: Colors.white24,
             ),
           ),
           Align(
@@ -419,7 +414,7 @@ class HomePageState extends State<HomePage> {
                   SizedBox(height: 32),
                   // Barre de recherche
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.98,
+                    width: MediaQuery.of(context).size.width * 0.95,
                     child: Row(
                       children: [
                         Expanded(
@@ -429,9 +424,9 @@ class HomePageState extends State<HomePage> {
                               labelText: 'Je recherche ...',
                               hintText: 'Ex: Running, Peinture, ...',
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                                borderRadius: BorderRadius.circular(30.0),
                               ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                             ),
                           ),
                         ),
@@ -443,26 +438,30 @@ class HomePageState extends State<HomePage> {
                             side: BorderSide(
                               color: Color(0xFF5B59B4)
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () async {
                             filteredActivities.clear();
-
-                            readAllActivities();
-
                             String searchQuery = keywordsController.text.trim();
+                            debugPrint('searchQuery: $searchQuery');
 
                             if (searchQuery.isNotEmpty) {
+                                
+                              await readAllActivities();
+
                               List<String> keywords = searchQuery.split(' ').map((e) => e.trim()).toList();
                               debugPrint('Keywords: $keywords');
 
+                              debugPrint('Activities before: ${activities.length}');
                               List<Map<String, dynamic>> filteredActivities = await sortActivities(
                                 keywords: keywords,
                                 activities: activities,
                               );
+                              debugPrint('Activities after: ${activities.length}');
+                              debugPrint('FilteredActivities after: ${filteredActivities.length}');
 
                               if (filteredActivities.isNotEmpty) {
                                 if (context.mounted) {
@@ -483,6 +482,7 @@ class HomePageState extends State<HomePage> {
                               }
                             }
                             keywordsController.clear();
+                            filteredActivities.clear();
                           },
                           child: Icon(
                             Icons.search,
@@ -501,7 +501,7 @@ class HomePageState extends State<HomePage> {
                       if (constraints.maxWidth < 325) {
                         padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
                       } else {
-                        padding = EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0);
+                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
                       }
 
                       return ToggleButtons(
@@ -510,6 +510,7 @@ class HomePageState extends State<HomePage> {
                           setState(() {
                             _selectedSection = section;
                             _resetFilters();
+                            readActivities();
                           });
                         },
                         color: Colors.black,
@@ -517,18 +518,32 @@ class HomePageState extends State<HomePage> {
                         fillColor: Color(0xFF5B59B4),
                         borderColor: Color(0xFF5B59B4),
                         selectedBorderColor: Color(0xFF5B59B4),
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(30.0),
                         direction: constraints.maxWidth < 325 ?
                           Axis.vertical
                           : Axis.horizontal,
                         children: [
                           Container(
                             padding: padding,
-                            child: Center(child: Text('Sport')),
+                            child: Center(
+                              child: Text(
+                                'Sport',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
                           Container(
                             padding: padding,
-                            child: Center(child: Text('Culture')),
+                            child: Center(
+                              child: Text(
+                                'Culture',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       );
@@ -728,21 +743,24 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () async {
-                                filteredActivities.clear();
 
                                 collectFilters();
-                                readActivities();
+                                await readActivities();
+
+                                debugPrint('FilteredActivities before: ${filteredActivities.length}');
                                 
                                 filteredActivities = await sortActivities(
                                   filters: filters,
                                   activities: activities,
                                 );
+
+                                debugPrint('FilteredActivities before: ${filteredActivities.length}');
 
                                 if (filteredActivities.isNotEmpty) {
                                   setState(() {
@@ -772,6 +790,7 @@ class HomePageState extends State<HomePage> {
                               child: Text('Rechercher',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -781,9 +800,9 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -796,6 +815,7 @@ class HomePageState extends State<HomePage> {
                               child: Text('Réinitialiser',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -809,9 +829,9 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () async {
@@ -853,6 +873,7 @@ class HomePageState extends State<HomePage> {
                               child: Text('Rechercher',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -862,9 +883,9 @@ class HomePageState extends State<HomePage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -877,6 +898,7 @@ class HomePageState extends State<HomePage> {
                               child: Text('Réinitialiser',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -907,7 +929,7 @@ class HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.5,
+        width: MediaQuery.of(context).size.width * 0.8,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
@@ -983,5 +1005,4 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }

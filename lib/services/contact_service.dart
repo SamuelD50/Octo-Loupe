@@ -57,7 +57,7 @@ class ContactService {
         ).showSnackBar(context);
       }
 
-      throw Exception('Erreur: $e');
+      throw Exception('Error sending message: $e');
     }
   }
 
@@ -75,9 +75,7 @@ class ContactService {
       var messagesData = await contactCRUD.getMessages();
 
       return messagesData.map((docSnapshot) {
-        debugPrint('MessagesData: ${docSnapshot.data()}');
         final messageId = docSnapshot['messageId'];
-        debugPrint('$messageId');
         final title = docSnapshot['title'];
         final firstName = docSnapshot['firstName'];
         final name = docSnapshot['name'];
@@ -111,7 +109,7 @@ class ContactService {
         );
       }).toList();
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des messsages: $e');
+      throw Exception('Error collecting messages: $e');
     }
   }
 

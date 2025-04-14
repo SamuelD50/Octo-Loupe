@@ -53,9 +53,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                           backgroundColor: Color(0xFF5B59B4),
                           foregroundColor: Colors.white,
                           side: BorderSide(color: Color(0xFF5B59B4)),
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.circular(30.0),
                           )
                         ),
                         onPressed: () {
@@ -69,6 +69,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         child: Text('Gestion de l\'interface',
                           style: TextStyle(
                             fontSize: 15,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -82,9 +83,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -98,6 +99,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Gestion des activités',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -110,9 +112,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -126,6 +128,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Formulaire de contact',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -138,9 +141,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -156,6 +159,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Mon profil utilisateur',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -168,9 +172,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -184,6 +188,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Ajouter un profil administrateur',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -196,9 +201,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Color(0xFF5B59B4),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -210,6 +215,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Supprimer mon compte',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -222,9 +228,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                         backgroundColor: Colors.red, 
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Colors.red),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -236,6 +242,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       child: Text('Se déconnecter',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),

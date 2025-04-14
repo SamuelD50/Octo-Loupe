@@ -7,7 +7,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   CustomAppBarState createState() => CustomAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(70);
+  Size get preferredSize => const Size.fromHeight(60);
 }
 
 class CustomAppBarState extends State<CustomAppBar> {
@@ -20,7 +20,7 @@ class CustomAppBarState extends State<CustomAppBar> {
           icon: Icon(
             Icons.arrow_back_ios_rounded,
             color: Colors.white,
-            size: 30,
+            size: 25,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -38,7 +38,7 @@ class CustomAppBarState extends State<CustomAppBar> {
             CircleAvatar(
               backgroundImage: AssetImage('assets/images/Octoloupe.webp'),
               backgroundColor: const Color(0xFF5B59B4),
-              radius: 25,
+              radius: 22.5,
             ),
             const SizedBox(width: 5),
             Text(
@@ -53,7 +53,7 @@ class CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       backgroundColor: const Color(0xFF5B59B4),
-      toolbarHeight: 70,
+      toolbarHeight: 60,
       actions: [
         
       ],

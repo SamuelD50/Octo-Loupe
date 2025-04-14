@@ -53,7 +53,6 @@ class ContactCRUD {
       var docSnapshot = await contactCollection
         .orderBy('timestamp', descending: true)
         .get();
-        debugPrint('GetMessages: ${docSnapshot.docs}');
       return docSnapshot.docs;
     } catch (e) {
       throw Exception('Erreur lors de la récupération des messages: $e');

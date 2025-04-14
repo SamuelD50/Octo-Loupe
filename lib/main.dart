@@ -128,10 +128,12 @@ class MainPage extends StatelessWidget {
   Widget build(
     BuildContext context
   ) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Container(),
-      bottomNavigationBar: CustomNavBar(),
+    return SafeArea(
+      child: Scaffold(
+        appBar: const CustomAppBar(),
+        body: Container(),
+        bottomNavigationBar: CustomNavBar(),
+      ),
     );
   }
 }

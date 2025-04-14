@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:octoloupe/components/filter_card.dart';
 import '../components/custom_app_bar.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
@@ -129,74 +130,26 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                               final isSelected = selectedAges.any((selected) =>
                                 selected['id'] == age.id);
 
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    selectedAges.removeWhere((selected) =>
-                                      selected['id'] == age.id);
-                                  } else {
-                                    if (age.id != null) {
-                                      selectedAges.add({
-                                        'id': age.id!,
-                                        'name': age.name,
-                                      });
+                              return FilterCard(
+                                name: age.name,
+                                imageUrl: age.imageUrl,
+                                isSelected: isSelected,
+                                fontSize: fontSize,
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      selectedAges.removeWhere((selected) =>
+                                        selected['id'] == age.id);
+                                    } else {
+                                      if (age.id != null) {
+                                        selectedAges.add({
+                                          'id': age.id!,
+                                          'name': age.name,
+                                        });
+                                      }
                                     }
-                                  }
-                                });
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeInOut,
-                                decoration: BoxDecoration(
-                                  color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: isSelected
-                                    ? []
-                                    : [
-                                        BoxShadow(
-                                          color: Colors.black54,
-                                          offset: Offset(2, 2),
-                                          blurRadius: 4,
-                                        ),
-                                      ],
-                                ),
-                                child: Card(
-                                  elevation: isSelected ? 2 : 4,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Image.network(
-                                          age.imageUrl,
-                                          fit:BoxFit.cover,
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black54,
-                                          borderRadius: BorderRadius.circular(16),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            age.name,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: fontSize,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                  });
+                                },
                               );
                             },
                           ),
@@ -208,9 +161,9 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -219,6 +172,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                               child: Text('Valider',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -272,7 +226,11 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                               final isSelected = selectedAges.any((selected) =>
                                 selected['id'] == age.id);
 
-                              return GestureDetector(
+                              return FilterCard(
+                                name: age.name,
+                                imageUrl: age.imageUrl,
+                                isSelected: isSelected,
+                                fontSize: fontSize,
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
@@ -285,62 +243,9 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                           'name': age.name,
                                         });
                                       }
-                                      
                                     }
                                   });
                                 },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.blueAccent : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: isSelected
-                                      ? []
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black54,
-                                            offset: Offset(2, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                  ),
-                                  child: Card(
-                                    elevation: isSelected ? 2 : 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Image.network(
-                                            age.imageUrl,
-                                            fit:BoxFit.cover,
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              age.name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                               );
                             },
                           ),
@@ -352,9 +257,9 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -363,6 +268,7 @@ class AgeSelectionPageState extends State<AgeSelectionPage> {
                               child: Text('Valider',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),

@@ -20,15 +20,14 @@ class ActivityPage extends StatefulWidget {
 
 class ActivityPageState extends State<ActivityPage> {
   bool isLoading = false;
-  final int _selectedSection = 0;
   List<Map<String, dynamic>> activities = [];
-  SportActivityService sportActivityService = SportActivityService();
-  CultureActivityService cultureActivityService = CultureActivityService();
+/*   SportActivityService sportActivityService = SportActivityService();
+  CultureActivityService cultureActivityService = CultureActivityService(); */
   List<Map<String, dynamic>> filteredActivities = [];
   late String activityId;
   Map<String, dynamic>? selectedActivity;
 
-  Future<void> readActivities() async {
+  /* Future<void> readActivities() async {
     try {
       setState(() {
         isLoading = true;
@@ -53,7 +52,7 @@ class ActivityPageState extends State<ActivityPage> {
     } catch (e) {
       debugPrint('Error fetching activity: $e');
     }
-  }
+  } */
 
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri.parse(url);
@@ -82,7 +81,7 @@ class ActivityPageState extends State<ActivityPage> {
   void initState() {
     super.initState();
     filteredActivities = widget.filteredActivities;
-    readActivities();
+    /* readActivities(); */
   }
     
   @override
@@ -119,7 +118,7 @@ class ActivityPageState extends State<ActivityPage> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: Colors.white,
               ),
             ),
             Align(
@@ -135,39 +134,43 @@ class ActivityPageState extends State<ActivityPage> {
       );
     }
 
+
+    /* List of activities after filtering in HomePage */
     Widget _buildListActivities() {
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          /* Map with markers to see location activity  */
           if (filteredActivities.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black54,
-                      offset: Offset(4, 4),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.98,
-                  height: 300,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.98,
+                height: 400,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        offset: Offset(4, 4),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(30),
                     child: ActivityMap(
                       markers: filteredActivities.map((filteredActivity) {
                         Place place = Place.fromMap(filteredActivity['place'] ?? {});
                         return {
                           'latitude': place.latitude,
                           'longitude': place.longitude,
+                          'discipline': filteredActivity['discipline'],
                         };
                       }).toList(),
                     ),
@@ -186,22 +189,22 @@ class ActivityPageState extends State<ActivityPage> {
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black54,
-                      offset: Offset(4, 4),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.98,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.98,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        offset: Offset(4, 4),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
                   child: ActivityCard(
                     imageUrl: filteredActivity['imageUrl'] ?? '',
                     discipline: filteredActivity['discipline'],
@@ -212,7 +215,6 @@ class ActivityPageState extends State<ActivityPage> {
                       setState(() {
                         selectedActivity = filteredActivity;
                         /* activityId = selectedActivity!['activityId']; */
-                        debugPrint('SelectedActivity: $selectedActivity');
                       });
                     },
                   ),
@@ -224,30 +226,21 @@ class ActivityPageState extends State<ActivityPage> {
       );
     }
 
+    /* Details of activity after being selected from list */
     _buildDetailActivity() {
       activityId = selectedActivity!['activityId'];
-      debugPrint('activityId: $activityId');
       String discipline = selectedActivity!['discipline'];
-      debugPrint('Discipline: $discipline');
       List<String>? information = selectedActivity?['information']?.cast<String>();
-      debugPrint('Information: $information');
-      String? imageUrl = selectedActivity?['imageUrl'] ?? '';
+      String imageUrl = selectedActivity?['imageUrl'];
       debugPrint('ImageUrl: $imageUrl');
       Place place = Place.fromMap(selectedActivity?['place']);
-      debugPrint('Place: $place');
       Contact? contact = Contact.fromMap(selectedActivity?['contact']) ;
-      debugPrint('Contact: $contact');
-      debugPrint('webSite: ${contact.webSite}');
-      debugPrint('phoneNumber: ${contact.phoneNumber}');
-      debugPrint('email: ${contact.email}');
       List<Schedule> schedules = (selectedActivity!['schedules'] as List?)
         ?.map((schedule) => Schedule.fromMap(schedule as Map<String, dynamic>))
         .toList() ?? [];
-      debugPrint('Schedules: $schedules');
       List<Pricing> pricings = (selectedActivity!['pricings'] as List?)
         ?.map((pricing) => Pricing.fromMap(pricing as Map<String, String>))
         .toList() ?? [];
-      debugPrint('Pricings: $pricings');
 
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -256,18 +249,12 @@ class ActivityPageState extends State<ActivityPage> {
           Padding(
             padding: EdgeInsets.only(top: 32),
           ),
-          if (imageUrl != null && imageUrl.isNotEmpty)
-            FutureBuilder(
-              future: checkImageValidity(imageUrl),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox.shrink();
-                }
-                if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
-                  return SizedBox.shrink();
-                }
+          FutureBuilder(
+            future: checkImageValidity(imageUrl),
+            builder: (context, snapshot) {
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
                 return ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(30),
                   child: Container(
                     width: 200,
                     height: 200,
@@ -276,21 +263,42 @@ class ActivityPageState extends State<ActivityPage> {
                         color: const Color(0xFF5B59B4),
                         width: 4,
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        imageUrl,
+                      borderRadius: BorderRadius.circular(25),
+                      child: Image.asset(
+                        'assets/images/ActivityByDefault.webp',
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 );
               }
-            ),
-          if (imageUrl != null && imageUrl.isNotEmpty)
-            SizedBox(height: 15),
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF5B59B4),
+                      width: 4,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              );
+            }
+          ),
+          SizedBox(height: 15),
           Text(
             discipline,
             style: TextStyle(
@@ -299,6 +307,7 @@ class ActivityPageState extends State<ActivityPage> {
               fontWeight: FontWeight.bold,
               color: Color(0xFF5B59B4),
             ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: 15),
           if (information != null && information.isNotEmpty)
@@ -312,28 +321,28 @@ class ActivityPageState extends State<ActivityPage> {
             ),
           if (information != null && information.isNotEmpty)
             SizedBox(height: 15),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black54,
-                  offset: Offset(4, 4),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.98,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.98,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black54,
+                    offset: Offset(4, 4),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
               child: Card(
                 elevation: 4.0,
                 color: const Color(0xFF5B59B4),
                 shadowColor: Colors.black,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -355,6 +364,7 @@ class ActivityPageState extends State<ActivityPage> {
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
+                        softWrap: true,
                       ),
                     ],
                   ),
@@ -365,12 +375,47 @@ class ActivityPageState extends State<ActivityPage> {
           SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.98,
+              height: 400,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      offset: Offset(4, 4),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: ActivityMap(
+                    markers: [
+                      {
+                        'latitude': place.latitude,
+                        'longitude': place.longitude,
+                        'discipline': discipline,
+                      },
+                    ].toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 5),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.98,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               decoration: BoxDecoration(
                 color: Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black54,
@@ -379,40 +424,6 @@ class ActivityPageState extends State<ActivityPage> {
                   ),
                 ],
               ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.98,
-                height: 300,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: ActivityMap(
-                    markers: [
-                      {
-                        'latitude': place.latitude,
-                        'longitude': place.longitude,
-                      },
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 5),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black54,
-                  offset: Offset(4, 4),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.98,
               child: Card(
                 elevation: 4.0,
                 color: const Color(0xFF5B59B4),
@@ -440,6 +451,8 @@ class ActivityPageState extends State<ActivityPage> {
                             fontSize: 15,
                             color: Colors.white,
                           ),
+                          softWrap: true,
+                          textAlign: TextAlign.center,
                         );
                       }),
                     ],
@@ -449,22 +462,22 @@ class ActivityPageState extends State<ActivityPage> {
             ),
           ),
           SizedBox(height: 5),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black54,
-                  offset: Offset(4, 4),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.98,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.98,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black54,
+                    offset: Offset(4, 4),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),  
               child: Card(
                 elevation: 4.0,
                 color: const Color(0xFF5B59B4),
@@ -486,8 +499,9 @@ class ActivityPageState extends State<ActivityPage> {
                         ),
                       ),
                       ...schedules.map((schedule) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        return Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.center,
                           children: [
                             Text(
                               '${schedule.day} : ',
@@ -495,31 +509,39 @@ class ActivityPageState extends State<ActivityPage> {
                                 fontSize: 15,
                                 color: Colors.white,
                               ),
+                              softWrap: true,
+                              textAlign: TextAlign.center,
                             ),
                             ...schedule.timeSlots.map((timeSlot) {
                               if (timeSlot.startHour?.isNotEmpty == true && timeSlot.endHour?.isNotEmpty == true) {
                                 return Text(
-                                  'De ${timeSlot.startHour} à ${timeSlot.endHour}',
+                                  'De ${timeSlot.startHour} à ${timeSlot.endHour} ',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
                                   ),
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
                                 );
                               } else if (timeSlot.startHour?.isNotEmpty == true && timeSlot.endHour?.isEmpty == true) {
                                 return Text(
-                                  'À partir de ${timeSlot.startHour}',
+                                  'À partir de ${timeSlot.startHour} ',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
                                   ),
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
                                 );
                               } else if (timeSlot.startHour?.isEmpty == true && timeSlot.endHour?.isNotEmpty == true) {
                                 return Text(
-                                  'Jusqu\'à ${timeSlot.endHour}',
+                                  'Jusqu\'à ${timeSlot.endHour} ',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
                                   ),
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
                                 );
                               } else {
                                 return SizedBox.shrink();
@@ -535,22 +557,22 @@ class ActivityPageState extends State<ActivityPage> {
             ),
           ),
           SizedBox(height: 5),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black54,
-                  offset: Offset(4, 4),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.98,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.98,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black54,
+                    offset: Offset(4, 4),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
               child: Card(
                 elevation: 4.0,
                 color: const Color(0xFF5B59B4),
@@ -577,40 +599,46 @@ class ActivityPageState extends State<ActivityPage> {
                           fontSize: 15,
                           color: Colors.white,
                         ),
+                        softWrap: true,
+                        textAlign: TextAlign.center,
                       ),
                       if (contact.email?.isNotEmpty ?? false)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.center,
                           children: [
-                              Text(
-                                'Email: ',
+                            Text(
+                              'Email : ',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                _launchUrl('mailto:${contact.email}');
+                              },
+                              child: Text(
+                                'Email: ${contact.email}',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.white,
                                 ),
+                                softWrap: true,
+                                textAlign: TextAlign.center,
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  _launchUrl('mailto:${contact.email}');
-                                },
-                                child: Text(
-                                  'Email: ${contact.email}',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Colors.white,
-                                  ),
-                                ),
-                              ),
+                            ),
                           ],
                         ),
                       if (contact.phoneNumber?.isNotEmpty ?? false)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.center,
                           children: [
                             Text(
-                              'Téléphone: ',
+                              'Téléphone : ',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white,
@@ -628,20 +656,25 @@ class ActivityPageState extends State<ActivityPage> {
                                   decoration: TextDecoration.underline,
                                   decorationColor: Colors.white,
                                 ),
+                                softWrap: true,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ],
                         ),
                       if (contact.webSite?.isNotEmpty ?? false)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.center,
                           children: [
                             Text(
-                              'Site web: ',
+                              'Site web : ',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white,
                               ),
+                              softWrap: true,
+                              textAlign: TextAlign.center,
                             ),
                             GestureDetector(
                               onTap: () {
@@ -673,20 +706,21 @@ class ActivityPageState extends State<ActivityPage> {
               side: BorderSide(
                 color: Color(0xFF5B59B4),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: () {
               setState(() {
                 selectedActivity = null;
-                readActivities();
+                /* readActivities(); */
               });
             },
             child: Text('Retour à la liste',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -696,61 +730,4 @@ class ActivityPageState extends State<ActivityPage> {
         ],
       );
     }
-
-
- /*  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children: <Widget>[
-          SearchAnchor(
-            builder: (BuildContext context, SearchController controller) {
-              return SearchBar(
-                controller: controller,
-                padding: const WidgetStatePropertyAll<EdgeInsets>(
-                  EdgeInsets.symmetric(horizontal: 16.0)),
-                onTap: () {
-                  controller.openView();
-                },
-                onChanged: (_) {
-                  controller.openView();
-                },
-                leading: const Icon(Icons.search),
-              );
-            },
-            suggestionsBuilder: (BuildContext context, SearchController controller) {
-              return List<ListTile>.generate(5, (int index) {
-                final String item = 'Item $index';
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    controller.closeView(item);
-                  },
-                );
-              });
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          ActivityCard(),
-        
-          const Card(
-            child: ListTile(
-              leading: Icon(Icons.notifications_sharp),
-              title: Text('Notification 1'),
-              subtitle: Text('This is a notification'),
-            ),
-          ),
-          const Card(
-            child: ListTile(
-              leading: Icon(Icons.notifications_sharp),
-              title: Text('Notification 2'),
-              subtitle: Text('This is a notification'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
-}
+  }

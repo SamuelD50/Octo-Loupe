@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import 'package:octoloupe/CRUD/activities_crud.dart';
 import 'package:octoloupe/model/activity_model.dart';
 
@@ -64,116 +65,106 @@ class SportActivityService {
     );
   }
 
-  /* Future<List<ActivityModel>> getSportActivities() async {
+  Future<List<ActivityModel>> getSportActivities() async {
     try {
-      var querySnapshot = await activitiesCRUD.getActivities('sports');
-      return querySnapshot.map((doc) {
-        return ActivityModel.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>);
-      }).toList();
-    } catch (e) {
-      throw Exception('Erreur lors de la récupération des activités sportives: $e');
-    }
-  } */
+      var activitiesData = await activitiesCRUD.getActivities('sports');
 
- Future<List<ActivityModel>> getSportActivities() async {
-  try {
-    var activitiesData = await activitiesCRUD.getActivities('sports');
-    return activitiesData.map((docSnapshot) {
-      /* debugPrint('ActivitiesData: ${docSnapshot.data()}'); */
-      final activityId = docSnapshot.id;
-      final discipline = docSnapshot['discipline'];
-      final information = (docSnapshot['information'] is List) ?
-        (docSnapshot['information'] as List).map((e) => e as String).toList() :
-        null;
-      final imageUrl = docSnapshot['imageUrl'] as String?;
-      final structureName = docSnapshot['contact']['structureName'];
-      final email = docSnapshot['contact']['email'] as String?;
-      final phoneNumber = docSnapshot['contact']['phoneNumber'] as String?;
-      final webSite = docSnapshot['contact']['webSite'] as String?;
-      final titleAddress = docSnapshot['place']['titleAddress'];
-      final streetAddress = docSnapshot['place']['streetAddress'];
-      final postalCode = docSnapshot['place']['postalCode'];
-      final city = docSnapshot['place']['city'];
-      final latitude = docSnapshot['place']['latitude'];
-      final longitude = docSnapshot['place']['longitude'];
-      List<Schedule> schedules = [];
-      for (var schedule in docSnapshot['schedules']) {
-        final day = schedule['day'];
-        List<TimeSlot> timeSlots = [];
-        for (var timeSlot in schedule['timeSlots']) {
-          timeSlots.add(TimeSlot(
-            startHour: timeSlot['startHour'],
-            endHour: timeSlot['endHour'],
-          ));
+      return activitiesData.map((docSnapshot) {
+        /* debugPrint('ActivitiesData: ${docSnapshot.data()}'); */
+        final activityId = docSnapshot.id;
+        final discipline = docSnapshot['discipline'];
+        final information = (docSnapshot['information'] is List) ?
+          (docSnapshot['information'] as List).map((e) => e as String).toList() :
+          null;
+        final imageUrl = docSnapshot['imageUrl'] as String?;
+        final structureName = docSnapshot['contact']['structureName'];
+        final email = docSnapshot['contact']['email'] as String?;
+        final phoneNumber = docSnapshot['contact']['phoneNumber'] as String?;
+        final webSite = docSnapshot['contact']['webSite'] as String?;
+        final titleAddress = docSnapshot['place']['titleAddress'];
+        final streetAddress = docSnapshot['place']['streetAddress'];
+        final postalCode = docSnapshot['place']['postalCode'];
+        final city = docSnapshot['place']['city'];
+        final latitude = docSnapshot['place']['latitude'];
+        final longitude = docSnapshot['place']['longitude'];
+        List<Schedule> schedules = [];
+        for (var schedule in docSnapshot['schedules']) {
+          final day = schedule['day'];
+          List<TimeSlot> timeSlots = [];
+          for (var timeSlot in schedule['timeSlots']) {
+            timeSlots.add(TimeSlot(
+              startHour: timeSlot['startHour'],
+              endHour: timeSlot['endHour'],
+            ));
+          }
+          schedules.add(Schedule(day: day, timeSlots: timeSlots));
         }
-        schedules.add(Schedule(day: day, timeSlots: timeSlots));
-      }
-      final pricings = (docSnapshot['pricings'] as List).map((pricingDoc) {
-        return Pricing(
-          profile: pricingDoc['profile'],
-          pricing: pricingDoc['pricing'],
+        final pricings = (docSnapshot['pricings'] as List).map((pricingDoc) {
+          return Pricing(
+            profile: pricingDoc['profile'],
+            pricing: pricingDoc['pricing'],
+          );
+        }).toList();
+        final categoriesId = (docSnapshot['filters']['categoriesId'] as List)
+            .map((e) => {
+              'id': e['id'] as String,
+              'name': e['name'] as String,
+            }).toList();
+          final agesId = (docSnapshot['filters']['agesId'] as List)
+            .map((e) => {
+              'id': e['id'] as String,
+              'name': e['name'] as String,
+            }).toList();
+          final daysId = (docSnapshot['filters']['daysId'] as List)
+            .map((e) => {
+              'id': e['id'] as String,
+              'name': e['name'] as String,
+            }).toList();
+          final schedulesId = (docSnapshot['filters']['schedulesId'] as List)
+            .map((e) => {
+              'id': e['id'] as String,
+              'name': e['name'] as String,
+            }).toList();
+          final sectorsId = (docSnapshot['filters']['sectorsId'] as List)
+            .map((e) => {
+              'id': e['id'] as String,
+              'name': e['name'] as String,
+            }).toList();
+
+        return ActivityModel(
+          activityId: activityId,
+          discipline: discipline,
+          information: information,
+          imageUrl: imageUrl,
+          contact: Contact(
+            structureName: structureName,
+            email: email,
+            phoneNumber: phoneNumber,
+            webSite: webSite,
+          ),
+          place: Place(
+            titleAddress: titleAddress,
+            streetAddress: streetAddress,
+            postalCode: postalCode,
+            city: city,
+            latitude: latitude,
+            longitude: longitude,
+          ),
+          schedules: schedules,
+          pricings: pricings,
+          filters: Filters(
+            categoriesId: categoriesId,
+            agesId: agesId,
+            daysId: daysId,
+            schedulesId: schedulesId,
+            sectorsId: sectorsId,
+          )
         );
       }).toList();
-      final categoriesId = (docSnapshot['filters']['categoriesId'] as List)
-          .map((e) => {
-            'id': e['id'] as String,
-            'name': e['name'] as String,
-          }).toList();
-        final agesId = (docSnapshot['filters']['agesId'] as List)
-          .map((e) => {
-            'id': e['id'] as String,
-            'name': e['name'] as String,
-          }).toList();
-        final daysId = (docSnapshot['filters']['daysId'] as List)
-          .map((e) => {
-            'id': e['id'] as String,
-            'name': e['name'] as String,
-          }).toList();
-        final schedulesId = (docSnapshot['filters']['schedulesId'] as List)
-          .map((e) => {
-            'id': e['id'] as String,
-            'name': e['name'] as String,
-          }).toList();
-        final sectorsId = (docSnapshot['filters']['sectorsId'] as List)
-          .map((e) => {
-            'id': e['id'] as String,
-            'name': e['name'] as String,
-          }).toList();
-
-      return ActivityModel(
-        activityId: activityId,
-        discipline: discipline,
-        information: information,
-        imageUrl: imageUrl,
-        contact: Contact(
-          structureName: structureName,
-          email: email,
-          phoneNumber: phoneNumber,
-          webSite: webSite,
-        ),
-        place: Place(
-          titleAddress: titleAddress,
-          streetAddress: streetAddress,
-          postalCode: postalCode,
-          city: city,
-          latitude: latitude,
-          longitude: longitude,
-        ),
-        schedules: schedules,
-        pricings: pricings,
-        filters: Filters(
-          categoriesId: categoriesId,
-          agesId: agesId,
-          daysId: daysId,
-          schedulesId: schedulesId,
-          sectorsId: sectorsId,
-        )
-      );
-    }).toList();
-  } catch (e) {
-    throw Exception('Erreur lors de la récupération des activités sportives: $e');
+    } catch (e) {
+      return [];
+    }
   }
- }
 
   Future<void> updateSportActivity(
     String activityId,

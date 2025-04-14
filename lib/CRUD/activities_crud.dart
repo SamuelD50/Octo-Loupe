@@ -46,7 +46,7 @@ class ActivitiesCRUD {
         .doc(section)
         .collection('ActivityById')
         .get();
-        debugPrint('QuerySnapshot activitesCRUD: ${querySnapshot.docs}');
+        debugPrint('Chargement des activités: ActivitiesCRUD');
       return querySnapshot.docs;
     } catch (e) {
       throw Exception('Erreur lors de la récupération des activités: $e');

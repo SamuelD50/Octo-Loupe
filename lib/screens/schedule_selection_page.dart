@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/components/filter_card.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
@@ -131,7 +132,11 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               final isSelected = selectedSchedules.any((selected) =>
                                 selected['id'] == schedule.id);
 
-                              return GestureDetector(
+                              return FilterCard(
+                                name: schedule.name,
+                                imageUrl: schedule.imageUrl,
+                                isSelected: isSelected,
+                                fontSize: fontSize,
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
@@ -147,59 +152,6 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     }
                                   });
                                 },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ?
-                                      Colors.blueAccent : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: isSelected
-                                      ? []
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black54,
-                                            offset: Offset(2, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                  ),
-                                  child: Card(
-                                    elevation: isSelected ? 2 : 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Image.network(
-                                            schedule.imageUrl,
-                                            fit:BoxFit.cover,
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              schedule.name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                               );
                             },
                           ),
@@ -211,9 +163,9 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -222,6 +174,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               child: Text('Valider',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -275,7 +228,11 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               final isSelected = selectedSchedules.any((selected) =>
                                 selected['id'] == schedule.id);
 
-                              return GestureDetector(
+                              return FilterCard(
+                                name: schedule.name,
+                                imageUrl: schedule.imageUrl,
+                                isSelected: isSelected,
+                                fontSize: fontSize,
                                 onTap: () {
                                   setState(() {
                                     if (isSelected) {
@@ -291,60 +248,6 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                     }
                                   });
                                 },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ?
-                                      Colors.blueAccent : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: isSelected
-                                      ? []
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black54,
-                                            offset: Offset(2, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                  ),
-                                  child: Card(
-                                    elevation: isSelected ?
-                                      2 : 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Image.network(
-                                            schedule.imageUrl,
-                                            fit:BoxFit.cover,
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              schedule.name,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                               );
                             },
                           ),
@@ -356,9 +259,9 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                                 backgroundColor: Color(0xFF5B59B4),
                                 foregroundColor: Colors.white,
                                 side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                               onPressed: () {
@@ -367,6 +270,7 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               child: Text('Valider',
                                 style: TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),

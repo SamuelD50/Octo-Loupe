@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/loader_spinning.dart';
+import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/services/contact_service.dart';
 
 /* Mailtrap */
@@ -96,8 +97,10 @@ class ContactPageState extends State<ContactPage> {
                             titleController.text = newValue ?? '';
                           });
                         },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                           isDense: true,
                         ),
                         validator: (value) => (value == null) ?
@@ -109,9 +112,11 @@ class ContactPageState extends State<ContactPage> {
                       width: MediaQuery.of(context).size.width * 0.98,
                       child: TextFormField(
                         controller: firstNameController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Prénom',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                         validator: (value) => (value == null || value.isEmpty) ?
                           'Veuillez entrer un prénom' : null,
@@ -124,9 +129,11 @@ class ContactPageState extends State<ContactPage> {
                       width: MediaQuery.of(context).size.width * 0.98,
                       child: TextFormField(
                         controller: nameController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Nom',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                         validator: (value) => (value == null || value.isEmpty) ?
                           'Veuillez entrer un nom' : null,
@@ -139,10 +146,12 @@ class ContactPageState extends State<ContactPage> {
                       width: MediaQuery.of(context).size.width * 0.98,
                       child:TextFormField(
                         controller: emailController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Email',
                           hintText: 'Ex: abc@exemple.com',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -165,10 +174,12 @@ class ContactPageState extends State<ContactPage> {
                       width: MediaQuery.of(context).size.width * 0.98,
                       child:TextFormField(
                         controller: subjectController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Objet',
                           hintText: 'Ex: Modification du lieu d\'activité',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -185,10 +196,12 @@ class ContactPageState extends State<ContactPage> {
                       width: MediaQuery.of(context).size.width * 0.98,
                       child:TextFormField(
                         controller: bodyController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Message',
                           hintText: 'Ex: Bonjour, le lieu de l\'activité a changé...',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                         maxLines: null,
                         validator: (value) {
@@ -209,9 +222,9 @@ class ContactPageState extends State<ContactPage> {
                         side: BorderSide(
                           color: Color(0xFF5B59B4),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -228,6 +241,7 @@ class ContactPageState extends State<ContactPage> {
                             context: context,
                             setLoading: setLoading,
                           );
+                          
                           titleController.clear();
                           selectedTitle = null;
                           firstNameController.clear();
@@ -241,6 +255,7 @@ class ContactPageState extends State<ContactPage> {
                         'Envoyer',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),

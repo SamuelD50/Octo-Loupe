@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
@@ -154,27 +155,22 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
           subFilters = (await SportFilterService().getSportCategories())
             .map((item) => (item).toMap())
             .toList();
-          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par âge') {
           subFilters = (await SportFilterService().getSportAges())
             .map((item) => (item).toMap())
             .toList(); 
-          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par jour') {
           subFilters = (await SportFilterService().getSportDays())
             .map((item) => (item).toMap())
             .toList();
-          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par horaire') {
           subFilters = (await SportFilterService().getSportSchedules())
             .map((item) => (item).toMap())
             .toList();
-          debugPrint('ReadSubFIlters: $subFilters');
         } else if (selectedFilter == 'Par secteur') {
           subFilters = (await SportFilterService().getSportSectors())
             .map((item) => (item).toMap())
             .toList();
-          debugPrint('ReadSubFIlters: $subFilters');
         }
       } else {
         if (selectedFilter == 'Par catégorie') {
@@ -453,10 +449,10 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         break;
 
       case 'Par secteur':
-      subFilters.sort(
-        (a, b) => a['name'].compareTo(b['name'])
-      );
-      break;
+        subFilters.sort(
+          (a, b) => a['name'].compareTo(b['name'])
+        );
+        break;
 
       default:
         subFilters.sort(
@@ -503,6 +499,14 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
     return dayOrder[day] ?? 99;
   }
 
+  Future<bool> checkImageValidity(String imageUrl) async {
+    try {
+      final response = await http.head(Uri.parse(imageUrl));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   void initState() {
@@ -519,7 +523,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         newImageUrl = newImageUrlController.text;
       });
     });
-    readSubFilters();
+    /* readSubFilters(); */
   }
 
 
@@ -563,7 +567,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: _currentMode == SubFilterMode.adding ?
                             [
                               BoxShadow(
@@ -588,7 +592,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                               color: Color(0xFF5B59B4)
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
@@ -613,7 +617,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: _currentMode == SubFilterMode.editing ?
                             [
                               BoxShadow(
@@ -636,7 +640,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
@@ -644,6 +648,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             setState(() {
                               _currentMode = SubFilterMode.editing;
                               selectedFilter = 'Par catégorie';
+                              debugPrint('selectedSubFilterIdForEditing: $selectedSubFilterIdForEditing');
                               subFilters = [];
                               readSubFilters();
                             });
@@ -661,7 +666,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: _currentMode == SubFilterMode.deleting ?
                             [
                               BoxShadow(
@@ -684,7 +689,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
@@ -692,6 +697,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             setState(() {
                               _currentMode = SubFilterMode.deleting;
                               selectedFilter = 'Par catégorie';
+                              debugPrint('selectedSubFilterIdForDeleting: $selectedSubFilterIdForDeleting');
                               subFilters = [];
                               readSubFilters();
                             });
@@ -743,18 +749,28 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             fillColor: Color(0xFF5B59B4),
             borderColor: Color(0xFF5B59B4),
             selectedBorderColor: Color(0xFF5B59B4),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Sport')
+                  child: Text(
+                    'Sport',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Culture')
+                  child: Text(
+                    'Culture',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
                 ),
               ),
             ],  
@@ -784,15 +800,26 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             }).toList(),
           ),
           const SizedBox(height: 16),
-          if (imageUrlController.text.isNotEmpty)
-            isLoading ?
-              Center(
-                child: SpinKitSpinningLines(
-                  color: Colors.black,
-                  size: 60,
-                ),
-              ) :
-              Container(
+          /* code avec delai et sans loader */
+          FutureBuilder<bool>(
+            key: ValueKey(imageUrlController.text),
+            future: Future.delayed(const Duration(seconds: 1))
+              .then((_) => checkImageValidity(imageUrlController.text)),
+            builder:(context, snapshot) {
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || imageUrlController.text.isEmpty) {
+                return Container(
+                  height: 220,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/FilterByDefault.webp'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                );
+              }
+              return Container(
                 height: 220,
                 width: 220,
                 decoration: BoxDecoration(
@@ -802,7 +829,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
-              ),
+              );
+            },
+          ),
           const SizedBox(height: 16),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.98,
@@ -811,6 +840,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               decoration: InputDecoration(
                 labelText: 'Url de la nouvelle image',
                 hintText: 'Ex: https://www.example.com/image.jpg',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -828,6 +860,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               decoration: InputDecoration(
                 labelText: 'Nom du nouveau sous-filtre',
                 hintText: 'Ex: Running',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -846,9 +881,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
               side: BorderSide(color: Color(0xFF5B59B4)),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: () {
@@ -866,6 +901,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             child: Text('Ajouter le sous-filtre',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -902,18 +938,27 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             fillColor: Color(0xFF5B59B4),
             borderColor: Color(0xFF5B59B4),
             selectedBorderColor: Color(0xFF5B59B4),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Sport')
+                  child: Text(
+                    'Sport',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Culture')
+                  child: Text('Culture',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],  
@@ -955,11 +1000,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   (subFilter) => subFilter['id'] == newValue
                 );
 
-                /* if (selectedSubFilter != null) { */
-                  newNameController.text = selectedSubFilter['name'];
-                  newImageUrlController.text = selectedSubFilter['imageUrl'];
-                  selectedSubFilterId = selectedSubFilter['id'];
-                /* } */
+                newNameController.text = selectedSubFilter['name'];
+                newImageUrlController.text = selectedSubFilter['imageUrl'];
+                selectedSubFilterId = selectedSubFilter['id'];
               });
             },
             items: sortSubFilters(
@@ -972,29 +1015,25 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             }).toList(),
           ),
           const SizedBox(height: 16),
-          if (newImageUrlController.text.isEmpty && selectedSubFilterIdForEditing.isNotEmpty)
-            Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    subFilters.firstWhere((subFilter) => subFilter['id'] == selectedSubFilterIdForEditing)['imageUrl']
+          FutureBuilder<bool>(
+            key: ValueKey(newImageUrlController.text),
+            future: Future.delayed(const Duration(seconds: 1))
+              .then((_) => checkImageValidity(newImageUrlController.text)),
+            builder:(context, snapshot) {
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || newImageUrlController.text.isEmpty) {
+                return Container(
+                  height: 220,
+                  width: 220,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/FilterByDefault.webp'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          if (newImageUrlController.text.isNotEmpty)
-            isLoading ?
-              Center(
-                child: SpinKitSpinningLines(
-                  color: Colors.black,
-                  size: 60,
-                ),
-              ) :
-              Container(
+                );
+              }
+              return Container(
                 height: 220,
                 width: 220,
                 decoration: BoxDecoration(
@@ -1004,7 +1043,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
-              ),
+              );
+            },
+          ),
           const SizedBox(height: 16),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.98,
@@ -1013,6 +1054,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               decoration: InputDecoration(
                 labelText: 'Url de la nouvelle image',
                 hintText: 'Ex: https://www.example.com/image.jpg',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -1030,6 +1074,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               decoration: InputDecoration(
                 labelText: 'Nouveau nom du sous-filtre',
                 hintText: 'Ex: Running',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -1048,9 +1095,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               backgroundColor: Color(0xFF5B59B4),
               foregroundColor: Colors.white,
               side: BorderSide(color: Color(0xFF5B59B4)),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: () {
@@ -1069,6 +1116,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             child: Text('Modifier le sous-filtre',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -1102,18 +1150,28 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             fillColor: Color(0xFF5B59B4),
             borderColor: Color(0xFF5B59B4),
             selectedBorderColor: Color(0xFF5B59B4),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Sport')
+                  child: Text(
+                    'Sport',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )
+                  )
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Culture')
+                  child: Text(
+                    'Culture',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )
+                  )
                 ),
               ),
             ],  
@@ -1150,14 +1208,11 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               setState(() {
                 selectedSubFilterIdForDeleting = newValue!;
                 var selectedSubFilter = subFilters.firstWhere(
-                  (subFilter) => subFilter['id'] == newValue
+                  (subFilter) => subFilter['id'] == newValue,
                 );
-                /* if (selectedSubFilter != null) { */
-                  imageUrl = selectedSubFilter['imageUrl'];
-                  selectedSubFilterId = selectedSubFilter['id'];
-                /* } */
+                imageUrl = selectedSubFilter['imageUrl'];
+                selectedSubFilterId = selectedSubFilter['id'];
               });
-              debugPrint('DebugPrint 1: $selectedSubFilterId');
             },
             items: sortSubFilters(
               subFilters, selectedFilter
@@ -1169,7 +1224,46 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             }).toList(),
           ),
           const SizedBox(height: 16),
-          if (selectedSubFilterIdForDeleting.isNotEmpty)
+          FutureBuilder<bool>(
+            /* key: ValueKey(selectedSubFilterIdForDeleting), */
+            future: selectedSubFilterIdForDeleting.isNotEmpty ?
+              Future.delayed(const Duration(seconds: 1))
+                .then((_) => checkImageValidity(
+                  subFilters.firstWhere(
+                  (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting,
+                  )['imageUrl']))
+              : Future.value(false),
+            builder:(context, snapshot) {
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || selectedSubFilterIdForDeleting.isEmpty) {
+                return Container(
+                  height: 220,
+                  width: 220,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/FilterByDefault.webp'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                );
+              }
+              return Container(
+                height: 220,
+                width: 220,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      subFilters.firstWhere(
+                        (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting
+                      )['imageUrl']),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              );
+            },
+          ),
+          /* if (selectedSubFilterIdForDeleting.isNotEmpty)
             isLoading ?
               Center(
                 child: SpinKitSpinningLines(
@@ -1189,14 +1283,23 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                     ),
                     fit: BoxFit.cover,
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(30),
                 ),
-              ),
+              ), */
           const SizedBox(height: 16),
           if (selectedSubFilterIdForDeleting.isNotEmpty)
-            Text('Nom du sous-filtre: ${subFilters.firstWhere(
-              (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting
-            )['name']}'),
+            isLoading ?
+              Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.black,
+                  size: 15,
+                ),
+              ) :
+              Text(
+                'Nom du sous-filtre: ${subFilters.firstWhere(
+                  (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting
+                )['name']}'
+              ),
           const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -1205,9 +1308,9 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               side: BorderSide(
                 color: Color(0xFF5B59B4)
               ),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: () {
@@ -1222,6 +1325,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
             child: Text('Supprimer le sous-filtre',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

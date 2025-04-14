@@ -17,7 +17,6 @@ class AdminContactPage extends StatefulWidget {
 class AdminContactPageState extends State<AdminContactPage> {
 
   bool isLoading = false;
-  /* final ContactMode _currentMode = ContactMode.reading; */
   bool isOpen = false;
   String messageId = '';
   Map<String, dynamic>? selectedMessage;
@@ -101,12 +100,10 @@ class AdminContactPageState extends State<AdminContactPage> {
       });
 
       var messagesData = await contactService.getAllMessages();
-      debugPrint('1: $messagesData');
 
       messages = messagesData.map((contactModel) {
         return contactModel.toMap();
       }).toList();
-      debugPrint('2: $messages');
 
       await Future.delayed(Duration(milliseconds: 25));
 
@@ -114,7 +111,6 @@ class AdminContactPageState extends State<AdminContactPage> {
         isLoading = false;
       });
 
-      debugPrint('ReadMessages: $messages');
     } catch (e) {
       debugPrint('Error fetching messages: $e');
     }
@@ -177,7 +173,7 @@ class AdminContactPageState extends State<AdminContactPage> {
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black54,
@@ -200,7 +196,7 @@ class AdminContactPageState extends State<AdminContactPage> {
                   color: const Color(0xFF5B59B4),
                   shadowColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -295,7 +291,7 @@ class AdminContactPageState extends State<AdminContactPage> {
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black54,
@@ -311,7 +307,7 @@ class AdminContactPageState extends State<AdminContactPage> {
                   color: const Color(0xFF5B59B4),
                   shadowColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -411,9 +407,9 @@ class AdminContactPageState extends State<AdminContactPage> {
             side: BorderSide(
               color: Color(0xFF5B59B4),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(30.0),
             ),
           ),
           onPressed: () {
@@ -426,6 +422,7 @@ class AdminContactPageState extends State<AdminContactPage> {
           child: Text('Supprimer ce message',
             style: TextStyle(
               fontSize: 15,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -437,9 +434,9 @@ class AdminContactPageState extends State<AdminContactPage> {
             side: BorderSide(
               color: Color(0xFF5B59B4),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(30.0),
             ),
           ),
           onPressed: () {
@@ -450,6 +447,7 @@ class AdminContactPageState extends State<AdminContactPage> {
             'Revenir à la liste',
             style: TextStyle(
               fontSize: 15,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 import 'package:octoloupe/components/activity_card.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/snackbar.dart';
@@ -693,6 +694,15 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     return dayOrder[day] ?? 99;
   }
 
+  Future<bool> checkImageValidity(String imageUrl) async {
+    try {
+      final response = await http.head(Uri.parse(imageUrl));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -770,7 +780,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: _currentMode == ActivityMode.adding ?
                             [
                               BoxShadow(
@@ -795,7 +805,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               color: Color(0xFF5B59B4)
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
@@ -844,7 +854,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           color: _currentMode == ActivityMode.editing ? Colors.blueAccent : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: _currentMode == ActivityMode.editing ?
                             [
                               BoxShadow(
@@ -867,7 +877,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
@@ -916,7 +926,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           color: _currentMode == ActivityMode.deleting ? Colors.blueAccent : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           boxShadow: _currentMode == ActivityMode.deleting ?
                             [
                               BoxShadow(
@@ -939,7 +949,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
@@ -1090,15 +1100,25 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             borderRadius: BorderRadius.circular(20),
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Sport')
+                  child: Text(
+                    'Sport',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Culture')
+                  child: Text(
+                    'Culture',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
                 ),
               ),
             ],  
@@ -1222,12 +1242,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 },
                 backgroundColor: Color(0xFF5B59B4),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                   side: BorderSide(
                     color: Color(0xFF5B59B4)
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
               );
             }).toList(),
           ),
@@ -1267,12 +1287,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 },
                 backgroundColor: Color(0xFF5B59B4),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                   side: BorderSide(
                     color: Color(0xFF5B59B4)
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
               );
             }).toList(),
           ),
@@ -1312,12 +1332,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 },
                 backgroundColor: Color(0xFF5B59B4),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                   side: BorderSide(
                     color: Color(0xFF5B59B4)
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
               );
             }).toList(),
           ),
@@ -1357,12 +1377,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 },
                 backgroundColor: Color(0xFF5B59B4),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                   side: BorderSide(
                     color: Color(0xFF5B59B4)
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
               );
             }).toList(),
           ),
@@ -1402,12 +1422,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 },
                 backgroundColor: Color(0xFF5B59B4),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                   side: BorderSide(
                     color: Color(0xFF5B59B4)
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
               );
             }).toList(),
           ),
@@ -1416,10 +1436,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             width: MediaQuery.of(context).size.width * 0.98,
             child: TextFormField(
               controller: disciplineController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Discipline',
                 hintText: 'Ex: Course à pied',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -1442,10 +1464,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     width: MediaQuery.of(context).size.width * 0.98,
                     child: TextFormField(
                       controller: informationControllers[infoIndex],
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Information (optionnel)',
                         hintText: 'Ex: Amenez votre bouteille d\'eau',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
                       ),
                     ),
                   ),
@@ -1459,9 +1483,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         side: BorderSide(
                           color: Colors.red,
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                       onPressed: () {
@@ -1470,6 +1494,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       child: Text('Supprimer cette information',
                         style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -1485,15 +1510,16 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               side: BorderSide(
                 color: Colors.lightGreen,
               ),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: addInformationField,
             child: Text('Ajouter une information',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -1502,37 +1528,90 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             width: MediaQuery.of(context).size.width * 0.98,
             child: TextFormField(
               controller: imageUrlController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Image Url (optionnel)',
                 hintText: 'Ex: https://www.example.com/image.jpg',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               onChanged: (value) {
                 setState(() {});
               },
             ),
           ),
-          if (imageUrlController.text.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            isLoading ?
-              Center(
-                child: SpinKitSpinningLines(
-                  color: Colors.black,
-                  size: 60,
-                ),
-              )
-              : Container(
-                height: 220,
-                width: 220,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(imageUrlController.text),
-                    fit: BoxFit.cover,
+          const SizedBox(height: 16),
+          FutureBuilder<bool>(
+            future: checkImageValidity(imageUrlController.text),
+            builder:(context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0xFF5B59B4),
+                          width: 4,
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: SpinKitSpinningLines(
+                        color: Colors.white,
+                        size: 60,
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                );
+              }
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || imageUrlController.text.isEmpty) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: const Color(0xFF5B59B4),
+                        width: 4,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(25),
+                      child: Image.asset(
+                        'assets/images/ActivityByDefault.webp',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF5B59B4),
+                      width: 4,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      imageUrlController.text,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-          ],
+              );
+            },
+          ),
           const SizedBox(height: 16),
           ExpansionTile(
             title: Text(
@@ -1547,9 +1626,11 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: structureNameController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nom de la structure/du responsable',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1564,10 +1645,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: emailController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Email (optionnel)',
                     hintText: 'Ex: abc@exemple.com',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1589,10 +1672,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: phoneNumberController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Numéro de téléphone (optionnel)',
                     hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1615,10 +1700,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: webSiteController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Site internet (optionnel)',
                     hintText: 'Ex: https://www.example.com',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1651,10 +1738,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: titleAddressController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Intitulé d\'adresse',
                     hintText: 'Ex: Stade Maurice Postaire',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1669,10 +1758,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: streetAddressController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'N° et/ou nom de rue',
                     hintText: 'Ex: 18 rue Pierre de Coubertin',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1687,10 +1778,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: postalCodeController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Code postal',
                     hintText: 'Ex: 50100',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1709,10 +1802,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: cityController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Ville',
                     hintText: 'Ex: Cherbourg-en-Cotentin',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1727,10 +1822,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: latitudeController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Latitude Google Maps',
                     hintText: 'Ex: 49.64358701909363',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1749,10 +1846,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 width: MediaQuery.of(context).size.width * 0.98,
                 child: TextFormField(
                   controller: longitudeController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Longitude Google Maps',
                     hintText: 'Ex: -1.638480195782405',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -1788,10 +1887,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         width: MediaQuery.of(context).size.width * 0.98,
                         child: TextFormField(
                           controller: dayControllers[dayIndex],
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Jour',
                             hintText: 'Ex: Mercredi',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -1810,9 +1911,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             side: BorderSide(
                               color: Colors.red,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () {
@@ -1822,6 +1923,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             'Supprimer cette journée',
                             style: TextStyle(
                               fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -1837,10 +1939,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                 width: MediaQuery.of(context).size.width * 0.98,
                                 child: TextFormField(
                                   controller: startHourControllersPerDay[dayIndex][timeSlotIndex],
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     labelText: 'Horaire de début (optionnel)',
                                     hintText: 'Ex: 10h, 10h30',
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -1855,10 +1959,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                 width: MediaQuery.of(context).size.width * 0.98,
                                 child: TextFormField(
                                   controller: endHourControllersPerDay[dayIndex][timeSlotIndex],
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     labelText: 'Horaire de fin (optionnel)',
                                     hintText: 'Ex: 11h, 11h30',
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -1877,9 +1983,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                     side: BorderSide(
                                       color: Colors.red,
                                     ),
-                                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
+                                      borderRadius: BorderRadius.circular(30.0),
                                     ),
                                   ),
                                   onPressed: () {
@@ -1888,6 +1994,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   child: Text('Supprimer ce créneau',
                                     style: TextStyle(
                                       fontSize: 15,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -1904,9 +2011,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             side: BorderSide(
                               color: Colors.lightGreen,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                         onPressed: () {
@@ -1915,6 +2022,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         child: Text('Ajouter un créneau',
                           style: TextStyle(
                             fontSize: 15,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -1930,9 +2038,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   side: BorderSide(
                     color: Colors.lightGreen,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 onPressed: () {
@@ -1941,6 +2049,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 child: Text('Ajouter une journée',
                   style: TextStyle(
                     fontSize: 15,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -1966,10 +2075,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         width: MediaQuery.of(context).size.width * 0.98,
                         child: TextFormField(
                           controller: profileControllers[index],
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Profil',
                             hintText: 'Ex: Débutants',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -1984,10 +2095,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         width: MediaQuery.of(context).size.width * 0.98,
                         child: TextFormField(
                           controller: pricingControllers[index],
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Prix',
                             hintText: 'Ex: 10€, 10€50',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -2006,9 +2119,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             side: BorderSide(
                               color: Colors.red,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () {
@@ -2017,6 +2130,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           child: Text('Supprimer ce tarif par profil',
                             style: TextStyle(
                               fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -2033,15 +2147,16 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   side: BorderSide(
                     color: Colors.lightGreen,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
                 onPressed: addProfilePricing,
                 child: Text('Ajouter un tarif par profil',
                   style: TextStyle(
                     fontSize: 15,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -2056,9 +2171,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               side: BorderSide(
                 color: Color(0xFF5B59B4),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: () {
@@ -2098,6 +2213,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             child: Text('Ajouter l\'activité',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -2292,12 +2408,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   },
                   backgroundColor: Color(0xFF5B59B4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                     side: BorderSide(
                       color: Color(0xFF5B59B4)
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
                 );
               }).toList(),
             ),
@@ -2337,12 +2453,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   },
                   backgroundColor: Color(0xFF5B59B4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                     side: BorderSide(
                       color: Color(0xFF5B59B4)
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
                 );
               }).toList(),
             ),
@@ -2382,12 +2498,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   },
                   backgroundColor: Color(0xFF5B59B4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                     side: BorderSide(
                       color: Color(0xFF5B59B4)
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
                 );
               }).toList(),
             ),
@@ -2427,12 +2543,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   },
                   backgroundColor: Color(0xFF5B59B4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                     side: BorderSide(
                       color: Color(0xFF5B59B4)
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
                 );
               }).toList(),
             ),
@@ -2472,12 +2588,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   },
                   backgroundColor: Color(0xFF5B59B4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                     side: BorderSide(
                       color: Color(0xFF5B59B4)
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 12),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
                 );
               }).toList(),
             ),
@@ -2490,9 +2606,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   color: Color(0xFF5B59B4)
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               ),
               onPressed: () async {
                 updateSelectedSubFilters();
@@ -2503,6 +2619,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   'Mettre à jour les filtres',
                   style: TextStyle(
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     fontSize: 15,
                   ),
                 ),
@@ -2512,10 +2629,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               width: MediaQuery.of(context).size.width * 0.98,
               child: TextFormField(
               controller: newDisciplineController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nouvelle discipline',
                   hintText: 'Ex: Course à pied',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -2538,10 +2657,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       width: MediaQuery.of(context).size.width * 0.98,
                       child: TextFormField(
                         controller: newInformationControllers[newInfoIndex],
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Nouvelle information (optionnel)',
                           hintText: 'Ex: Amenez votre bouteille d\'eau',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                       ),
                     ),
@@ -2555,9 +2676,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           side: BorderSide(
                             color: Colors.red,
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
                         onPressed: () {
@@ -2565,6 +2686,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                         },
                         child: Text('Supprimer cette information',
                           style: TextStyle(
+                            fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
                         ),
@@ -2581,15 +2703,16 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 side: BorderSide(
                   color: Colors.lightGreen,
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
               onPressed: addNewInformationField,
               child: Text('Ajouter une information',
                 style: TextStyle(
                   fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -2598,37 +2721,90 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               width: MediaQuery.of(context).size.width * 0.98,
               child: TextFormField(
                 controller: newImageUrlController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nouvelle image Url (optionnel)',
                   hintText: 'Ex: https://www.example.com/image.jpg',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
                 ),
                 onChanged: (value) {
                   setState(() {});
                 },
               ),
             ),
-            if (newImageUrlController.text.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              isLoading ?
-                Center(
-                  child: SpinKitSpinningLines(
-                    color: Colors.black,
-                    size: 60,
-                  ),
-                )
-                : Container(
-                  height: 220,
-                  width: 220,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(newImageUrlController.text),
-                      fit: BoxFit.cover,
+            const SizedBox(height: 16),
+            FutureBuilder<bool>(
+              future: checkImageValidity(newImageUrlController.text),
+              builder:(context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFF5B59B4),
+                            width: 4,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: SpinKitSpinningLines(
+                          color: Colors.white,
+                          size: 60,
+                        ),
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(8),
+                  );
+                }
+                if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || newImageUrlController.text.isEmpty) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0xFF5B59B4),
+                          width: 4,
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(25),
+                        child: Image.asset(
+                          'assets/images/ActivityByDefault.webp',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: const Color(0xFF5B59B4),
+                        width: 4,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(25),
+                      child: Image.network(
+                        newImageUrlController.text,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
-            ],
+                );
+              },
+            ),
             const SizedBox(height: 16),
             ExpansionTile(
               title: Text(
@@ -2643,9 +2819,11 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newStructureNameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouveau nom de la structure/du responsable',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2660,10 +2838,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newEmailController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouvel email (optionnel)',
                       hintText: 'Ex: abc@exemple.com',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2685,10 +2865,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newPhoneNumberController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouveau numéro de téléphone (optionnel)',
                       hintText: 'Ex: 01 23 45 67 89/+33 1 23 45 67 89',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2711,10 +2893,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newWebSiteController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouveau site internet (optionnel)',
                       hintText: 'Ex: https://www.example.com',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2747,10 +2931,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newTitleAddressController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouvel intitulé d\'adresse',
                       hintText: 'Ex: Stade Maurice Postaire',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2765,10 +2951,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newStreetAddressController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouveau(x) N° et/ou nom de rue',
                       hintText: 'Ex: 18 rue Pierre de Coubertin',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2783,10 +2971,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newPostalCodeController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouveau code postal',
                       hintText: 'Ex: 50100',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2805,10 +2995,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newCityController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouvelle ville',
                       hintText: 'Ex: Cherbourg-en-Cotentin',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2823,10 +3015,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newLatitudeController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouvelle latitude Google Maps',
                       hintText: 'Ex: 49.64358701909363',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2845,10 +3039,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   width: MediaQuery.of(context).size.width * 0.98,
                   child: TextFormField(
                     controller: newLongitudeController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Nouvelle longitude Google Maps',
                       hintText: 'Ex: -1.638480195782405',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -2884,10 +3080,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: newDayControllers[newDayIndex],
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Nouveau jour',
                               hintText: 'Ex: Mercredi',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -2906,9 +3104,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               side: BorderSide(
                                 color: Colors.red,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                                borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
                             onPressed: () {
@@ -2917,6 +3115,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             child: Text('Supprimer cette journée',
                               style: TextStyle(
                                 fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -2932,10 +3131,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   width: MediaQuery.of(context).size.width * 0.98,
                                   child: TextFormField(
                                     controller: newStartHourControllersPerDay[newDayIndex][newTimeSlotIndex],
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       labelText: 'Nouvel horaire de début (optionnel)',
                                       hintText: 'Ex: 10h, 10h30',
-                                      border: OutlineInputBorder(),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -2950,10 +3151,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                   width: MediaQuery.of(context).size.width * 0.98,
                                   child: TextFormField(
                                     controller: newEndHourControllersPerDay[newDayIndex][newTimeSlotIndex],
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       labelText: 'Nouvel horaire de fin (optionnel)',
                                       hintText: 'Ex: 11h, 11h30',
-                                      border: OutlineInputBorder(),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -2972,9 +3175,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                       side: BorderSide(
                                         color: Colors.red,
                                       ),
-                                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20.0),
+                                        borderRadius: BorderRadius.circular(30.0),
                                       ),
                                     ),
                                     onPressed: () {
@@ -2983,6 +3186,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                                     child: Text('Supprimer ce créneau',
                                       style: TextStyle(
                                         fontSize: 15,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
@@ -2999,9 +3203,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               side: BorderSide(
                                 color: Colors.lightGreen,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                                borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
                           onPressed: () {
@@ -3010,6 +3214,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           child: Text('Ajouter un créneau',
                             style: TextStyle(
                               fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -3025,9 +3230,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     side: BorderSide(
                       color: Colors.lightGreen,
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
                   onPressed: () {
@@ -3036,6 +3241,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   child: Text('Ajouter une journée',
                     style: TextStyle(
                       fontSize: 15,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -3061,10 +3267,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: newProfileControllers[newIndex],
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Nouveau profil',
                               hintText: 'Ex: Débutants',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -3079,10 +3287,12 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: newPricingControllers[newIndex],
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Nouveau prix',
                               hintText: 'Ex: 10€, 10€50',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -3100,9 +3310,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             side: BorderSide(
                               color: Colors.red,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () {
@@ -3111,6 +3321,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           child: Text('Supprimer ce tarif par profil',
                             style: TextStyle(
                               fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -3127,15 +3338,16 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     side: BorderSide(
                       color: Colors.lightGreen,
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
                   onPressed: addNewProfilePricing,
                   child: Text('Ajouter un tarif par profil',
                     style: TextStyle(
                       fontSize: 15,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -3150,9 +3362,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 side: BorderSide(
                   color: Color(0xFF5B59B4),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
               onPressed: () {
@@ -3191,6 +3403,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               child: Text('Modifier l\'activité',
                 style: TextStyle(
                   fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -3202,9 +3415,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 side: BorderSide(
                   color: Color(0xFF5B59B4),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
               onPressed: () {
@@ -3240,6 +3453,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               child: Text('Retour à la liste',
                 style: TextStyle(
                   fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -3268,15 +3482,25 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             borderRadius: BorderRadius.circular(20),
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Sport')
+                  child: Text(
+                    'Sport',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )
+                  )
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
-                  child: Text('Culture')
+                  child: Text(
+                    'Culture',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )
+                  )
                 ),
               ),
             ],  
@@ -3294,22 +3518,22 @@ class AdminActivityPageState extends State<AdminActivityPage> {
 
               return Column(
                 children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black54,
-                          offset: Offset(4, 4),
-                          blurRadius: 6,
-                        ),
-                      ],
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.98,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.98,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black54,
+                            offset: Offset(4, 4),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
                       child: ActivityCard(
                         imageUrl: activity['imageUrl'] ?? '',
                         discipline: activity['discipline'] ?? '',
@@ -3420,16 +3644,16 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             fillColor: Color(0xFF5B59B4),
             borderColor: Color(0xFF5B59B4),
             selectedBorderColor: Color(0xFF5B59B4),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
                   child: Text('Sport')
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
                 child: Center(
                   child: Text('Culture')
                 ),
@@ -3450,30 +3674,30 @@ class AdminActivityPageState extends State<AdminActivityPage> {
 
               return Column(
                 children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.blueAccent : Colors.transparent,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: isSelected ?
-                        [
-                          BoxShadow(
-                            color: Colors.blueAccent,
-                            offset: Offset(4, 4),
-                            blurRadius: 6,
-                          ),
-                        ] :
-                        [
-                          BoxShadow(
-                            color: Colors.black54,
-                            offset: Offset(4, 4),
-                            blurRadius: 6,
-                          ),
-                        ],
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.98,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.98,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.blueAccent : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: isSelected ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(4, 4),
+                              blurRadius: 6,
+                            ),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(4, 4),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
                       child: ActivityCard(
                         imageUrl: activity['imageUrl'] ?? '',
                         discipline: activity['discipline'] ?? '',
@@ -3484,12 +3708,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                           setState(() {
                             if (isSelected) {
                               selectedActivityIds.remove(activity['activityId']);
-                              debugPrint('Déselectionné: ${activity['activityId']}');
                             } else {
                               selectedActivityIds.add(activity['activityId']);
-                              debugPrint('Sélectionné: ${activity['activityId']}');
                             }
-                            debugPrint('Activités sélectionnées: $selectedActivityIds');
                           });
                         },
                       ),
@@ -3508,9 +3729,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
               side: BorderSide(
                 color: Color(0xFF5B59B4),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
             onPressed: () {
@@ -3526,6 +3747,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             child: Text('Supprimer l\'activité',
               style: TextStyle(
                 fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

@@ -96,13 +96,13 @@ class AuthPageState extends State<AuthPage> {
                   const SizedBox(height: 32),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      EdgeInsetsGeometry padding;
+                      /* EdgeInsetsGeometry padding;
 
                       if (constraints.maxWidth < 325) {
                         padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
                       } else {
-                        padding = EdgeInsets.symmetric(horizontal: 40.0, vertical: 1.0);
-                      }
+                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
+                      } */
 
                       return ToggleButtons(
                         isSelected: [_selectedIndex == 0, _selectedIndex == 1],
@@ -117,18 +117,32 @@ class AuthPageState extends State<AuthPage> {
                         fillColor: Color(0xFF5B59B4),
                         borderColor: Color(0xFF5B59B4),
                         selectedBorderColor: Color(0xFF5B59B4),
-                        borderRadius:  BorderRadius.circular(20.0),
-                        direction: constraints.maxWidth < 325 ?
+                        borderRadius:  BorderRadius.circular(30.0),
+                        direction: constraints.maxWidth < 375 ?
                           Axis.vertical
                           : Axis.horizontal,
                         children: [
                           Container(
-                            padding: padding,
-                            child: Center(child: Text('Se connecter')),
+                            padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
+                            child: Center(
+                              child: Text(
+                                'Se connecter',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ),
                           ),
                           Container(
-                            padding: padding,
-                            child: Center(child: Text('Créer un compte')),
+                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
+                            child: Center(
+                              child: Text(
+                                'Créer un compte',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ),
                           ),
                         ],
                       );
@@ -144,10 +158,12 @@ class AuthPageState extends State<AuthPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: emailController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'E-mail',
                               hintText: 'Ex: abc@exemple.com',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -170,7 +186,9 @@ class AuthPageState extends State<AuthPage> {
                             obscureText: !_isPasswordVisible,
                             decoration: InputDecoration(
                               labelText: 'Mot de passe',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -205,7 +223,9 @@ class AuthPageState extends State<AuthPage> {
                               },
                               child: const Text(
                                 'Mot de passe oublié ?',
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
@@ -216,9 +236,9 @@ class AuthPageState extends State<AuthPage> {
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: isButtonDisabled ?
@@ -235,6 +255,7 @@ class AuthPageState extends State<AuthPage> {
                           },
                           child: Text('Se connecter',
                             style: TextStyle(
+                              fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
                           ),
@@ -250,9 +271,11 @@ class AuthPageState extends State<AuthPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: firstNameController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Prénom',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -269,9 +292,11 @@ class AuthPageState extends State<AuthPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: nameController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Nom',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -288,10 +313,12 @@ class AuthPageState extends State<AuthPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: newEmailController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'E-mail',
                               hintText: 'Ex: abc@exemple.com',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -316,7 +343,9 @@ class AuthPageState extends State<AuthPage> {
                             obscureText: !_isNewPasswordVisible,
                             decoration: InputDecoration(
                               labelText: 'Mot de passe',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -344,9 +373,9 @@ class AuthPageState extends State<AuthPage> {
                             backgroundColor: Color(0xFF5B59B4),
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Color(0xFF5B59B4)),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () {
@@ -364,6 +393,7 @@ class AuthPageState extends State<AuthPage> {
                           child: Text('Créer un compte',
                             style: TextStyle(
                               fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),

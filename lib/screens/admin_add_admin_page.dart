@@ -72,9 +72,11 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: firstNameAdminController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Prénom',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -91,9 +93,11 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child: TextFormField(
                             controller: nameAdminController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Nom',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -110,10 +114,12 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           width: MediaQuery.of(context).size.width * 0.98,
                           child:TextFormField(
                             controller: newEmailAdminController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'E-mail',
                               hintText: 'Ex: abc@exemple.com',
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -138,7 +144,9 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             obscureText: !_isNewPasswordVisible,
                             decoration: InputDecoration(
                               labelText: 'Mot de passe',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _isNewPasswordVisible ?
@@ -169,9 +177,9 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                             side: BorderSide(
                               color: Color(0xFF5B59B4),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                           onPressed: () {
@@ -195,6 +203,7 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                           child: Text('Créer un compte',
                             style: TextStyle(
                               fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
