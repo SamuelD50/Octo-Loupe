@@ -85,7 +85,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                 Transform.scale(
                   scale: scale,
                   child: Image.asset(
-                    'assets/images/Octoloupe.webp',
+                    'assets/icons/icon_app.webp',
                     height: 100,
                   ),
                 ),

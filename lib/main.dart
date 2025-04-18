@@ -110,7 +110,7 @@ class MyApp extends StatelessWidget {
           ),
         ),  
       ),
-      home: const MainPage(),
+      home: const SplashPage(),
       initialRoute: '/',
       routes: {
         '/HomePage': (context) => HomePage(),
