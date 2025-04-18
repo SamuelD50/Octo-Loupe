@@ -44,7 +44,6 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/icon_app.webp"
   remove_alpha_ios: true
-
   
 flutter:
   uses-material-design: true
@@ -52,7 +51,7 @@ flutter:
     - assets/fonts/GreatVibes-Regular.ttf
     - assets/fonts/Poppins-Regular.ttf
     - assets/fonts/Satisfy-Regular.ttf
-    - assets/images/Octoloupe.webp
+    - assets/icons/icon_app.webp
     - assets/images/
     - assets/icons/
   fonts:

@@ -30,7 +30,7 @@ class UserCRUD {
     }
   }
 
-  Future<UserModel?> getUser() async {
+  Future<UserModel?> getUser(String uid) async {
     try {
       final docSnapshot = await usersCollection
         .doc(uid)
@@ -38,22 +38,23 @@ class UserCRUD {
 
       if (docSnapshot.exists) {
         return UserModel.fromFirestore(docSnapshot);
+      } else {
+        return null;
       }
     } catch (e) {
       throw Exception('Erreur lors de la récupération de l\'utilisateur: $e');
     }
-    return null;
   }
 
-  Future<void> updateUser(UserModel userModel) async {
+  Future<void> updateUser(String uid, UserModel userModel) async {
     try {
       var docSnapshot = await usersCollection
-        .doc(uid)
+        .doc(userModel.uid)
         .get();
 
       if (docSnapshot.exists) {
         await usersCollection
-          .doc(uid)
+          .doc(userModel.uid)
           .update(
             userModel.toMap(),
           );
@@ -64,7 +65,7 @@ class UserCRUD {
     }
   }
 
-  Future<void> deleteUser() async {
+  Future<void> deleteUser(String uid) async {
     try {
       var docSnapshot = await usersCollection
         .doc(uid)

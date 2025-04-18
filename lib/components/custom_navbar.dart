@@ -1,6 +1,6 @@
-import 'package:octoloupe/screens/auth_page.dart';
-import 'package:octoloupe/screens/contact_page.dart';
-import 'package:octoloupe/screens/home_page.dart';
+import 'package:octoloupe/pages/auth_page.dart';
+import 'package:octoloupe/pages/contact_page.dart';
+import 'package:octoloupe/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';

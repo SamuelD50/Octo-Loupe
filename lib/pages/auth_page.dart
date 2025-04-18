@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:octoloupe/screens/reset_password_page.dart';
+import 'package:octoloupe/pages/reset_password_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/loader_spinning.dart';
@@ -27,7 +27,7 @@ class AuthPageState extends State<AuthPage> {
   final newEmailController = TextEditingController();
   final newPasswordController = TextEditingController();
 
-  bool loading = false;
+  bool isLoading = false;
   int _selectedIndex = 0;
   bool _isPasswordVisible = false;
   bool _isNewPasswordVisible = false;
@@ -38,17 +38,8 @@ class AuthPageState extends State<AuthPage> {
 
   void setLoading(bool value) {
     setState(() {
-      loading = value;
+      isLoading = value;
     });
-  }
-
-  void _resetPassword() {
-    Navigator.pushReplacement(
-      context, 
-      MaterialPageRoute(
-        builder: (context) => ResetPasswordPage()
-      ),
-    );
   }
 
   void _clearFormFields() {
@@ -64,7 +55,7 @@ class AuthPageState extends State<AuthPage> {
   Widget build(
     BuildContext context
   ) {
-    return loading ? Loading() : Scaffold(
+    return isLoading ? Loading() : Scaffold(
       appBar: const CustomAppBar(),
       body: Stack(
         children: [
@@ -96,13 +87,6 @@ class AuthPageState extends State<AuthPage> {
                   const SizedBox(height: 32),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      /* EdgeInsetsGeometry padding;
-
-                      if (constraints.maxWidth < 325) {
-                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
-                      } else {
-                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
-                      } */
 
                       return ToggleButtons(
                         isSelected: [_selectedIndex == 0, _selectedIndex == 1],

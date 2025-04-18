@@ -10,12 +10,12 @@ import 'package:octoloupe/services/culture_activity_service.dart';
 import 'package:octoloupe/services/notification_service.dart';
 import 'package:octoloupe/services/sport_activity_service.dart';
 // Pages
-import 'package:octoloupe/screens/category_selection_page.dart';
-import 'package:octoloupe/screens/age_selection_page.dart';
-import 'package:octoloupe/screens/day_selection_page.dart';
-import 'package:octoloupe/screens/schedule_selection_page.dart';
-import 'package:octoloupe/screens/sector_selection_page.dart';
-import 'package:octoloupe/screens/activity_page.dart';
+import 'package:octoloupe/pages/category_selection_page.dart';
+import 'package:octoloupe/pages/age_selection_page.dart';
+import 'package:octoloupe/pages/day_selection_page.dart';
+import 'package:octoloupe/pages/schedule_selection_page.dart';
+import 'package:octoloupe/pages/sector_selection_page.dart';
+import 'package:octoloupe/pages/activity_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

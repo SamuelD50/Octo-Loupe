@@ -21,38 +21,9 @@ class ActivityPage extends StatefulWidget {
 class ActivityPageState extends State<ActivityPage> {
   bool isLoading = false;
   List<Map<String, dynamic>> activities = [];
-/*   SportActivityService sportActivityService = SportActivityService();
-  CultureActivityService cultureActivityService = CultureActivityService(); */
   List<Map<String, dynamic>> filteredActivities = [];
   late String activityId;
   Map<String, dynamic>? selectedActivity;
-
-  /* Future<void> readActivities() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      if (_selectedSection == 0) {
-        activities = (await sportActivityService.getSportActivities())
-          .map((item) => (item).toMap())
-          .toList();
-      } else {
-        activities = (await cultureActivityService.getCultureActivities())
-          .map((item) => (item).toMap())
-          .toList();
-      }
-
-      await Future.delayed(Duration(milliseconds: 25));
-
-      setState(() {
-        isLoading = false;
-      });
-    
-    } catch (e) {
-      debugPrint('Error fetching activity: $e');
-    }
-  } */
 
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri.parse(url);

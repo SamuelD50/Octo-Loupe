@@ -3,9 +3,9 @@ import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/screens/admin_central_page.dart';
-import 'package:octoloupe/screens/auth_page.dart';
-import 'package:octoloupe/screens/user_central_page.dart';
+import 'package:octoloupe/pages/admin_central_page.dart';
+import 'package:octoloupe/pages/auth_page.dart';
+import 'package:octoloupe/pages/user_central_page.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -210,7 +210,7 @@ class AuthService {
       //Collect user data from firestore
       if (user != null) {
         UserCRUD userCRUD = UserCRUD(user.uid);
-        UserModel? userDoc = await userCRUD.getUser();
+        UserModel? userDoc = await userCRUD.getUser(user.uid);
 
         if (userDoc?.role != null) {
           if (context.mounted) {
@@ -372,7 +372,7 @@ class AuthService {
       User? user = _auth.currentUser;
 
       if (user != null) {
-        await UserCRUD(user.uid).deleteUser();
+        await UserCRUD(user.uid).deleteUser(user.uid);
         await user.delete();
 
         if (context.mounted) {
@@ -411,25 +411,70 @@ class AuthService {
     return _auth.currentUser;
   }
 
-/*  //Update email
-  Future<void> updateEmail(String newEmail) async {
+  //Update email
+  Future<void> updateEmail(
+    String newEmail,
+    String password,
+    {required BuildContext context,
+    required Function(bool) setLoading})
+  async {
     try {
+      setLoading(true);
+
       User? user = FirebaseAuth.instance.currentUser;
+      
       if (user != null) {
+
+        final credentialForUpdatingEmail = EmailAuthProvider.credential(
+          email: user.email ?? '',
+          password: password,
+        );
+        
+        await user.reauthenticateWithCredential(credentialForUpdatingEmail);
         await user.verifyBeforeUpdateEmail(newEmail);
-        debugPrint('Email updated successfully');
-      } else {
-        debugPrint('No user is currently signed in');
+        UserModel? currentUser = await UserCRUD(user.uid).getUser(user.uid);
+
+        if (currentUser != null) {
+          UserModel updateUser = UserModel(
+            uid: user.uid,
+            email: newEmail,
+            firstName: currentUser.firstName,
+            name: currentUser.name,
+            role: currentUser.role,
+          );
+
+          await UserCRUD(user.uid).updateUser(user.uid, updateUser);
+        }
+
+        await Future.delayed(Duration(milliseconds: 25));
+
+        setLoading(false);
+
+        if (context.mounted) {
+          CustomSnackBar(
+            message: 'Email de vérification envoyé',
+            backgroundColor: Colors.green,
+          ).showSnackBar(context);
+        }
       }
     } catch (e) {
-      debugPrint('Error updating email: $e');
+      setLoading(false);
+
+      if (context.mounted) {
+        CustomSnackBar(
+          message: 'Erreur lors de la mise à jour de l\'email',
+          backgroundColor: Colors.red,
+        ).showSnackBar(context);
+      }
+
+      throw Exception('Error updating email: $e');
     }
-  } */
-
-
+  }
 
   //Update user password
   Future<void> updatePassword(
+    String email,
+    String currentPassword,
     String newPassword, {
       required BuildContext context,
       required Function(bool) setLoading
@@ -439,9 +484,16 @@ class AuthService {
       setLoading(true);
 
       User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await user.updatePassword(newPassword);
 
+      if (user != null) {
+        final credentialForUpdatingPassword = EmailAuthProvider.credential(
+          email: email,
+          password: currentPassword,
+        );
+
+        await user.reauthenticateWithCredential(credentialForUpdatingPassword);
+        await user.updatePassword(newPassword);
+        
         await Future.delayed(Duration(milliseconds: 25));
 
         setLoading(false);

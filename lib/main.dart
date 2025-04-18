@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/screens/admin_central_page.dart';
-import 'package:octoloupe/screens/auth_page.dart';
-import 'package:octoloupe/screens/contact_page.dart';
-import 'package:octoloupe/screens/home_page.dart';
+import 'package:octoloupe/pages/admin_central_page.dart';
+import 'package:octoloupe/pages/auth_page.dart';
+import 'package:octoloupe/pages/contact_page.dart';
+import 'package:octoloupe/pages/home_page.dart';
+import 'package:octoloupe/pages/splash_page.dart';
 import 'components/custom_app_bar.dart';
 import 'components/custom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';

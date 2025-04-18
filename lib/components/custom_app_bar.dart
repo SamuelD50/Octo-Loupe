@@ -36,7 +36,7 @@ class CustomAppBarState extends State<CustomAppBar> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage('assets/images/Octoloupe.webp'),
+              backgroundImage: AssetImage('assets/icons/icon_app.webp'),
               backgroundColor: const Color(0xFF5B59B4),
               radius: 22.5,
             ),

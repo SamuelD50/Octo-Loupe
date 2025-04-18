@@ -217,9 +217,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
   }) async {
     String newName = newNameController.text.trim();
     String newImageUrl = newImageUrlController.text.trim();
-
-    debugPrint('newName: $newName');
-    debugPrint('newImageUrl: $newImageUrl');
     
     try {
       setState(() {
@@ -648,7 +645,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             setState(() {
                               _currentMode = SubFilterMode.editing;
                               selectedFilter = 'Par catégorie';
-                              debugPrint('selectedSubFilterIdForEditing: $selectedSubFilterIdForEditing');
                               subFilters = [];
                               readSubFilters();
                             });
@@ -697,7 +693,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
                             setState(() {
                               _currentMode = SubFilterMode.deleting;
                               selectedFilter = 'Par catégorie';
-                              debugPrint('selectedSubFilterIdForDeleting: $selectedSubFilterIdForDeleting');
                               subFilters = [];
                               readSubFilters();
                             });
@@ -1263,29 +1258,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
               );
             },
           ),
-          /* if (selectedSubFilterIdForDeleting.isNotEmpty)
-            isLoading ?
-              Center(
-                child: SpinKitSpinningLines(
-                  color: Colors.black,
-                  size: 60,
-                ),
-              ) :
-              Container(
-                height: 220,
-                width: 220,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      subFilters.firstWhere(
-                        (subFilter) => subFilter['id'] == selectedSubFilterIdForDeleting
-                      )['imageUrl']
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ), */
           const SizedBox(height: 16),
           if (selectedSubFilterIdForDeleting.isNotEmpty)
             isLoading ?

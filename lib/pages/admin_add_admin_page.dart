@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:octoloupe/screens/admin_central_page.dart';
+import 'package:octoloupe/pages/admin_central_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 
 class AdminAddAdminPage extends StatefulWidget {

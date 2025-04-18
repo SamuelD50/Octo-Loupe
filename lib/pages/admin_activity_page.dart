@@ -1542,30 +1542,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           ),
           const SizedBox(height: 16),
           FutureBuilder<bool>(
-            future: checkImageValidity(imageUrlController.text),
+            key: ValueKey(imageUrlController.text),
+            future: Future.delayed(const Duration(seconds: 1))
+              .then((_) => checkImageValidity(imageUrlController.text)),
             builder:(context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color(0xFF5B59B4),
-                          width: 4,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: SpinKitSpinningLines(
-                        color: Colors.white,
-                        size: 60,
-                      ),
-                    ),
-                  ),
-                );
-              }
               if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || imageUrlController.text.isEmpty) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(30),
@@ -2735,30 +2715,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
             ),
             const SizedBox(height: 16),
             FutureBuilder<bool>(
-              future: checkImageValidity(newImageUrlController.text),
+              key: ValueKey(newImageUrlController.text),
+              future: Future.delayed(const Duration(seconds: 1))
+                .then((_) => checkImageValidity(newImageUrlController.text)),
               builder:(context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFF5B59B4),
-                            width: 4,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: SpinKitSpinningLines(
-                          color: Colors.white,
-                          size: 60,
-                        ),
-                      ),
-                    ),
-                  );
-                }
                 if (snapshot.hasError || !snapshot.hasData || snapshot.data == false || newImageUrlController.text.isEmpty) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(30),
