@@ -15,7 +15,7 @@ class SplashScreenState extends State<SplashScreen> with TickerProviderStateMixi
 } */
 
 import 'package:flutter/material.dart';
-import 'package:octoloupe/main.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -51,10 +51,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     // Redirection vers la page principale
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainPage()),
-        );
+        context.go('/home');
       }
     });
   }

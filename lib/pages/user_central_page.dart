@@ -90,159 +90,156 @@ class UserCentralPageState extends State<UserCentralPage> {
   Widget build(
     BuildContext context
   ) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white24,
-            ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
           ),
-          Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (userData.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 32),
-                      child: Text(
-                        'Bonjour ${userData['firstName']}',
-                        style: TextStyle(
-                          fontFamily: 'Satisfy-Regular',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4),
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        )
-                      ),
-                      onPressed: () {
-                        // Naviguer vers une autre page ici
-                        /* Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ModifierInterfacePage()
-                            ),
-                          );
-                        ); */
-                      },
-                      child: Text('Mon profil utilisateur',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (userData.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(top: 32),
+                    child: Text(
+                      'Bonjour ${userData['firstName']}',
+                      style: TextStyle(
+                        fontFamily: 'Satisfy-Regular',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.black,
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4),
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      onPressed: () {
-                        // Naviguer vers une autre page ici
-                        Navigator.push(
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF5B59B4),
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Color(0xFF5B59B4)),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      )
+                    ),
+                    onPressed: () {
+                      // Naviguer vers une autre page ici
+                      /* Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => UpdateCredentialsPage(),
+                            builder: (context) => ModifierInterfacePage()
                           ),
                         );
-                      },
-                      child: Text('Modifier mes identifiants',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      ); */
+                    },
+                    child: Text('Mon profil utilisateur',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5B59B4),
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: Color(0xFF5B59B4)),
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF5B59B4),
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Color(0xFF5B59B4)),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
-                      onPressed: () {
-                        _authService.deleteUser(
-                          context: context,
-                          setLoading: setLoading,
-                        );
-                      },
-                      child: Text('Supprimer mon compte',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    onPressed: () {
+                      // Naviguer vers une autre page ici
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateCredentialsPage(),
                         ),
+                      );
+                    },
+                    child: Text('Modifier mes identifiants',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, 
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: Colors.red),
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF5B59B4),
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Color(0xFF5B59B4)),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
-                      onPressed: () {
-                        _authService.signOut(
-                          context: context,
-                          setLoading: setLoading,
-                        );
-                      },
-                      child: Text('Se déconnecter',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                    onPressed: () {
+                      _authService.deleteUser(
+                        context: context,
+                        setLoading: setLoading,
+                      );
+                    },
+                    child: Text('Supprimer mon compte',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 32),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, 
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Colors.red),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      _authService.signOut(
+                        context: context,
+                        setLoading: setLoading,
+                      );
+                    },
+                    child: Text('Se déconnecter',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 32),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   } 
 }

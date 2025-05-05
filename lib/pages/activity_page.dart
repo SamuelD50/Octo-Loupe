@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/components/activity_card.dart';
 import 'package:octoloupe/components/activity_map.dart';
-import 'package:octoloupe/services/culture_activity_service.dart';
-import 'package:octoloupe/services/sport_activity_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -33,7 +30,7 @@ class ActivityPageState extends State<ActivityPage> {
         mode: LaunchMode.externalApplication,
       );
     } else {
-      debugPrint('Could not launch $url');
+      throw Exception('Could not launch $url');
     }
   }
 
@@ -52,7 +49,6 @@ class ActivityPageState extends State<ActivityPage> {
   void initState() {
     super.initState();
     filteredActivities = widget.filteredActivities;
-    /* readActivities(); */
   }
     
   @override
@@ -60,48 +56,42 @@ class ActivityPageState extends State<ActivityPage> {
     BuildContext context
   ) {
     return isLoading?
-      Scaffold(
-        appBar: const CustomAppBar(),
-        body: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white24,
-              ),
+      Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white24,
             ),
-            Align(
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                child: Center(
-                  child: SpinKitSpinningLines(
-                    color: Colors.white,
-                    size: 60,
-                  ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.white,
+                  size: 60,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ) :
-      Scaffold(
-        appBar: const CustomAppBar(),
-        body: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
+      Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
             ),
-            Align(
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                child: selectedActivity != null && selectedActivity!.isNotEmpty ?
-                  _buildDetailActivity() :
-                  _buildListActivities(),
-              ),
-            )
-          ],
-        )
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: selectedActivity != null && selectedActivity!.isNotEmpty ?
+                _buildDetailActivity() :
+                _buildListActivities(),
+            ),
+          )
+        ],
       );
     }
 
@@ -185,7 +175,6 @@ class ActivityPageState extends State<ActivityPage> {
                     onTap: () {
                       setState(() {
                         selectedActivity = filteredActivity;
-                        /* activityId = selectedActivity!['activityId']; */
                       });
                     },
                   ),
@@ -203,7 +192,6 @@ class ActivityPageState extends State<ActivityPage> {
       String discipline = selectedActivity!['discipline'];
       List<String>? information = selectedActivity?['information']?.cast<String>();
       String imageUrl = selectedActivity?['imageUrl'];
-      debugPrint('ImageUrl: $imageUrl');
       Place place = Place.fromMap(selectedActivity?['place']);
       Contact? contact = Contact.fromMap(selectedActivity?['contact']) ;
       List<Schedule> schedules = (selectedActivity!['schedules'] as List?)

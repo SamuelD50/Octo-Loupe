@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
@@ -180,7 +181,6 @@ class AuthService {
   int failedAttempts = 0;
   bool isButtonDisabled = false;
 
-/* https://github.com/Nayangadhiya/Firebase-AuthServices-Flutter/blob/main/lib/screens/login_screen.dart */
   //SignIn with email and password
   Future<UserCredential> signIn(
     String email,
@@ -214,13 +214,10 @@ class AuthService {
 
         if (userDoc?.role != null) {
           if (context.mounted) {
-            Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(
-                builder: (context) => userDoc!.role == 'admin'
-                  ? AdminCentralPage()
-                  : UserCentralPage(),
-              ),
+            context.go(
+              userDoc!.role == 'admin' ?
+                '/auth/admin' :
+                '/auth/user'
             );
           }
 
@@ -279,14 +276,11 @@ class AuthService {
           email: email,
         );
 
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (context) => AuthPage()),
-          );
-        }
-
         await Future.delayed(Duration(milliseconds: 25));
+
+        if (context.mounted) {
+          context.pop('/auth');
+        }
 
         setLoading(false);
 
@@ -331,14 +325,11 @@ class AuthService {
       if (user != null) {
         await _auth.signOut();
 
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AuthPage()),
-          );
-        }
-
         await Future.delayed(Duration(milliseconds: 25));
+
+        if (context.mounted) {
+          context.pop('/auth');
+        }
 
         setLoading(false);
 
@@ -375,14 +366,11 @@ class AuthService {
         await UserCRUD(user.uid).deleteUser(user.uid);
         await user.delete();
 
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AuthPage()),
-          );
-        }
-
         await Future.delayed(Duration(milliseconds: 25));
+
+        if (context.mounted) {
+          context.pop('/auth');
+        }
 
         setLoading(false);
 

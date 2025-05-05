@@ -526,197 +526,194 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white24,
-            ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
           ),
-          Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 32),
-                    child: Text(
-                      'Gestion de l\'interface',
-                      style: TextStyle(
-                        fontFamily: 'Satisfy-Regular',
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child: Text(
+                    'Gestion de l\'interface',
+                    style: TextStyle(
+                      fontFamily: 'Satisfy-Regular',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children : [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: _currentMode == SubFilterMode.adding ?
-                            [
-                              BoxShadow(
-                                color: Colors.blueAccent,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ] :
-                            [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ],
+                ),
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children : [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: _currentMode == SubFilterMode.adding ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Color(0xFF5B59B4)
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                         ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(
-                              color: Color(0xFF5B59B4)
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _currentMode = SubFilterMode.adding;
-                              selectedFilter = 'Par catégorie';
-                              subFilters = [];
-                              readSubFilters();
-                            });
-                          },
-                          child: Icon(
-                            Icons.add,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                        onPressed: () {
+                          setState(() {
+                            _currentMode = SubFilterMode.adding;
+                            selectedFilter = 'Par catégorie';
+                            subFilters = [];
+                            readSubFilters();
+                          });
+                        },
+                        child: Icon(
+                          Icons.add,
+                          size: 30,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 16),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: _currentMode == SubFilterMode.editing ?
-                            [
-                              BoxShadow(
-                                color: Colors.blueAccent,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ] :
-                            [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ],
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    SizedBox(width: 16),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: _currentMode == SubFilterMode.editing ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _currentMode = SubFilterMode.editing;
-                              selectedFilter = 'Par catégorie';
-                              subFilters = [];
-                              readSubFilters();
-                            });
-                          },
-                          child: Icon(
-                            Icons.edit,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _currentMode = SubFilterMode.editing;
+                            selectedFilter = 'Par catégorie';
+                            subFilters = [];
+                            readSubFilters();
+                          });
+                        },
+                        child: Icon(
+                          Icons.edit,
+                          size: 30,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 16),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: _currentMode == SubFilterMode.deleting ?
-                            [
-                              BoxShadow(
-                                color: Colors.blueAccent,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ] :
-                            [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ],
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    SizedBox(width: 16),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: _currentMode == SubFilterMode.deleting ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _currentMode = SubFilterMode.deleting;
-                              selectedFilter = 'Par catégorie';
-                              subFilters = [];
-                              readSubFilters();
-                            });
-                          },
-                          child: Icon(
-                            Icons.remove,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _currentMode = SubFilterMode.deleting;
+                            selectedFilter = 'Par catégorie';
+                            subFilters = [];
+                            readSubFilters();
+                          });
+                        },
+                        child: Icon(
+                          Icons.remove,
+                          size: 30,
+                          color: Colors.white,
                         ),
                       ),
-                    ], 
-                  ),
-                  SizedBox(height: 16),
+                    ),
+                  ], 
+                ),
+                SizedBox(height: 16),
 
-                  if (_currentMode == SubFilterMode.adding) _buildAddSubFilter(context),
-                  if (_currentMode == SubFilterMode.editing) _buildEditSubFilter(context),
-                  if (_currentMode == SubFilterMode.deleting) _buildDeleteSubFilter(context),
-                ],
-              ),
+                if (_currentMode == SubFilterMode.adding) _buildAddSubFilter(context),
+                if (_currentMode == SubFilterMode.editing) _buildEditSubFilter(context),
+                if (_currentMode == SubFilterMode.deleting) _buildDeleteSubFilter(context),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

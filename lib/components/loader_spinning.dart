@@ -7,23 +7,20 @@ class Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white24,
-            ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
           ),
-          Center(
-            child: SpinKitSpinningLines(
-              color: Colors.black,
-              size: 60.0,
-            ),
+        ),
+        Center(
+          child: SpinKitSpinningLines(
+            color: Colors.black,
+            size: 60.0,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

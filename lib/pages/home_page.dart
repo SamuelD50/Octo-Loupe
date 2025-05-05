@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 // Components
 import 'package:octoloupe/components/custom_app_bar.dart';
+import 'package:octoloupe/components/custom_navbar.dart';
 import 'package:octoloupe/components/snackbar.dart';
 // Models
 import 'package:octoloupe/model/sport_filters_model.dart';
@@ -382,96 +385,400 @@ class HomePageState extends State<HomePage> {
   Widget build(
     BuildContext context
   ) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white24,
-            ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
           ),
-          Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 32),
-                    child: Text(
-                      'Je trouve mon activité',
-                      style: TextStyle(
-                        fontFamily: 'Satisfy-Regular',
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child: Text(
+                    'Je trouve mon activité',
+                    style: TextStyle(
+                      fontFamily: 'Satisfy-Regular',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 32),
-                  // Barre de recherche
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: Row(
+                ),
+                SizedBox(height: 32),
+                // Barre de recherche
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: keywordsController,
+                          decoration: InputDecoration(
+                            labelText: 'Je recherche ...',
+                            hintText: 'Ex: Running, Peinture, ...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Color(0xFF5B59B4)
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        onPressed: () async {
+                          filteredActivities.clear();
+                          String searchQuery = keywordsController.text.trim();
+                          debugPrint('searchQuery: $searchQuery');
+
+                          if (searchQuery.isNotEmpty) {
+                              
+                            await readAllActivities();
+
+                            List<String> keywords = searchQuery.split(' ').map((e) => e.trim()).toList();
+
+                            List<Map<String, dynamic>> filteredActivities = await sortActivities(
+                              keywords: keywords,
+                              activities: activities,
+                            );
+
+                            if (filteredActivities.isNotEmpty) {
+                              if (context.mounted) {
+                                context.push(
+                                  '/home/results',
+                                  extra: {
+                                    'filteredActivities': filteredActivities,
+                                  }
+                                );
+                              }
+                            } else {
+                              CustomSnackBar(
+                                message: 'Aucune activité trouvée !',
+                                backgroundColor: Colors.red,
+                              ).showSnackBar(context);
+                            }
+                          }
+                          keywordsController.clear();
+                          filteredActivities.clear();
+                        },
+                        child: Icon(
+                          Icons.search,
+                          size: 24,
+                        )
+                      )
+                    ],
+                  )
+                ),
+                SizedBox(height: 16),
+                //Sport or Culture section
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    EdgeInsetsGeometry padding;
+
+                    if (constraints.maxWidth < 325) {
+                      padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
+                    } else {
+                      padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
+                    }
+
+                    return ToggleButtons(
+                      isSelected: [_selectedSection == 0, _selectedSection == 1],
+                      onPressed: (int section) {
+                        setState(() {
+                          _selectedSection = section;
+                          _resetFilters();
+                          readActivities();
+                        });
+                      },
+                      color: Colors.black,
+                      selectedColor: Colors.white,
+                      fillColor: Color(0xFF5B59B4),
+                      borderColor: Color(0xFF5B59B4),
+                      selectedBorderColor: Color(0xFF5B59B4),
+                      borderRadius: BorderRadius.circular(30.0),
+                      direction: constraints.maxWidth < 325 ?
+                        Axis.vertical
+                        : Axis.horizontal,
                       children: [
-                        Expanded(
-                          child: TextField(
-                            controller: keywordsController,
-                            decoration: InputDecoration(
-                              labelText: 'Je recherche ...',
-                              hintText: 'Ex: Running, Peinture, ...',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
+                        Container(
+                          padding: padding,
+                          child: Center(
+                            child: Text(
+                              'Sport',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                             ),
                           ),
                         ),
-                        SizedBox(width: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(
-                              color: Color(0xFF5B59B4)
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                        Container(
+                          padding: padding,
+                          child: Center(
+                            child: Text(
+                              'Culture',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          onPressed: () async {
-                            filteredActivities.clear();
-                            String searchQuery = keywordsController.text.trim();
-                            debugPrint('searchQuery: $searchQuery');
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                    //Filter button by categories
+                      _buildCriteriaTile(
+                        context,
+                        Icons.category,
+                        'Par catégorie',
+                        () async {
+                          final List<Map<String, String>>? selectedCategories = await context.push(
+                            '/home/categories',
+                            extra: {
+                              'isSport': _selectedSection == 0,
+                              'selectedCategories': _selectedSection == 0 ?
+                                selectedSportCategories.map((category) => {
+                                  'id': category.id ?? '',
+                                  'name': category.name,
+                                }).toList()
+                                : selectedCultureCategories.map((category) => {
+                                  'id': category.id ?? '',
+                                  'name': category.name,
+                                }).toList(),
+                            }
+                          );
 
-                            if (searchQuery.isNotEmpty) {
-                                
-                              await readAllActivities();
+                          setState(() {
+                            if (selectedCategories != null) {
+                              if (_selectedSection == 0) {
+                                selectedSportCategories = selectedCategories
+                                  .map((category) => SportCategory.fromMap(category))
+                                  .toList();
+                              } else {
+                                selectedCultureCategories = selectedCategories
+                                  .map((category) => CultureCategory.fromMap(category))
+                                  .toList();
+                              }
+                            }
+                          });
+                        },
+                        isSport: _selectedSection == 0,
+                      ),
+                      //Filter button by ages
+                      _buildCriteriaTile(
+                        context,
+                        Icons.accessibility_new,
+                        'Par âge',
+                        () async {
+                          final List<Map<String, String>>? selectedAges = await context.push(
+                            '/home/ages',
+                            extra: {
+                              'isSport': _selectedSection == 0,
+                              'selectedAges': _selectedSection == 0 ?
+                                selectedSportAges.map((age) => {
+                                  'id': age.id ?? '',
+                                  'name': age.name,
+                                }).toList()
+                                : selectedCultureAges.map((age) => {
+                                  'id': age.id ?? '',
+                                  'name': age.name,
+                                }).toList(),
+                            }
+                          );
+                            
+                          setState(() {
+                            if (selectedAges != null) {
+                              if (_selectedSection == 0) {
+                                selectedSportAges = selectedAges
+                                  .map((age) => SportAge.fromMap(age))
+                                  .toList();
+                              } else {
+                                selectedCultureAges = selectedAges
+                                  .map((age) => CultureAge.fromMap(age))
+                                  .toList();
+                              }
+                            }
+                          });
+                        },
+                        isSport: _selectedSection == 0,
+                      ),
+                      //Filter button by days
+                      _buildCriteriaTile(
+                        context,
+                        Icons.date_range,
+                        'Par jour',
+                        () async {
+                          final List<Map<String, String>>? selectedDays = await context.push(
+                            '/home/days',
+                            extra: {
+                              'isSport': _selectedSection == 0,
+                              'selectedDays': _selectedSection == 0 ?
+                                selectedSportDays.map((day) => {
+                                  'id': day.id ?? '',
+                                  'name': day.name,
+                                }).toList()
+                                : selectedCultureDays.map((day) => {
+                                  'id': day.id ?? '',
+                                  'name': day.name,
+                                }).toList(),
+                            }
+                          );
 
-                              List<String> keywords = searchQuery.split(' ').map((e) => e.trim()).toList();
-                              debugPrint('Keywords: $keywords');
+                          setState(() {
+                            if (selectedDays != null) {
+                              if (_selectedSection == 0) {
+                                selectedSportDays = selectedDays
+                                  .map((day) => SportDay.fromMap(day))
+                                  .toList();
+                              } else {
+                                selectedCultureDays = selectedDays
+                                  .map((day) => CultureDay.fromMap(day))
+                                  .toList();
+                              }
+                            }
+                          });
+                        },
+                        isSport: _selectedSection == 0,
+                      ),
+                      //Filter button by schedules
+                      _buildCriteriaTile(
+                        context,
+                        Icons.access_time,
+                        'Par horaire',
+                        () async {
+                          final List<Map<String, String>>? selectedSchedules = await context.push(
+                            '/home/schedules',
+                            extra: {
+                              'isSport': _selectedSection == 0,
+                              'selectedSchedules': _selectedSection == 0 ?
+                                selectedSportSchedules.map((schedule) => {
+                                  'id': schedule.id ?? '',
+                                  'name': schedule.name,
+                                }).toList()
+                                : selectedCultureSchedules.map((schedule) => {
+                                  'id': schedule.id ?? '',
+                                  'name': schedule.name,
+                                }).toList(),
+                            }
+                          );
 
-                              debugPrint('Activities before: ${activities.length}');
-                              List<Map<String, dynamic>> filteredActivities = await sortActivities(
-                                keywords: keywords,
+                          setState(() {
+                            if (selectedSchedules != null) {
+                              if (_selectedSection == 0) {
+                                selectedSportSchedules = selectedSchedules
+                                  .map((schedule) => SportSchedule.fromMap(schedule))
+                                  .toList();
+                              } else {
+                                selectedCultureSchedules = selectedSchedules
+                                  .map((schedule) => CultureSchedule.fromMap(schedule))
+                                  .toList();
+                              }
+                            }
+                          });
+                        },
+                        isSport: _selectedSection == 0,
+                      ),
+                      //Filter button by sectors
+                      _buildCriteriaTile(
+                        context,
+                        Icons.apartment_rounded,
+                        'Par secteur',
+                        () async {
+                          final List<Map<String, String>>? selectedSectors = await context.push(
+                            '/home/sectors',
+                            extra: {
+                              'isSport': _selectedSection == 0,
+                              'selectedSectors': _selectedSection == 0 ?
+                                selectedSportSectors.map((sector) => {
+                                  'id': sector.id ?? '',
+                                  'name': sector.name,
+                                }).toList()
+                                : selectedCultureSectors.map((sector) => {
+                                  'id': sector.id ?? '',
+                                  'name': sector.name,
+                                }).toList(),
+                            }
+                          );
+                            
+                          setState(() {
+                            if (selectedSectors != null) {
+                              if (_selectedSection == 0) {
+                                selectedSportSectors = selectedSectors
+                                  .map((sector) => SportSector.fromMap(sector))
+                                  .toList();
+                              } else {
+                                selectedCultureSectors = selectedSectors
+                                  .map((sector) => CultureSector.fromMap(sector))
+                                  .toList();
+                              }
+                            }
+                          });
+                        },
+                        isSport: _selectedSection == 0,
+                      ),
+                    ],
+                  ),
+                ),
+                //Buttons to search for activities or reset filters (Row/Column)
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return constraints.maxWidth > 325 ?
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF5B59B4),
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Color(0xFF5B59B4)),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            onPressed: () async {
+
+                              collectFilters();
+                              await readActivities();
+                              
+                              filteredActivities = await sortActivities(
+                                filters: filters,
                                 activities: activities,
                               );
-                              debugPrint('Activities after: ${activities.length}');
-                              debugPrint('FilteredActivities after: ${filteredActivities.length}');
 
                               if (filteredActivities.isNotEmpty) {
+                                setState(() {
+                                  filteredActivities = filteredActivities;
+                                });
+                                
                                 if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ActivityPage(
-                                        filteredActivities: filteredActivities,
-                                      )
-                                    )
+                                  context.push(
+                                    '/home/results',
+                                    extra: {
+                                      'filteredActivities': filteredActivities,
+                                    }
                                   );
                                 }
                               } else {
@@ -480,441 +787,135 @@ class HomePageState extends State<HomePage> {
                                   backgroundColor: Colors.red,
                                 ).showSnackBar(context);
                               }
-                            }
-                            keywordsController.clear();
-                            filteredActivities.clear();
-                          },
-                          child: Icon(
-                            Icons.search,
-                            size: 24,
-                          )
-                        )
-                      ],
-                    )
-                  ),
-                  SizedBox(height: 16),
-                  //Sport or Culture section
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      EdgeInsetsGeometry padding;
 
-                      if (constraints.maxWidth < 325) {
-                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
-                      } else {
-                        padding = EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0);
-                      }
-
-                      return ToggleButtons(
-                        isSelected: [_selectedSection == 0, _selectedSection == 1],
-                        onPressed: (int section) {
-                          setState(() {
-                            _selectedSection = section;
-                            _resetFilters();
-                            readActivities();
-                          });
-                        },
-                        color: Colors.black,
-                        selectedColor: Colors.white,
-                        fillColor: Color(0xFF5B59B4),
-                        borderColor: Color(0xFF5B59B4),
-                        selectedBorderColor: Color(0xFF5B59B4),
-                        borderRadius: BorderRadius.circular(30.0),
-                        direction: constraints.maxWidth < 325 ?
-                          Axis.vertical
-                          : Axis.horizontal,
-                        children: [
-                          Container(
-                            padding: padding,
-                            child: Center(
-                              child: Text(
-                                'Sport',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              _resetFilters();
+                              filters.clear();
+                            },
+                            child: Text('Rechercher',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          Container(
-                            padding: padding,
-                            child: Center(
-                              child: Text(
-                                'Culture',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          SizedBox(width: 32),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF5B59B4),
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Color(0xFF5B59B4)),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              _resetFilters();
+                              CustomSnackBar(
+                                message: 'Filtres réinitialisés !',
+                                backgroundColor: Colors.amber,
+                              ).showSnackBar(context);
+                            },
+                            child: Text('Réinitialiser',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ) :
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF5B59B4),
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Color(0xFF5B59B4)),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            onPressed: () async {
+                              filteredActivities.clear();
+
+                              collectFilters();
+                              readActivities();
+
+                              filteredActivities = await sortActivities(
+                                filters: filters,
+                                activities: activities
+                              );
+
+                              if (filteredActivities.isNotEmpty) {
+                                setState(() {
+                                  filteredActivities = filteredActivities;
+                                });
+
+                                if (context.mounted) {
+                                  context.push(
+                                    '/home/results',
+                                    extra: {
+                                      'filteredActivities': filteredActivities,
+                                    }
+                                  );
+                                }
+                              } else {
+                                CustomSnackBar(
+                                  message: 'Aucune activité trouvée !',
+                                  backgroundColor: Colors.red,
+                                ).showSnackBar(context);
+                              }
+
+                              _resetFilters();
+                              filters.clear();
+                            },
+                            child: Text('Rechercher',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF5B59B4),
+                              foregroundColor: Colors.white,
+                              side: BorderSide(color: Color(0xFF5B59B4)),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              _resetFilters();
+                              CustomSnackBar(
+                                message: 'Filtres réinitialisés !',
+                                backgroundColor: Colors.amber,
+                              ).showSnackBar(context);
+                            },
+                            child: Text('Réinitialiser',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
                       );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Column(
-                      children: [
-                        //Filter button by categories
-                        _buildCriteriaTile(
-                          context,
-                          Icons.category,
-                          'Par catégorie',
-                          () async {
-                            final List<Map<String, String>>? selectedCategories = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CategorySelectionPage(
-                                  selectedCategories: _selectedSection == 0 ?
-                                    selectedSportCategories.map((category) => {
-                                      'id': category.id ?? '',
-                                      'name': category.name,
-                                    }).toList()
-                                  : selectedCultureCategories.map((category) => {
-                                    'id': category.id ?? '',
-                                    'name': category.name,
-                                  }).toList(),
-                                  isSport: _selectedSection == 0,
-                                )
-                              ),
-                            );
-                            setState(() {
-                              if (selectedCategories != null) {
-                                if (_selectedSection == 0) {
-                                  selectedSportCategories = selectedCategories.map((category) => SportCategory.fromMap(category)).toList();
-                                } else {
-                                  selectedCultureCategories = selectedCategories.map((category) => CultureCategory.fromMap(category)).toList();
-                                }
-                              }
-                            });
-                          },
-                          isSport: _selectedSection == 0,
-                        ),
-                        //Filter button by ages
-                        _buildCriteriaTile(
-                          context,
-                          Icons.accessibility_new,
-                          'Par âge',
-                          () async {
-                            final List<Map<String, String>>? selectedAges = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AgeSelectionPage(
-                                  selectedAges: _selectedSection == 0 ?
-                                    selectedSportAges.map((age) => {
-                                      'id': age.id ?? '',
-                                      'name': age.name,
-                                    }).toList()
-                                  : selectedCultureAges.map((age) => {
-                                      'id': age.id ?? '',
-                                      'name': age.name,
-                                    }).toList(),
-                                  isSport: _selectedSection == 0,
-                                )
-                              ),
-                            );
-                            setState(() {
-                              if (selectedAges != null) {
-                                if (_selectedSection == 0) {
-                                  selectedSportAges = selectedAges.map((age) => SportAge.fromMap(age)).toList();
-                                } else {
-                                  selectedCultureAges = selectedAges.map((age) => CultureAge.fromMap(age)).toList();
-                                }
-                              }
-                            });
-                          },
-                          isSport: _selectedSection == 0,
-                        ),
-                        //Filter button by days
-                        _buildCriteriaTile(
-                          context,
-                          Icons.date_range,
-                          'Par jour',
-                          () async {
-                            final List<Map<String, String>>? selectedDays = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DaySelectionPage(
-                                  selectedDays: _selectedSection == 0 ?
-                                    selectedSportDays.map((day) => {
-                                      'id': day.id ?? '',
-                                      'name': day.name,
-                                    }).toList()
-                                  : selectedCultureDays.map((day) => {
-                                      'id': day.id ?? '',
-                                      'name': day.name,
-                                    }).toList(),
-                                isSport: _selectedSection == 0,
-                                )
-                              ),
-                            );
-                            setState(() {
-                              if (selectedDays != null) {
-                                if (_selectedSection == 0) {
-                                  selectedSportDays = selectedDays.map((day) => SportDay.fromMap(day)).toList();
-                                } else {
-                                  selectedCultureDays = selectedDays.map((day) => CultureDay.fromMap(day)).toList();
-                                }
-                              }
-                            });
-                          },
-                          isSport: _selectedSection == 0,
-                        ),
-                        //Filter button by schedules
-                        _buildCriteriaTile(
-                          context,
-                          Icons.access_time,
-                          'Par horaire',
-                          () async {
-                            final List<Map<String, String>>? selectedSchedules = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ScheduleSelectionPage(
-                                  selectedSchedules: _selectedSection == 0 ?
-                                    selectedSportSchedules.map((schedule) => {
-                                      'id': schedule.id ?? '',
-                                      'name': schedule.name,
-                                    }).toList()
-                                  : selectedCultureSchedules.map((schedule) => {
-                                      'id': schedule.id ?? '',
-                                      'name': schedule.name,
-                                    }).toList(),
-                                  isSport: _selectedSection == 0,
-                                )
-                              ),
-                            );
-                            setState(() {
-                              if (selectedSchedules != null) {
-                                if (_selectedSection == 0) {
-                                  selectedSportSchedules = selectedSchedules.map((schedule) => SportSchedule.fromMap(schedule)).toList();
-                                } else {
-                                  selectedCultureSchedules = selectedSchedules.map((schedule) => CultureSchedule.fromMap(schedule)).toList();
-                                }
-                              }
-                            });
-                          },
-                          isSport: _selectedSection == 0,
-                        ),
-                        //Filter button by sectors
-                        _buildCriteriaTile(
-                          context,
-                          Icons.apartment_rounded,
-                          'Par secteur',
-                          () async {
-                            final List<Map<String, String>>? selectedSectors = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SectorSelectionPage(
-                                  selectedSectors: _selectedSection == 0 ?
-                                    selectedSportSectors.map((sector) => {
-                                      'id': sector.id ?? '',
-                                      'name': sector.name,
-                                    }).toList()
-                                  : selectedCultureSectors.map((sector) => {
-                                      'id': sector.id ?? '',
-                                      'name': sector.name,
-                                    }).toList(),
-                                  isSport: _selectedSection == 0,
-                                )
-                              ),
-                            );
-                            setState(() {
-                              if (selectedSectors != null) {
-                                if (_selectedSection == 0) {
-                                  selectedSportSectors = selectedSectors.map((sector) => SportSector.fromMap(sector)).toList();
-                                } else {
-                                  selectedCultureSectors = selectedSectors.map((sector) => CultureSector.fromMap(sector)).toList();
-                                }
-                              }
-                            });
-                          },
-                          isSport: _selectedSection == 0,
-                        ),
-                      ],
-                    ),
-                  ),
-                  //Buttons to search for activities or reset filters (Row/Column)
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      return constraints.maxWidth > 325 ?
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF5B59B4),
-                                foregroundColor: Colors.white,
-                                side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                              onPressed: () async {
-
-                                collectFilters();
-                                await readActivities();
-
-                                debugPrint('FilteredActivities before: ${filteredActivities.length}');
-                                
-                                filteredActivities = await sortActivities(
-                                  filters: filters,
-                                  activities: activities,
-                                );
-
-                                debugPrint('FilteredActivities before: ${filteredActivities.length}');
-
-                                if (filteredActivities.isNotEmpty) {
-                                  setState(() {
-                                    filteredActivities = filteredActivities;
-                                  });
-                                  
-                                  if (context.mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ActivityPage(
-                                          filteredActivities: filteredActivities,
-                                        )
-                                      )
-                                    );
-                                  }
-                                } else {
-                                  CustomSnackBar(
-                                    message: 'Aucune activité trouvée !',
-                                    backgroundColor: Colors.red,
-                                  ).showSnackBar(context);
-                                }
-
-                                _resetFilters();
-                                filters.clear();
-                              },
-                              child: Text('Rechercher',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 32),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF5B59B4),
-                                foregroundColor: Colors.white,
-                                side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                              onPressed: () {
-                                _resetFilters();
-                                CustomSnackBar(
-                                  message: 'Filtres réinitialisés !',
-                                  backgroundColor: Colors.amber,
-                                ).showSnackBar(context);
-                              },
-                              child: Text('Réinitialiser',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ) :
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF5B59B4),
-                                foregroundColor: Colors.white,
-                                side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                              onPressed: () async {
-                                filteredActivities.clear();
-
-                                collectFilters();
-                                readActivities();
-
-                                filteredActivities = await sortActivities(
-                                  filters: filters,
-                                  activities: activities
-                                );
-
-                                if (filteredActivities.isNotEmpty) {
-                                  setState(() {
-                                    filteredActivities = filteredActivities;
-                                  });
-
-                                  if (context.mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ActivityPage(
-                                          filteredActivities: filteredActivities,
-                                        )
-                                      )
-                                    );
-                                  }
-                                } else {
-                                  CustomSnackBar(
-                                    message: 'Aucune activité trouvée !',
-                                    backgroundColor: Colors.red,
-                                  ).showSnackBar(context);
-                                }
-
-                                _resetFilters();
-                                filters.clear();
-                              },
-                              child: Text('Rechercher',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF5B59B4),
-                                foregroundColor: Colors.white,
-                                side: BorderSide(color: Color(0xFF5B59B4)),
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                              onPressed: () {
-                                _resetFilters();
-                                CustomSnackBar(
-                                  message: 'Filtres réinitialisés !',
-                                  backgroundColor: Colors.amber,
-                                ).showSnackBar(context);
-                              },
-                              child: Text('Réinitialiser',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                    }
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 32),
-                  ),
-                ],
-              ),
+                  }
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 32),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

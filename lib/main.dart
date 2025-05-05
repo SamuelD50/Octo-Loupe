@@ -1,16 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/pages/admin_central_page.dart';
-import 'package:octoloupe/pages/auth_page.dart';
-import 'package:octoloupe/pages/contact_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octoloupe/pages/home_page.dart';
 import 'package:octoloupe/pages/splash_page.dart';
+import 'package:octoloupe/router/app_router.dart';
 import 'components/custom_app_bar.dart';
 import 'components/custom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:octoloupe/services/notification_service.dart';
+import 'web_url_strategy_stub.dart'
+  if (dart.library.html) 'web_url_strategy_real.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,11 +26,14 @@ void main() async {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
 
+  configureWebUrlStrategy();
+
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
   NotificationService().initNotification();
+  
   runApp(
     const MyApp()
   );
@@ -42,7 +46,8 @@ class MyApp extends StatelessWidget {
   Widget build(
     BuildContext context
   ) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,
       theme: ThemeData(
@@ -110,31 +115,62 @@ class MyApp extends StatelessWidget {
           ),
         ),  
       ),
-      home: const SplashPage(),
-      initialRoute: '/',
-      routes: {
-        '/HomePage': (context) => HomePage(),
-        '/AuthPage': (context) => AuthPage(),
-        '/ContactPage': (context) => ContactPage(),
-        '/AdminCentralPage': (context) => AdminCentralPage(),
-      }
+      /* home: const SplashPage(), */
     );
   }
 }
 
 class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+  final Widget child;
+  
+  const MainPage({
+    super.key,
+    required this.child,
+  });
 
   @override
   Widget build(
     BuildContext context
   ) {
+    final currentIndex = _getCurrentIndex(context);
     return SafeArea(
       child: Scaffold(
         appBar: const CustomAppBar(),
-        body: Container(),
-        bottomNavigationBar: CustomNavBar(),
+        body: child,
+        bottomNavigationBar: CustomNavBar(
+          currentIndex: currentIndex,
+          onItemSelected: (index) => _onItemTapped(context, index),
+        ),
       ),
     );
+  }
+}
+
+int _getCurrentIndex(
+  BuildContext context,
+) {
+  final location = GoRouterState.of(context).uri.toString();
+
+  if (location.startsWith('/home')) return 0;
+  if (location.startsWith('/auth')) return 1;
+  if (location.startsWith('/contact')) return 2;
+
+  return 0;
+}
+
+void _onItemTapped(
+  BuildContext context,
+  int index,
+) {
+  switch (index) {
+    case 0:
+      context.go('/home');
+      break;
+    case 1:
+      context.go('/auth');
+      break;
+    case 2:
+      context.go('/contact');
+      break;
   }
 }

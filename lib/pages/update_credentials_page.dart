@@ -86,93 +86,91 @@ class UpdateCredentialsPageState extends State<UpdateCredentialsPage> {
   Widget build(
     BuildContext context
   ) {
-    return isLoading ? Loading() : Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white24,
-            ),
+    return isLoading ? Loading() :
+    Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
           ),
-          Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 32),
-                    child: Text(
-                      'Modifier mes identifiants',
-                      style: TextStyle(
-                        fontFamily: 'Satisfy-Regular',
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 32),
+                  child: Text(
+                    'Modifier mes identifiants',
+                    style: TextStyle(
+                      fontFamily: 'Satisfy-Regular',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 32),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
+                ),
+                const SizedBox(height: 32),
+                LayoutBuilder(
+                  builder: (context, constraints) {
 
-                      return ToggleButtons(
-                        isSelected: [_selectedIndex == 0, _selectedIndex == 1],
-                        onPressed: (int index) {
-                          setState(() {
-                            _selectedIndex = index;
-                          });
-                        },
-                        color: Colors.black,
-                        selectedColor: Colors.white,
-                        fillColor: Color(0xFF5B59B4),
-                        borderColor: Color(0xFF5B59B4),
-                        selectedBorderColor: Color(0xFF5B59B4),
-                        borderRadius:  BorderRadius.circular(30.0),
-                        direction: constraints.maxWidth < 375 ?
-                          Axis.vertical
-                          : Axis.horizontal,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
-                            child: Center(
-                              child: Text(
-                                'Email',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            ),
+                    return ToggleButtons(
+                      isSelected: [_selectedIndex == 0, _selectedIndex == 1],
+                      onPressed: (int index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                      color: Colors.black,
+                      selectedColor: Colors.white,
+                      fillColor: Color(0xFF5B59B4),
+                      borderColor: Color(0xFF5B59B4),
+                      selectedBorderColor: Color(0xFF5B59B4),
+                      borderRadius:  BorderRadius.circular(30.0),
+                      direction: constraints.maxWidth < 375 ?
+                        Axis.vertical
+                        : Axis.horizontal,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 1.0),
+                          child: Center(
+                            child: Text(
+                              'Email',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
-                            child: Center(
-                              child: Text(
-                                'Mot de passe',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 1.0),
+                          child: Center(
+                            child: Text(
+                              'Mot de passe',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  _selectedIndex == 0 ? _buildUpdateEmail() : _buildUpdatePassword(),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 32),
-                  )
-                ]
-              ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                _selectedIndex == 0 ? _buildUpdateEmail() : _buildUpdatePassword(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 32),
+                )
+              ]
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

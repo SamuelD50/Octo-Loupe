@@ -719,32 +719,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
     BuildContext context
   ) {
     return isLoading ? 
-      Scaffold(
-        appBar: const CustomAppBar(),
-        body: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white24,
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                child: Center(
-                  child: SpinKitSpinningLines(
-                    color: Colors.black,
-                    size: 60,
-                  ),
-                )
-              )
-            )
-          ]
-        )
-      )
-    : Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
+      Stack(
         children: [
           Container(
             decoration: BoxDecoration(
@@ -754,232 +729,251 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           Align(
             alignment: Alignment.center,
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 32),
-                    child: Text(
-                      'Gestion des activités',
-                      style: TextStyle(
-                        fontFamily: 'Satisfy-Regular',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                        color: Colors.black,
-                      ),
+              child: Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.black,
+                  size: 60,
+                ),
+              )
+            )
+          )
+        ]
+      )
+    : Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child: Text(
+                    'Gestion des activités',
+                    style: TextStyle(
+                      fontFamily: 'Satisfy-Regular',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children : [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: _currentMode == ActivityMode.adding ?
-                            [
-                              BoxShadow(
-                                color: Colors.blueAccent,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ] :
-                            [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ],
+                ),
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children : [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: _currentMode == ActivityMode.adding ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Color(0xFF5B59B4)
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                         ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(
-                              color: Color(0xFF5B59B4)
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _currentMode = ActivityMode.adding;
-                              readSubFilters();
-                              disciplineController.clear();
-                              informationControllers.clear();
-                              imageUrlController.clear();
-                              structureNameController.clear();
-                              emailController.clear();
-                              phoneNumberController.clear();
-                              webSiteController.clear();
-                              titleAddressController.clear();
-                              streetAddressController.clear();
-                              postalCodeController.clear();
-                              cityController.clear();
-                              latitudeController.clear();
-                              longitudeController.clear();
-                              dayControllers.clear();
-                              startHourControllersPerDay.clear();
-                              endHourControllersPerDay.clear();
-                              profileControllers.clear();
-                              pricingControllers.clear();
-                              selectedSubFiltersByCategories.clear();
-                              selectedSubFiltersByAges.clear();
-                              selectedSubFiltersByDays.clear();
-                              selectedSubFiltersBySchedules.clear();
-                              selectedSubFiltersBySectors.clear();
-                              addInformationField();
-                              addDayField();
-                              addProfilePricing();
-                            });
-                          },
-                          child: Icon(
-                            Icons.add,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                        onPressed: () {
+                          setState(() {
+                            _currentMode = ActivityMode.adding;
+                            readSubFilters();
+                            disciplineController.clear();
+                            informationControllers.clear();
+                            imageUrlController.clear();
+                            structureNameController.clear();
+                            emailController.clear();
+                            phoneNumberController.clear();
+                            webSiteController.clear();
+                            titleAddressController.clear();
+                            streetAddressController.clear();
+                            postalCodeController.clear();
+                            cityController.clear();
+                            latitudeController.clear();
+                            longitudeController.clear();
+                            dayControllers.clear();
+                            startHourControllersPerDay.clear();
+                            endHourControllersPerDay.clear();
+                            profileControllers.clear();
+                            pricingControllers.clear();
+                            selectedSubFiltersByCategories.clear();
+                            selectedSubFiltersByAges.clear();
+                            selectedSubFiltersByDays.clear();
+                            selectedSubFiltersBySchedules.clear();
+                            selectedSubFiltersBySectors.clear();
+                            addInformationField();
+                            addDayField();
+                            addProfilePricing();
+                          });
+                        },
+                        child: Icon(
+                          Icons.add,
+                          size: 30,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 16),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          color: _currentMode == ActivityMode.editing ? Colors.blueAccent : Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: _currentMode == ActivityMode.editing ?
-                            [
-                              BoxShadow(
-                                color: Colors.blueAccent,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ] :
-                            [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ],
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    SizedBox(width: 16),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: _currentMode == ActivityMode.editing ? Colors.blueAccent : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: _currentMode == ActivityMode.editing ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _currentMode = ActivityMode.editing;
-                              isEditing = false;
-                              readActivities();
-                              readSubFilters();
-                              activityId = '';
-                              newDisciplineController.clear();
-                              newInformationControllers.clear();
-                              newImageUrlController.clear();
-                              newStructureNameController.clear();
-                              newEmailController.clear();
-                              newPhoneNumberController.clear();
-                              newWebSiteController.clear();
-                              newTitleAddressController.clear();
-                              newStreetAddressController.clear();
-                              newPostalCodeController.clear();
-                              newCityController.clear();
-                              newLatitudeController.clear();
-                              newLongitudeController.clear();
-                              newDayControllers.clear();
-                              newStartHourControllersPerDay.clear();
-                              newEndHourControllersPerDay.clear();
-                              newProfileControllers.clear();
-                              newPricingControllers.clear();
-                              newSelectedSubFiltersByCategories.clear();
-                              newSelectedSubFiltersByAges.clear();
-                              newSelectedSubFiltersByDays.clear();
-                              newSelectedSubFiltersBySchedules.clear();
-                              newSelectedSubFiltersBySectors.clear();
-                            });
-                          },
-                          child: Icon(
-                            Icons.edit,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _currentMode = ActivityMode.editing;
+                            isEditing = false;
+                            readActivities();
+                            readSubFilters();
+                            activityId = '';
+                            newDisciplineController.clear();
+                            newInformationControllers.clear();
+                            newImageUrlController.clear();
+                            newStructureNameController.clear();
+                            newEmailController.clear();
+                            newPhoneNumberController.clear();
+                            newWebSiteController.clear();
+                            newTitleAddressController.clear();
+                            newStreetAddressController.clear();
+                            newPostalCodeController.clear();
+                            newCityController.clear();
+                            newLatitudeController.clear();
+                            newLongitudeController.clear();
+                            newDayControllers.clear();
+                            newStartHourControllersPerDay.clear();
+                            newEndHourControllersPerDay.clear();
+                            newProfileControllers.clear();
+                            newPricingControllers.clear();
+                            newSelectedSubFiltersByCategories.clear();
+                            newSelectedSubFiltersByAges.clear();
+                            newSelectedSubFiltersByDays.clear();
+                            newSelectedSubFiltersBySchedules.clear();
+                            newSelectedSubFiltersBySectors.clear();
+                          });
+                        },
+                        child: Icon(
+                          Icons.edit,
+                          size: 30,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 16),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          color: _currentMode == ActivityMode.deleting ? Colors.blueAccent : Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: _currentMode == ActivityMode.deleting ?
-                            [
-                              BoxShadow(
-                                color: Colors.blueAccent,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ] :
-                            [
-                              BoxShadow(
-                                color: Colors.black54,
-                                offset: Offset(8, 8),
-                                blurRadius: 6,
-                              ),
-                            ],
-                        ),
-                        child:  ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5B59B4),
-                            foregroundColor: Colors.white,
-                            side: BorderSide(color: Color(0xFF5B59B4)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    SizedBox(width: 16),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: _currentMode == ActivityMode.deleting ? Colors.blueAccent : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: _currentMode == ActivityMode.deleting ?
+                          [
+                            BoxShadow(
+                              color: Colors.blueAccent,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          ] :
+                          [
+                            BoxShadow(
+                              color: Colors.black54,
+                              offset: Offset(8, 8),
+                              blurRadius: 6,
+                            ),
+                          ],
+                      ),
+                      child:  ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF5B59B4),
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Color(0xFF5B59B4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _currentMode = ActivityMode.deleting;
-                              readActivities();
-                              selectedActivityIds.clear();
-                            });
-                          },
-                          child: Icon(
-                            Icons.remove,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _currentMode = ActivityMode.deleting;
+                            readActivities();
+                            selectedActivityIds.clear();
+                          });
+                        },
+                        child: Icon(
+                          Icons.remove,
+                          size: 30,
+                          color: Colors.white,
                         ),
                       ),
-                    ], 
-                  ),
-                  SizedBox(height: 16),
+                    ),
+                  ], 
+                ),
+                SizedBox(height: 16),
 
-                  if (_currentMode == ActivityMode.adding) _buildAddActivity(context),
-                  if (_currentMode == ActivityMode.editing) _buildEditActivity(context),
-                  if (_currentMode == ActivityMode.deleting) _buildDeleteActivity(context),
-                ],
-              ),
+                if (_currentMode == ActivityMode.adding) _buildAddActivity(context),
+                if (_currentMode == ActivityMode.editing) _buildEditActivity(context),
+                if (_currentMode == ActivityMode.deleting) _buildDeleteActivity(context),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

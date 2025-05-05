@@ -29,32 +29,7 @@ class AdminContactPageState extends State<AdminContactPage> {
     BuildContext context
   ) {
     return isLoading ? 
-      Scaffold(
-        appBar: const CustomAppBar(),
-        body: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white24,
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                child: Center(
-                  child: SpinKitSpinningLines(
-                    color: Colors.black,
-                    size: 60,
-                  ),
-                )
-              )
-            )
-          ]
-        )
-      )
-    : Scaffold(
-      appBar: const CustomAppBar(),
-      body: Stack(
+      Stack(
         children: [
           Container(
             decoration: BoxDecoration(
@@ -64,32 +39,51 @@ class AdminContactPageState extends State<AdminContactPage> {
           Align(
             alignment: Alignment.center,
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 32),
-                    child: Text(
-                      'Formulaire de contact',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Satisfy-Regular',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+              child: Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.black,
+                  size: 60,
+                ),
+              )
+            )
+          )
+        ]
+      )
+    : Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white24,
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child: Text(
+                    'Formulaire de contact',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontFamily: 'Satisfy-Regular',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 32),
-                  isOpen ?
-                    _buildDetailMessage(context)
-                    : _buildMessageList(context),
-                ],
-              ),
+                ),
+                SizedBox(height: 32),
+                isOpen ?
+                  _buildDetailMessage(context)
+                  : _buildMessageList(context),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
