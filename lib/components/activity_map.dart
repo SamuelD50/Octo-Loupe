@@ -42,7 +42,6 @@ class ActivityMapState extends State<ActivityMap> {
               selectedDiscipline = marker['discipline'];
             });
             _showMarkerDetails(marker['discipline']);
-            debugPrint(marker['discipline'].toString());
           },
           child: Icon(
             Icons.location_pin,

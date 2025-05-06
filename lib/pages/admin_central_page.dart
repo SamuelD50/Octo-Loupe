@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/model/user_model.dart';
@@ -54,9 +56,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
       });
 
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      debugPrint('Error fetching user');
     }
   }
 
@@ -112,12 +112,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       )
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminInterfacePage()
-                        ),
-                      );
+                      context.push('/auth/admin/interface');
                     },
                     child: Text('Gestion de l\'interface',
                       style: TextStyle(
@@ -141,12 +136,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminActivityPage()
-                        ),
-                      );
+                      context.push('/auth/admin/activities');
                     },
                     child: Text('Gestion des activités',
                       style: TextStyle(
@@ -170,12 +160,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminContactPage()
-                        ),
-                      );
+                      context.push('/auth/admin/contact');
                     },
                     child: Text('Formulaire de contact',
                       style: TextStyle(
@@ -200,13 +185,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                     ),
                     onPressed: () {
                       // Naviguer vers une autre page ici
-                      /* Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ModifierInterfacePage()
-                          ),
-                        );
-                      ); */
+                      /* context.push('/auth/admin/activities'); */
                     },
                     child: Text('Mon profil utilisateur',
                       style: TextStyle(
@@ -230,12 +209,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UpdateCredentialsPage(),
-                        ),
-                      );
+                      context.push('/auth/admin/updateCredentials');
                     },
                     child: Text('Modifier mes identifiants',
                       style: TextStyle(
@@ -259,12 +233,7 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminAddAdminPage()
-                        ),
-                      );
+                      context.push('/auth/admin/addAnOtherAdministrator');
                     },
                     child: Text('Ajouter un profil administrateur',
                       style: TextStyle(
@@ -337,5 +306,5 @@ class AdminCentralPageState extends State<AdminCentralPage> {
         ),
       ],
     );
-  } 
+  }
 }

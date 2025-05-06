@@ -1,8 +1,8 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:octoloupe/components/activity_card.dart';
-import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
@@ -202,7 +202,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         ).showSnackBar(context);
       }
     } catch (e) {
-      debugPrint('Error creating activity: $e');
+      debugPrint('Error creating activity');
 
       setState(() {
         isLoading = false;
@@ -232,8 +232,6 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           .map((item) => (item).toMap())
           .toList();
       }
-
-      debugPrint('ReadActivities: $activities');
       
       await Future.delayed(Duration(milliseconds: 25));
 
@@ -242,7 +240,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       });
     
     } catch (e) {
-      debugPrint('Error fetching activity: $e');
+      debugPrint('Error fetching activity');
     }
   }
 
@@ -411,7 +409,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         ).showSnackBar(context);
       }
     } catch (e) {
-      debugPrint('Error updating activity: $e');
+      debugPrint('Error updating activity');
 
       setState(() {
         isLoading = false;
@@ -469,7 +467,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         }
       }
     } catch (e) {
-      debugPrint('Error deleting activity(ies): $e');
+      debugPrint('Error deleting activity(ies)');
 
       setState(() {
         isLoading = false;
@@ -537,7 +535,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       }
 
     } catch (e) {
-      debugPrint('Error reading sub-filters: $e');
+      debugPrint('Error reading sub-filters');
     } finally {
       setState(() {
         isLoading = false;
@@ -596,7 +594,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         newSelectedSubFiltersBy.removeWhere((item) => !subFiltersBy.any((subFilterBy) => subFilterBy['id'] == item['id']));
       }
     } catch (e) {
-      debugPrint('Error updating selected sub-filters: $e');
+      debugPrint('Error updating selected sub-filters');
     } finally {
       setState(() {
         isLoading = false;

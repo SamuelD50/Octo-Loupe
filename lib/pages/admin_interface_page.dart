@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
@@ -129,7 +130,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         ).showSnackBar(context);
       }
     } catch (e) {
-      debugPrint('Error creating sub-filter: $e');
+      debugPrint('Error creating sub-filter');
 
       setState(() {
         isLoading = false;
@@ -204,7 +205,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         });
       } */
     } catch (e) {
-      debugPrint('Error reading sub-filters: $e');
+      debugPrint('Error reading sub-filters');
     } finally {
       setState(() {
         isLoading = false;
@@ -302,7 +303,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         ).showSnackBar(context);
       }
     } catch (e) {
-      debugPrint('Error updating sub-filter: $e');
+      debugPrint('Error updating sub-filter');
 
       setState(() {
         isLoading = false;
@@ -384,7 +385,7 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         ).showSnackBar(context);
       }
     } catch (e) {
-      debugPrint('Error deleting sub-filter: $e');
+      debugPrint('Error deleting sub-filter');
 
       setState(() {
         isLoading = false;
@@ -520,7 +521,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
         newImageUrl = newImageUrlController.text;
       });
     });
-    /* readSubFilters(); */
   }
 
 

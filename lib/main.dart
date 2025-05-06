@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:octoloupe/pages/home_page.dart';
-import 'package:octoloupe/pages/splash_page.dart';
 import 'package:octoloupe/router/app_router.dart';
+import 'package:octoloupe/router/router_config.dart';
 import 'components/custom_app_bar.dart';
 import 'components/custom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -132,6 +131,7 @@ class MainPage extends StatelessWidget {
   Widget build(
     BuildContext context
   ) {
+    canPopNotifier.value = GoRouter.of(context).canPop();
     final currentIndex = _getCurrentIndex(context);
     return SafeArea(
       child: Scaffold(

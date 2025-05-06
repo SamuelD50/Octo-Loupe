@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:octoloupe/components/custom_app_bar.dart';
 
 class LegalNoticesPage extends StatelessWidget {
   const LegalNoticesPage({super.key});

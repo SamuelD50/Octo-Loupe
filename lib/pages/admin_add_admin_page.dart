@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/pages/admin_central_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
@@ -191,12 +192,6 @@ class AdminAddAdminPageState extends State<AdminAddAdminPage> {
                               setLoading: setLoading,
                             );
                           }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AdminCentralPage()
-                            ),
-                          );
                         },
                         child: Text('Créer un compte',
                           style: TextStyle(

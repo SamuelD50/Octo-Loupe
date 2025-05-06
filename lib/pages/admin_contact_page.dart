@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
@@ -106,7 +107,11 @@ class AdminContactPageState extends State<AdminContactPage> {
       });
 
     } catch (e) {
-      debugPrint('Error fetching messages: $e');
+      debugPrint('Error fetching messages');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 

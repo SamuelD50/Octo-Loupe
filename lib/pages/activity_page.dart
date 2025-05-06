@@ -30,7 +30,7 @@ class ActivityPageState extends State<ActivityPage> {
         mode: LaunchMode.externalApplication,
       );
     } else {
-      throw Exception('Could not launch $url');
+      debugPrint('Could not launch');
     }
   }
 

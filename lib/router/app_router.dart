@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/main.dart';
-import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/pages/activity_page.dart';
+import 'package:octoloupe/pages/admin_activity_page.dart';
+import 'package:octoloupe/pages/admin_add_admin_page.dart';
 import 'package:octoloupe/pages/admin_central_page.dart';
+import 'package:octoloupe/pages/admin_contact_page.dart';
+import 'package:octoloupe/pages/admin_interface_page.dart';
 import 'package:octoloupe/pages/age_selection_page.dart';
 import 'package:octoloupe/pages/auth_page.dart';
 import 'package:octoloupe/pages/category_selection_page.dart';
 import 'package:octoloupe/pages/contact_page.dart';
 import 'package:octoloupe/pages/day_selection_page.dart';
+import 'package:octoloupe/pages/general_conditions_of_sales_page.dart';
+import 'package:octoloupe/pages/general_conditions_of_use_page.dart';
 import 'package:octoloupe/pages/home_page.dart';
+import 'package:octoloupe/pages/legal_notices_page.dart';
+import 'package:octoloupe/pages/privacy_policy_page.dart';
 import 'package:octoloupe/pages/reset_password_page.dart';
 import 'package:octoloupe/pages/schedule_selection_page.dart';
 import 'package:octoloupe/pages/sector_selection_page.dart';
 import 'package:octoloupe/pages/splash_page.dart';
+import 'package:octoloupe/pages/update_credentials_page.dart';
 import 'package:octoloupe/pages/user_central_page.dart';
+import 'package:octoloupe/router/router_config.dart';
+
+final ValueNotifier<bool> canPopNotifier = ValueNotifier(false);
 
 final appRouter = GoRouter(
   debugLogDiagnostics: true,
@@ -22,7 +33,10 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => SplashPage(),
+      builder: (context, state) {
+        /* canPopNotifier.value = false; */
+        return const SplashPage();
+      },
     ),
 
     ShellRoute(
@@ -32,14 +46,22 @@ final appRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/home',
-          pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey,
-            child: HomePage(),
-          ),
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              canPopNotifier.value = false;
+            });
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: HomePage(),
+            );
+          },
           routes: [
             GoRoute(
               path: 'categories',
               pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
                 debugPrint('Arrivé dans /home/categories');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
@@ -57,6 +79,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: 'ages',
               pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
                 debugPrint('Arrivé dans /home/ages');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
@@ -74,6 +99,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: 'days',
               pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
                 debugPrint('Arrivé dans /home/days');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
@@ -91,6 +119,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: 'schedules',
               pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
                 debugPrint('Arrivé dans /home/schedules');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
@@ -108,6 +139,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: 'sectors',
               pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
                 debugPrint('Arrivé dans /home/sectors');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
@@ -125,6 +159,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: 'results',
               pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
                 final data = state.extra as Map<String, dynamic>;
                 final filteredActivities = data['filteredActivities'] as List<Map<String, dynamic>>;
 
@@ -140,90 +177,191 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: '/auth',
-          pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey,
-            child: AuthPage(),
-          ),
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = false;
+                });
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: AuthPage(),
+            );
+          },
           routes: [
             // if user is an administrator
             GoRoute(
               path: 'admin',
-              pageBuilder: (context, state) => NoTransitionPage(
-                key: state.pageKey,
-                child: AdminCentralPage(),
-              ),
-              /* routes: [
+              pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = false;
+                });
+                
+                return NoTransitionPage(
+                  key: state.pageKey,
+                  child: AdminCentralPage(),
+                );
+              },
+              routes: [
                 GoRoute(
-                  path: '',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: 
-                  ),
+                  path: 'interface',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: AdminInterfacePage(),
+                    );
+                  },
                 ),
                 GoRoute(
-                  path: '',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: 
-                  ),
+                  path: 'activities',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: AdminActivityPage(),
+                    );
+                  },
                 ),
                 GoRoute(
+                  path: 'contact',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: AdminContactPage(),
+                    );
+                  },
+                ),
+                /* GoRoute(
                   path: '',
                   pageBuilder: (context, state) => NoTransitionPage(
                     key: state.pageKey,
                     child: 
                   ),
+                ), */
+                GoRoute(
+                  path: 'updateCredentials',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: UpdateCredentialsPage(),
+                    );
+                  },
                 ),
                 GoRoute(
-                  path: '',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: 
-                  ),
-                ),
-                GoRoute(
-                  path: '',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: 
-                  ),
-                ),
-                GoRoute(
-                  path: '',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: 
-                  ),
+                  path: 'addAnOtherAdministrator',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: AdminAddAdminPage(),
+                    );
+                  },
                 ),
               ]
-             */
             ),
             // if user is an user
             GoRoute(
               path: 'user',
-              pageBuilder: (context, state) => NoTransitionPage(
-                key: state.pageKey,
-                child: UserCentralPage(),
-              )
+              pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = false;
+                });
+                return NoTransitionPage(
+                  key: state.pageKey,
+                  child: UserCentralPage(),
+                );
+              },
             ),
             // if password is forgotten
             GoRoute(
               path: 'forgottenPassword',
-              pageBuilder: (context, state) => NoTransitionPage(
-                key: state.pageKey,
-                child: ResetPasswordPage(),
-              )
+              pageBuilder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  canPopNotifier.value = true;
+                });
+                return NoTransitionPage(
+                  key: state.pageKey,
+                  child: ResetPasswordPage(),
+                );
+              },
             )
           ]
         ),
         GoRoute(
           path: '/contact',
-          pageBuilder: (context, state) => NoTransitionPage(
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              canPopNotifier.value = false;
+            });
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: ContactPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/legalNotices',
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              canPopNotifier.value = false;
+            });
+            return NoTransitionPage(
             key: state.pageKey,
-            child: ContactPage(),
-          ),
+            child: LegalNoticesPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/GCU',
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              canPopNotifier.value = false;
+            });
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: GCUPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/GCS',
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              canPopNotifier.value = false;
+            });
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: GCSPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/privacyPolicy',
+          pageBuilder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              canPopNotifier.value = false;
+            });
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: PrivacyPolicyPage(),
+            );
+          },
         ),
       ],
     )
+  ],
+  observers: [
+    NavigatorObserverWithCanPop(),
   ]
 );
