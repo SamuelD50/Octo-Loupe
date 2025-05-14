@@ -1,13 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+// Create, read, delete messages. Use in combination with ContactService & ContactModel
 
 class ContactCRUD {
 
   final CollectionReference<Map<String, dynamic>> contactCollection =
     FirebaseFirestore.instance.collection('contacts');
 
-  Future<void> createMessage(String? messageId, String title, String firstName, String name, String email, String subject, String body, DateTime timestamp) async {
+  Future<void> createMessage(
+    String? messageId,
+    String title,
+    String firstName,
+    String name,
+    String email,
+    String subject,
+    String body,
+    DateTime timestamp,
+  ) async {
     try {
       String createMessageId = messageId ?? _generateMessageId();
 
@@ -36,10 +48,10 @@ class ContactCRUD {
             'body': body,
             'timestamp': timestampMap,
           });
-        debugPrint('Message sent');
       }
-    } catch (e) {
-      throw Exception('Erreur lors de l\'envoi du message: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating message -> CRUD');
+      throw Exception('Error creating message');
     }
   }
 
@@ -54,8 +66,9 @@ class ContactCRUD {
         .orderBy('timestamp', descending: true)
         .get();
       return docSnapshot.docs;
-    } catch (e) {
-      throw Exception('Erreur lors de la récupération des messages: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error fetching messages -> CRUD');
+      throw Exception('Error fetching messages');
     }
   }
 
@@ -69,10 +82,10 @@ class ContactCRUD {
         await contactCollection
           .doc(messageId)
           .delete();
-        debugPrint('Message deleted');
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la suppression du message: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting messages(s) -> CRUD');
+      throw Exception('Error deleting message(s)');
     }
   }
 }

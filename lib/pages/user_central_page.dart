@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/model/user_model.dart';
@@ -131,14 +132,7 @@ class UserCentralPageState extends State<UserCentralPage> {
                       )
                     ),
                     onPressed: () {
-                      // Naviguer vers une autre page ici
-                      /* Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ModifierInterfacePage()
-                          ),
-                        );
-                      ); */
+                      /* context.push('/auth/user/          '); */
                     },
                     child: Text('Mon profil utilisateur',
                       style: TextStyle(
@@ -162,13 +156,7 @@ class UserCentralPageState extends State<UserCentralPage> {
                       ),
                     ),
                     onPressed: () {
-                      // Naviguer vers une autre page ici
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UpdateCredentialsPage(),
-                        ),
-                      );
+                      context.push('/auth/user/updateCredentials');
                     },
                     child: Text('Modifier mes identifiants',
                       style: TextStyle(

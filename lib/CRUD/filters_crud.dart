@@ -1,13 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+//Create, read, update and delete filter. Use in combinaison with CultureFilterService, SportFilterService & SportFiltersModel, CultureFiltersModel
 
 class FiltersCRUD {
 
   final CollectionReference<Map<String, dynamic>> filtersCollection =
     FirebaseFirestore.instance.collection('filters');
 
-  Future<void> createFilter(String section, String filterType, String? filterId, String name, String imageUrl) async {
+  Future<void> createFilter(
+    String section,
+    String filterType,
+    String? filterId,
+    String name,
+    String imageUrl,
+  ) async {
     try {
       String createFilterId = filterId ?? _generateFilterId(section, filterType);
       
@@ -27,34 +36,47 @@ class FiltersCRUD {
             'imageUrl': imageUrl,
             'id': createFilterId,
           });
-        debugPrint('Filter created');
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la création du filtre: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating filter -> CRUD');
+      throw Exception('Error creating filter');
     }
   } 
   
-  String _generateFilterId(String section, String filterType) {
+  String _generateFilterId(
+    String section,
+    String filterType,
+  ) {
     return filtersCollection
       .doc(section)
       .collection(filterType)
       .doc().id;
   }
 
-  Future<List<DocumentSnapshot>> getFilters(String section, String filterType) async {
+  Future<List<DocumentSnapshot>> getFilters(
+    String section,
+    String filterType,
+  ) async {
     try {
       var docSnapshot = await filtersCollection
         .doc(section)
         .collection(filterType)
         .get();
       return docSnapshot.docs;
-    } catch (e) {
-      throw Exception('Erreur lors de la récupération des filtres: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error fetching filters -> CRUD');
+      throw Exception('Error fetching filters');
     }
   }
 
 
-  Future<void> updateFilter(String section, String filterType, String filterId, String newName, String newImageUrl) async {
+  Future<void> updateFilter(
+    String section,
+    String filterType,
+    String filterId,
+    String newName,
+    String newImageUrl,
+  ) async {
     try {
       var docSnapshot = await filtersCollection
         .doc(section)
@@ -71,14 +93,18 @@ class FiltersCRUD {
             'name': newName,
             'imageUrl': newImageUrl,
           });
-        debugPrint('Filter updated');
       }
-    } catch (e) {
-      debugPrint('Error updating filter: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error updating filter -> CRUD');
+      throw Exception('Error updating filter');
     }
   }
 
-  Future<void> deleteFilter(String section, String filterType, String filterId) async {
+  Future<void> deleteFilter(
+    String section,
+    String filterType,
+    String filterId,
+  ) async {
     try {
       var docSnapshot = await filtersCollection
         .doc(section)
@@ -92,10 +118,10 @@ class FiltersCRUD {
           .collection(filterType)
           .doc(filterId)
           .delete();
-        debugPrint('Filter deleted');
       }
-    } catch (e) {
-      debugPrint('Error deleting filter: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting filter(s) -> CRUD');
+      throw Exception('Error deleting filter(s)');
     }
   }
 }

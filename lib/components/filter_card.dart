@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// This component is used to filter activities by category, by age, by day, by schedule or even by sector
+
 class FilterCard extends StatelessWidget {
   final String name;
   final String imageUrl;

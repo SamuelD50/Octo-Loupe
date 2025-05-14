@@ -378,7 +378,6 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     /* readActivities(); */
-    NotificationService().initNotification();
   }
 
   @override
@@ -949,6 +948,7 @@ class HomePageState extends State<HomePage> {
           },
           child: Row(
             children: [
+              //Sport section organization
               if (isSport) ...[
                 Container(
                   width: 50,
@@ -975,6 +975,7 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
               ] else ...[
+                //Culture section organization
                 Expanded(
                   child: Text(
                     label,

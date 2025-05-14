@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+// Model for sport filters
+
 class SportFilterModel {
   final List<SportCategory> categories;
   final List<SportAge> ages;
@@ -21,7 +23,6 @@ class SportFilterModel {
   ) {
     final data = snapshot.data();
     if (data == null) {
-      debugPrint('Aucune donnée trouvée pour la section Sport');
       return SportFilterModel(
         categories: [],
         ages: [],

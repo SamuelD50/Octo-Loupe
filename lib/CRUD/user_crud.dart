@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'dart:async';
+
+//Create, read, update and delete user. Use in combinaison with UserModel & AuthService
 
 class UserCRUD {
   final String? uid;
@@ -24,9 +26,9 @@ class UserCRUD {
           userModel.toMap()
         );
       }
-      debugPrint('User created');
-    } catch (e) {
-      throw Exception('Erreur lors de la création de l\'utilisateur: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating user -> CRUD');
+      throw Exception('Error creating user');
     }
   }
 
@@ -41,12 +43,16 @@ class UserCRUD {
       } else {
         return null;
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la récupération de l\'utilisateur: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error fetching user -> CRUD');
+      throw Exception('Error fetching user');
     }
   }
 
-  Future<void> updateUser(String uid, UserModel userModel) async {
+  Future<void> updateUser(
+    String uid,
+    UserModel userModel,
+  ) async {
     try {
       var docSnapshot = await usersCollection
         .doc(userModel.uid)
@@ -59,9 +65,9 @@ class UserCRUD {
             userModel.toMap(),
           );
       }
-      debugPrint('User updated');
-    } catch (e) {
-      throw Exception("Erreur lors de la mise à jour de l'utilisateur: $e");
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error updating user -> CRUD');
+      throw Exception("Error updating user");
     }
   }
 
@@ -75,10 +81,10 @@ class UserCRUD {
         await usersCollection
           .doc(uid)
           .delete();
-        debugPrint('User deleted');
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la suppression de l\'utilisateur: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting user -> CRUD');
+      throw Exception('Error deleting user');
     }
   }
 
@@ -90,8 +96,9 @@ class UserCRUD {
         .get();
 
       return querySnapshot.docs.isNotEmpty;
-    } catch (e) {
-      throw Exception('Erreur lors de la vérification de l\'utilisateir: ${e.toString()}');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error cheching user -> CRUD');
+      throw Exception('Error checking if user exists');
     }
   }
 }

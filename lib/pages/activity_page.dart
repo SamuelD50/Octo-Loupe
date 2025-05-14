@@ -6,6 +6,7 @@ import 'package:octoloupe/components/activity_card.dart';
 import 'package:octoloupe/components/activity_map.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// Show activities after the user has completed their filtering
 
 class ActivityPage extends StatefulWidget {
   final List<Map<String, dynamic>> filteredActivities;
@@ -673,7 +674,6 @@ class ActivityPageState extends State<ActivityPage> {
             onPressed: () {
               setState(() {
                 selectedActivity = null;
-                /* readActivities(); */
               });
             },
             child: Text('Retour à la liste',

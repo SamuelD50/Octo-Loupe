@@ -1,6 +1,7 @@
-import 'package:http/http.dart' as http;
 import 'package:octoloupe/CRUD/activities_crud.dart';
 import 'package:octoloupe/model/activity_model.dart';
+
+// Options of ActivitiesCRUD to create, read, update and deleting a sport activity
 
 class SportActivityService {
   final ActivitiesCRUD activitiesCRUD = ActivitiesCRUD();
@@ -70,7 +71,6 @@ class SportActivityService {
       var activitiesData = await activitiesCRUD.getActivities('sports');
 
       return activitiesData.map((docSnapshot) {
-        /* debugPrint('ActivitiesData: ${docSnapshot.data()}'); */
         final activityId = docSnapshot.id;
         final discipline = docSnapshot['discipline'];
         final information = (docSnapshot['information'] is List) ?

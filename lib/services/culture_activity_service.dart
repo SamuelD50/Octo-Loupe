@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:octoloupe/CRUD/activities_crud.dart';
 import 'package:octoloupe/model/activity_model.dart';
+
+// Options of ActivitiesCRUD to create, read, update and deleting a cultural activity
 
 class CultureActivityService {
   final ActivitiesCRUD activitiesCRUD = ActivitiesCRUD();
@@ -33,7 +33,7 @@ class CultureActivityService {
       activityId: activityId ?? '',
       discipline: discipline,
       information: information,
-      imageUrl: imageUrl ?? 'https://plus.unsplash.com/premium_vector-1682303202011-e00262790dc2?q=80&w=2296&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageUrl: imageUrl ?? 'assets/images/ActivityByDefault.webp',
       contact: Contact(
         structureName: structureName,
         email: email,

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:octoloupe/CRUD/contact_crud.dart';
 import 'package:octoloupe/model/contact_model.dart';
 import 'package:octoloupe/components/snackbar.dart';
@@ -47,7 +49,7 @@ class ContactService {
           backgroundColor: Colors.green,
         ).showSnackBar(context);
       }
-    } catch (e) {
+    } on FirebaseException catch (e, stackTrace) {
       setLoading(false);
 
       if (context.mounted) {
@@ -57,7 +59,12 @@ class ContactService {
         ).showSnackBar(context);
       }
 
-      throw Exception('Error sending message: $e');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error sending message -> Service',
+        information: ['errorCode: ${e.code}']  
+      );
     }
   }
 
@@ -108,8 +115,15 @@ class ContactService {
           },
         );
       }).toList();
-    } catch (e) {
-      throw Exception('Error collecting messages: $e');
+    } on FirebaseException catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error fetching messages -> Service',
+        information: ['errorCode: ${e.code}']   
+      );
+
+      throw Exception('Error fetching messages');
     }
   }
 

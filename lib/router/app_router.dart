@@ -62,7 +62,6 @@ final appRouter = GoRouter(
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   canPopNotifier.value = true;
                 });
-                debugPrint('Arrivé dans /home/categories');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
                 final selectedCategories = data['selectedCategories'] as List<Map<String, String>>?;
@@ -82,7 +81,6 @@ final appRouter = GoRouter(
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   canPopNotifier.value = true;
                 });
-                debugPrint('Arrivé dans /home/ages');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
                 final selectedAges = data['selectedAges'] as List<Map<String, String>>?;
@@ -102,7 +100,6 @@ final appRouter = GoRouter(
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   canPopNotifier.value = true;
                 });
-                debugPrint('Arrivé dans /home/days');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
                 final selectedDays = data['selectedDays'] as List<Map<String, String>>?;
@@ -122,7 +119,6 @@ final appRouter = GoRouter(
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   canPopNotifier.value = true;
                 });
-                debugPrint('Arrivé dans /home/schedules');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
                 final selectedSchedules = data['selectedSchedules'] as List<Map<String, String>>?;
@@ -142,7 +138,6 @@ final appRouter = GoRouter(
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   canPopNotifier.value = true;
                 });
-                debugPrint('Arrivé dans /home/sectors');
                 final data = state.extra as Map<String, dynamic>;
                 final isSport = data['isSport'] as bool;
                 final selectedSectors = data['selectedSectors'] as List<Map<String, String>>?;
@@ -282,6 +277,32 @@ final appRouter = GoRouter(
                   child: UserCentralPage(),
                 );
               },
+              routes: [
+                /* GoRoute(
+                  path: '',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: 
+                    ),
+                ), */
+                GoRoute(
+                  path: 'updateCredentials',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: UpdateCredentialsPage(),
+                    );
+                  },
+                ),
+              ],
+
             ),
             // if password is forgotten
             GoRoute(

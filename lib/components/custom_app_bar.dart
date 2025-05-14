@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/router/app_router.dart';
-import 'package:octoloupe/router/router_config.dart';
+
+// This component constitutes the application's appBar
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -57,6 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           toolbarHeight: 60,
           actions: [
             PopupMenuButton(
+              tooltip: 'Informations légales',
               icon: const Icon(
                 Icons.settings,
                 color: Colors.white,

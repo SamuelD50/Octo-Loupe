@@ -201,8 +201,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           backgroundColor: Colors.green,
         ).showSnackBar(context);
       }
-    } catch (e) {
-      debugPrint('Error creating activity');
+    } catch (e, stackTrace) {
 
       setState(() {
         isLoading = false;
@@ -214,6 +213,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
+
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating sport or cultural activity -> AdminActivity');
+
+      throw Exception('Error creating sport or cultural activity');
     }
   }
 
@@ -239,8 +242,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         isLoading = false;
       });
     
-    } catch (e) {
-      debugPrint('Error fetching activity');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error reading sport or cultural activities -> AdminActivity');
+
+      throw Exception('Error fetching activity');
     }
   }
 
@@ -408,8 +413,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           backgroundColor: Colors.green,
         ).showSnackBar(context);
       }
-    } catch (e) {
-      debugPrint('Error updating activity');
+    } catch (e, stackTrace) {
 
       setState(() {
         isLoading = false;
@@ -421,6 +425,10 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
+
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error updating sport or cultural activity -> AdminActivity');
+
+      throw Exception('Error updating sport or cultural activity');
     }
   }
 

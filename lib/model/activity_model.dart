@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Model for 1 activity
+
 class ActivityModel {
   final String activityId;
   final String discipline;

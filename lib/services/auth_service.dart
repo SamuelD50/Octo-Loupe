@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:flutter/material.dart';
-import 'package:octoloupe/pages/admin_central_page.dart';
-import 'package:octoloupe/pages/auth_page.dart';
-import 'package:octoloupe/pages/user_central_page.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -76,7 +74,7 @@ class AuthService {
         }
       }
       return userCredential;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
 
       setLoading(false);
 
@@ -87,14 +85,23 @@ class AuthService {
         ).showSnackBar(context);
       }
 
-      if (e.code == 'weak-password') {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error signing up user -> Service',
+        information: ['errorCode: ${e.code}']  
+      );
+
+/*       if (e.code == 'weak-password') {
         throw Exception('The password provided is too weak');
       } else if (e.code == 'email-already-in-use') {
         throw Exception('The account already exists for that email');
       } else {
-        throw Exception('Error creating user: ${e.message}');
-      }
+        throw Exception('Error creating user');
+      } */
+      
     }
+    return null;
   }
 
   Future<UserCredential?> signUpAdmin(
@@ -157,7 +164,7 @@ class AuthService {
         }
       }
       return userCredential;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
 
       setLoading(false);
 
@@ -168,14 +175,14 @@ class AuthService {
         ).showSnackBar(context);
       }
 
-      if (e.code == 'weak-password') {
-        throw Exception('The password provided is to weak');
-      } else if (e.code == 'email-already-in-use') {
-        throw Exception('The accounts already exists for that email');
-      } else {
-        throw Exception('Error creating user: ${e.message}');
-      }
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error signing up admin -> Service',
+        information: ['errorCode: ${e.code}']  
+      );
     }
+    return null;
   }
 
   int failedAttempts = 0;
@@ -195,8 +202,8 @@ class AuthService {
           message: 'Trop de tentatives échouées. Réessayez plus tard',
           backgroundColor: Colors.red,
         ).showSnackBar(context);
-        return Future.error('Too many attempts');
       }
+      return Future.error('Too many attempts');
     }
     try {
       setLoading(true);
@@ -235,7 +242,7 @@ class AuthService {
       }
       failedAttempts = 0;
       return userCredential;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
 
       setLoading(false);
       failedAttempts++;
@@ -247,13 +254,14 @@ class AuthService {
         ).showSnackBar(context);
       }
 
-      if (e.code == 'user-not-found') {
-        throw Exception('No user found for that email');
-      } else if (e.code == 'wrong-password') {
-        throw Exception('Wrong password provided for that user');
-      } else {
-        throw Exception('Error during connection: ${e.message}');
-      }
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error signing in -> Service',
+        information: ['errorCode: ${e.code}']  
+      );
+
+      return Future.error('Error during sign-in');
     }
   }
 
@@ -291,7 +299,7 @@ class AuthService {
           ).showSnackBar(context);
         }
       }
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
 
       setLoading(false);
 
@@ -302,13 +310,12 @@ class AuthService {
         ).showSnackBar(context);
       }
 
-      if (e.code == 'invalid-email') {
-        throw Exception('The email address is invalid');
-      } else if (e.code == 'user-not-found') {
-        throw Exception('No user found for that email');
-      } else {
-        throw Exception('Error reseting password: ${e.message}');
-      }
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error sending reset password email -> Service',
+        information: ['errorCode: ${e.code}']  
+      );
     }
   }
 
@@ -340,7 +347,7 @@ class AuthService {
           ).showSnackBar(context);
         }
       } 
-    } catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
       if (context.mounted) {
         CustomSnackBar(
           message: 'Vous n\'êtes pas connecté',
@@ -348,7 +355,12 @@ class AuthService {
         ).showSnackBar(context);
       }
 
-      throw Exception('Error during disconnection: $e');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error signing out -> Service',
+        information: ['errorCode: ${e.code}']  
+      );
     } 
   }
 
@@ -381,7 +393,7 @@ class AuthService {
           ).showSnackBar(context);
         }
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
       setLoading(false);
 
       if (context.mounted) {
@@ -390,7 +402,13 @@ class AuthService {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
-      throw Exception('Error deleting user: $e');
+
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error deleting user -> Service',
+        information: ['errorCode: ${e.code}']
+      );
     }
   }
 
@@ -445,7 +463,7 @@ class AuthService {
           ).showSnackBar(context);
         }
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
       setLoading(false);
 
       if (context.mounted) {
@@ -455,7 +473,12 @@ class AuthService {
         ).showSnackBar(context);
       }
 
-      throw Exception('Error updating email: $e');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error updating email -> Service',
+        information: ['errorCode: ${e.code}'],
+      );
     }
   }
 
@@ -493,7 +516,7 @@ class AuthService {
           ).showSnackBar(context);
         }
       } 
-    } catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
       setLoading(false);
 
       if (context.mounted) {
@@ -502,7 +525,13 @@ class AuthService {
           backgroundColor: Colors.red,
         ).showSnackBar(context);
       }
-      throw Exception('Error updating password: $e');
+
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stackTrace,
+        reason: 'Error updating password -> Service',
+        information: ['errorCode: ${e.code}']
+      );
     }
   }
 }

@@ -1,14 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:octoloupe/model/activity_model.dart';
 import 'dart:async';
+
+// Create, Read, Update or Delete an activity. Use in combination with ActivityModel, SportActivityService & CultureActivityService for th evariations
 
 class ActivitiesCRUD {
 
   final CollectionReference<Map<String, dynamic>> activitiesCollection =
     FirebaseFirestore.instance.collection('activities');
 
-  Future<void> createActivity(String section, String? activityId, ActivityModel activityModel) async {
+  Future<void> createActivity(
+    String section,
+    String? activityId,
+    ActivityModel activityModel,
+  ) async {
     try {
       String createActivityId = activityId ?? _generateActivityId(section);
 
@@ -26,10 +32,11 @@ class ActivitiesCRUD {
           .set(
             activityModel.toMap()
           );
-        debugPrint('Activity created');
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la création de l\'activité: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating activity -> CRUD');
+      throw Exception('Error creating activity');
+      
     }
   }
 
@@ -46,10 +53,10 @@ class ActivitiesCRUD {
         .doc(section)
         .collection('ActivityById')
         .get();
-        debugPrint('Chargement des activités: ActivitiesCRUD');
       return querySnapshot.docs;
-    } catch (e) {
-      throw Exception('Erreur lors de la récupération des activités: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error fetching activities -> CRUD');
+      throw Exception('Error fetching activities');
     }
   }
 
@@ -73,14 +80,17 @@ class ActivitiesCRUD {
           .update(
             activityModel.toMap(),
           );
-        debugPrint('Activity updated');
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la mise à jour de l\'activité: $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error updating activity -> CRUD');
+      throw Exception('Error updating activity(ies)');
     }
   }
 
-  Future<void> deleteActivities(String section, List<String> activityIds) async {
+  Future<void> deleteActivities(
+    String section,
+    List<String> activityIds
+  ) async {
     try {
       for (String activityId in activityIds) {
         var docSnapshot = await activitiesCollection
@@ -95,11 +105,11 @@ class ActivitiesCRUD {
             .collection('ActivityById')
             .doc(activityId)
             .delete();
-          debugPrint('Activity(ies) deleted');
         }
       }
-    } catch (e) {
-      throw Exception('Erreur lors de la suppression de(s) l\'activité(s): $e');
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting activity(ies) -> CRUD');
+      throw Exception('Error deleting activity(ies)');
     }
   }
 }

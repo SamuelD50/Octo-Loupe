@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Model for cultural filters
+
 class CultureFilterModel {
   final List<CultureCategory> categories;
   final List<CultureAge> ages;

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Model for 1 message
+
 class ContactModel {
   final String messageId;
   final String title;

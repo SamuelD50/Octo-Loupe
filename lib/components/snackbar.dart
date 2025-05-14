@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// This component allows to notify the success or failure of requests in the application
+
 class CustomSnackBar extends StatelessWidget {
   final String message;
   final Color backgroundColor;
