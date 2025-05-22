@@ -71,15 +71,6 @@ class ContactPageState extends State<ContactPage> {
                   const SizedBox(height: 32),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.98,
-                    child: Text(
-                      'N\'hésitez pas à nous contacter pour modifier du contenu ou pour toutes autres questions.',
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.98,
                     child:DropdownButtonFormField<String>(
                       value: selectedTitle,
                       hint: Text('Titre'),

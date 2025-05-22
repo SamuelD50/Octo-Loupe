@@ -16,8 +16,6 @@ dependencies:
   url_launcher: ^6.0.20
   http: ^1.2.2
   mailer: ^6.2.0
-  flutter_dotenv: ^5.2.1
-  persistent_bottom_nav_bar: ^6.2.1
   flutter_local_notifications: ^19.0.0
   image_picker: ^1.1.2
 
@@ -32,7 +30,6 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_launcher_icons: ^0.14.3
   firebase_crashlytics: ^4.3.4
-  firebase_app_check: ^0.3.2+4
   go_router: ^15.1.1
   firebase_messaging: ^15.2.5
 

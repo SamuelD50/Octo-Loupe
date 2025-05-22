@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/router/app_router.dart';
 import 'package:octoloupe/router/router_config.dart';
+import 'package:octoloupe/services/firebase_messaging_service.dart';
+import 'package:octoloupe/services/local_notifications_services.dart';
 import 'components/custom_app_bar.dart';
 import 'components/custom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:octoloupe/services/notification_service.dart';
 import 'web_url_strategy_stub.dart'
   if (dart.library.html) 'web_url_strategy_real.dart';
 
@@ -31,7 +32,12 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  await NotificationService.instance.initialize();
+
+  final localNotificationsService = LocalNotificationsService.instance();
+  await localNotificationsService.init();
+
+  final firebaseMessagingService = FirebaseMessagingService.instance();
+  await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
   
   runApp(
     const MyApp()

@@ -132,9 +132,9 @@ class UserCentralPageState extends State<UserCentralPage> {
                       )
                     ),
                     onPressed: () {
-                      /* context.push('/auth/user/          '); */
+                      context.push('/auth/user/notifications');
                     },
-                    child: Text('Mon profil utilisateur',
+                    child: Text('Notifications par centres d\'intérêt',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

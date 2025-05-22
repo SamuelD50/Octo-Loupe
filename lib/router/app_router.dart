@@ -12,7 +12,6 @@ import 'package:octoloupe/pages/auth_page.dart';
 import 'package:octoloupe/pages/category_selection_page.dart';
 import 'package:octoloupe/pages/contact_page.dart';
 import 'package:octoloupe/pages/day_selection_page.dart';
-import 'package:octoloupe/pages/general_conditions_of_sales_page.dart';
 import 'package:octoloupe/pages/general_conditions_of_use_page.dart';
 import 'package:octoloupe/pages/home_page.dart';
 import 'package:octoloupe/pages/legal_notices_page.dart';
@@ -23,6 +22,7 @@ import 'package:octoloupe/pages/sector_selection_page.dart';
 import 'package:octoloupe/pages/splash_page.dart';
 import 'package:octoloupe/pages/update_credentials_page.dart';
 import 'package:octoloupe/pages/user_central_page.dart';
+import 'package:octoloupe/pages/user_notifications_page.dart';
 import 'package:octoloupe/router/router_config.dart';
 
 final ValueNotifier<bool> canPopNotifier = ValueNotifier(false);
@@ -232,13 +232,18 @@ final appRouter = GoRouter(
                     );
                   },
                 ),
-                /* GoRoute(
-                  path: '',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: 
-                  ),
-                ), */
+                GoRoute(
+                  path: 'notifications',
+                  pageBuilder: (context, state) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      canPopNotifier.value = true;
+                    });
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: UserNotificationsPage(),
+                    );
+                  },
+                ),
                 GoRoute(
                   path: 'updateCredentials',
                   pageBuilder: (context, state) {
@@ -278,17 +283,18 @@ final appRouter = GoRouter(
                 );
               },
               routes: [
-                /* GoRoute(
-                  path: '',
+                GoRoute(
+                  path: 'notifications',
                   pageBuilder: (context, state) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       canPopNotifier.value = true;
                     });
                     return NoTransitionPage(
                       key: state.pageKey,
-                      child: 
-                    ),
-                ), */
+                      child: UserNotificationsPage(),
+                    );
+                  },
+                ),
                 GoRoute(
                   path: 'updateCredentials',
                   pageBuilder: (context, state) {
@@ -352,18 +358,6 @@ final appRouter = GoRouter(
             return NoTransitionPage(
               key: state.pageKey,
               child: GCUPage(),
-            );
-          },
-        ),
-        GoRoute(
-          path: '/GCS',
-          pageBuilder: (context, state) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              canPopNotifier.value = false;
-            });
-            return NoTransitionPage(
-              key: state.pageKey,
-              child: GCSPage(),
             );
           },
         ),

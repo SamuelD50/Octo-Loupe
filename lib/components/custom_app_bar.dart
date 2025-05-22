@@ -72,9 +72,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     context.go('/GCU');
                     break;
                   case 2:
-                    context.go('/GCS');
-                    break;
-                  case 3:
                     context.go('/privacyPolicy');
                     break;
                 }
@@ -94,12 +91,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const PopupMenuItem(
                   value: 2,
-                  child: Text(
-                    'CGV'
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 3,
                   child: Text(
                     'Politique de confidentialité'
                   ),

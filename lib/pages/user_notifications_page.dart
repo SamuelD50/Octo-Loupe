@@ -1,24 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// Components
+import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:octoloupe/components/snackbar.dart';
-// Models
-import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
-// Services
-import 'package:octoloupe/services/culture_activity_service.dart';
-import 'package:octoloupe/services/sport_activity_service.dart';
+import 'package:octoloupe/model/sport_filters_model.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import '../model/user_model.dart';
+
+class UserNotificationsPage extends StatefulWidget {
+  const UserNotificationsPage({super.key});
 
   @override
-  HomePageState createState() => HomePageState();
+  UserNotificationsPageState createState() => UserNotificationsPageState();
 }
 
-class HomePageState extends State<HomePage> {
+class UserNotificationsPageState extends State<UserNotificationsPage> {
   int _selectedSection = 0;
-  
+  Filters? filtersSport;
+  Filters? filtersCulture;
+  UserModel? user;
+
   void _resetFilters() {
     setState(() {
       if (_selectedSection == 0) {
@@ -47,7 +49,7 @@ class HomePageState extends State<HomePage> {
   List<CultureAge> selectedCultureAges = [];
   List<CultureDay> selectedCultureDays = [];
   List<CultureSchedule> selectedCultureSchedules = [];
-  List<CultureSector> selectedCultureSectors = []; 
+  List<CultureSector> selectedCultureSectors = [];
 
   Map<String, List<Map<String, String>>> filters = {};
 
@@ -90,268 +92,82 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  //List of all activities
-  List<Map<String, dynamic>> activities = [];
-  SportActivityService sportActivityService = SportActivityService();
-  CultureActivityService cultureActivityService = CultureActivityService();
-  bool isLoading = false;
+  void applyFilters() {
+    if (_selectedSection == 0) {
+      selectedSportCategories = (filtersSport?.categoriesId ?? [])
+        .map((e) => SportCategory.fromMap(e))
+        .toList();
 
-  //Get activities
-  Future<void> readActivities() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
+      selectedSportAges = (filtersSport?.agesId ?? [])
+        .map((e) => SportAge.fromMap(e))
+        .toList();
 
-      if (_selectedSection == 0) {
-        activities = (await sportActivityService.getSportActivities())
-          .map((item) => (item).toMap())
-          .toList();
-      } else {
-        activities = (await cultureActivityService.getCultureActivities())
-          .map((item) => (item).toMap())
-          .toList();
-      }
+      selectedSportDays = (filtersSport?.daysId ?? [])
+        .map((e) => SportDay.fromMap(e))
+        .toList();
 
-      await Future.delayed(Duration(milliseconds: 25));
+      selectedSportSchedules = (filtersSport?.schedulesId ?? [])
+        .map((e) => SportSchedule.fromMap(e))
+        .toList();
 
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error fetching activity: $e');
+      selectedSportSectors = (filtersSport?.sectorsId ?? [])
+        .map((e) => SportSector.fromMap(e))
+        .toList();
+    } else {
+      selectedCultureCategories = (filtersCulture?.categoriesId ?? [])
+        .map((e) => CultureCategory.fromMap(e))
+        .toList();
+
+      selectedCultureAges = (filtersCulture?.agesId ?? [])
+        .map((e) => CultureAge.fromMap(e))
+        .toList();
+
+      selectedCultureDays = (filtersCulture?.daysId ?? [])
+        .map((e) => CultureDay.fromMap(e))
+        .toList();
+
+      selectedCultureSchedules = (filtersCulture?.schedulesId ?? [])
+        .map((e) => CultureSchedule.fromMap(e))
+        .toList();
+
+      selectedCultureSectors = (filtersCulture?.sectorsId ?? [])
+        .map((e) => CultureSector.fromMap(e))
+        .toList();
+
     }
   }
 
-  //List of activities after filtering
-  List<Map<String, dynamic>> filteredActivities = [];
+  Future<void> _loadCurrentUser() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    debugPrint('uid: $uid');
+    final userData = await UserCRUD().getUser(uid);
+    debugPrint('userData: ${userData?.toMap()}');
 
-  Future<List<Map<String, dynamic>>> sortActivities({
-    required List<Map<String, dynamic>> activities,
-    Map<String, List<Map<String, String>>>? filters,
-    List<String>? keywords,
-  }) async {
-
-    //Filter activities by categories, ages, days, schedules and sectors
-    List<Map<String, String>> categories = [];
-    List<Map<String, String>> ages = [];
-    List<Map<String, String>> days = [];
-    List<Map<String, String>> schedules = [];
-    List<Map<String, String>> sectors = [];
-
-    if (filters != null) {
-      if (filters.containsKey('categories')) {
-        categories = filters['categories']!.map((category) {
-          return {
-            'id': category['id']!,
-            'name': category['name']!,
-          };
-        }).toList();
-      }
-      
-      if (filters.containsKey('ages')) {
-        ages = filters['ages']!.map((age) {
-          return {
-            'id': age['id']!,
-            'name': age['name']!,
-          };
-        }).toList();
-      }
-
-      if (filters.containsKey('days')) {
-        days = filters['days']!.map((day) {
-          return {
-            'id': day['id']!,
-            'name': day['name']!,
-          };
-        }).toList();
-      }
-
-      if (filters.containsKey('schedules')) {
-        schedules = filters['schedules']!.map((schedule) {
-          return {
-            'id': schedule['id']!,
-            'name': schedule['name']!,
-          };
-        }).toList();
-      }
-
-      if (filters.containsKey('sectors')) {
-        sectors = filters['sectors']!.map((sector) {
-          return {
-            'id': sector['id']!,
-            'name': sector['name']!,
-          };
-        }).toList();
-      }
-    }
-
-    List<Map<String, dynamic>> filteredActivities = [];
-
-    for (var activity in activities) {
-      List<Map<String, dynamic>> categoriesId = (activity['filters']?['categoriesId'] as List?)
-        ?.map((categoryId) {
-          return {
-            'id': categoryId['id'] ?? '',
-            'name': categoryId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> agesId = (activity['filters']?['agesId'] as List?)
-        ?.map((ageId) {
-          return {
-            'id': ageId['id'] ?? '',
-            'name': ageId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> daysId = (activity['filters']?['daysId'] as List?)
-        ?.map((dayId) {
-          return {
-            'id': dayId['id'] ?? '',
-            'name': dayId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> schedulesId = (activity['filters']?['schedulesId'] as List?)
-        ?.map((scheduleId) {
-          return {
-            'id': scheduleId['id'] ?? '',
-            'name': scheduleId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> sectorsId = (activity['filters']?['sectorsId'] as List?)
-        ?.map((sectorId) {
-          return {
-            'id': sectorId['id'] ?? '',
-            'name': sectorId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      bool matchesCategory = categories.isEmpty || categories.any((category) {
-        return categoriesId.any((categoryId) => category['id'] == categoryId['id']);
-      });
-
-      bool matchesAge = ages.isEmpty || ages.any((age) {
-        return agesId.any((ageId) => age['id'] == ageId['id']);
-      });
-
-      bool matchesDay = days.isEmpty || days.any((day) {
-        return daysId.any((dayId) => day['id'] == dayId['id']);
-      });
-
-      bool matchesSchedule = schedules.isEmpty || schedules.any((schedule) {
-        return schedulesId.any((scheduleId) => schedule['id'] == scheduleId['id']);
-      });
-
-      bool matchesSector = sectors.isEmpty || sectors.any((sector) {
-        return sectorsId.any((sectorId) => sector['id'] == sectorId['id']);
-      });
-
-      if (matchesCategory && matchesAge && matchesDay && matchesSchedule && matchesSector) {
-        filteredActivities.add(activity);
-      }
-    }
-  
-    //Filter activities by keywords
-    if (keywords != null && keywords.isNotEmpty) {
-      filteredActivities = filteredActivities.where((activity) {
-        List<RegExp> regExps = keywords.map((keyword) {
-          return RegExp(r'\b' + RegExp.escape(keyword.toLowerCase()) + r'\b');
-        }).toList();
-
-        String discipline = activity['discipline'] ?? '';
-        List<String>? information = activity['information'] ?? [];
-        String structureName = activity['contact']['structureName'] ?? '';
-        String email = activity['contact']['email'] ?? '';
-        String phoneNumber = activity['contact']['phoneNumber'] ?? '';
-        String webSite = activity['contact']['webSite'] ?? '';
-        String titleAddress = activity['place']['titleAddress'] ?? '';
-        String streetAddress = activity['place']['streetAddress'] ?? '';
-        String postalCode = activity['place']['postalCode']?.toString() ?? '';
-        String city = activity['place']['city'] ?? '';
-
-        bool matchesSchedule = activity['schedules']?.any((schedule) {
-          String day = schedule['day'] ?? '';
-          List<Map<String, dynamic>> timeSlots = schedule['timeSlots'] ?? [];
-
-          bool matchesDay = regExps.any((regExp) => day.toLowerCase().contains(regExp));
-          bool matchesTimeSlots = timeSlots.any((timeSlot) {
-            String startHour = timeSlot['startHour'] ?? '';
-            String endHour = timeSlot['endHour'] ?? '';
-            return regExps.any((regExp) =>
-              startHour.toLowerCase().contains(regExp) ||
-              endHour.toLowerCase().contains(regExp)
-            );
-          });
-
-          return matchesDay || matchesTimeSlots;
-        }) ?? false;
-
-        bool matchesPricing = activity['pricings']?.any((pricing) {
-          String profile = pricing['profile'] ?? '';
-          String pricingValue = pricing['pricing'] ?? '';
-          return regExps.any((regExp) =>
-            profile.toLowerCase().contains(regExp) ||
-            pricingValue.toLowerCase().contains(regExp));
-        }) ?? false;
-        
-        bool matchesKeywords = regExps.every((regExp) {
-          return discipline.toLowerCase().contains(regExp) ||
-          (information != null ? information.join(' ') : '').toLowerCase().contains(regExp) ||
-          structureName.toLowerCase().contains(regExp) ||
-          email.toLowerCase().contains(regExp) ||
-          phoneNumber.toLowerCase().contains(regExp) ||
-          webSite.toLowerCase().contains(regExp) ||
-          titleAddress.toLowerCase().contains(regExp) ||
-          streetAddress.toLowerCase().contains(regExp) ||
-          postalCode.toLowerCase().contains(regExp) ||
-          city.toLowerCase().contains(regExp) ||
-          matchesSchedule ||
-          matchesPricing;
-        });
-
-        return matchesKeywords;
-      }).toList();
-    }
-    
-    return filteredActivities;
-  }
-
-  final keywordsController = TextEditingController();
-
-  //Get all activities before filtering by keyword
-  Future<void> readAllActivities() async {
-    try {
+    if (userData != null) {
       setState(() {
-        isLoading = true;
+        user = userData;
+        filtersSport = user!.filtersSport;
+        filtersCulture = user!.filtersCulture;
       });
 
-      List<Map<String, dynamic>> sportActivities = (await sportActivityService.getSportActivities())
-        .map((item) => (item).toMap())
-        .toList();
+      debugPrint('L144 filtersSport: ${filtersSport?.toMap()}');
+      debugPrint('L145 filtersCulture: ${filtersCulture?.toMap()}');
 
-      List<Map<String, dynamic>> cultureActivities = (await cultureActivityService.getCultureActivities())
-        .map((item) => (item).toMap())
-        .toList();
+      applyFilters();
 
-      activities = [...sportActivities, ...cultureActivities];
-
-      await Future.delayed(Duration(milliseconds: 25));
-
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error fetching activities: $e');
+      /* refaire le chemin inverse de collectFilters pour redistribuer */
+    } else {
+      CustomSnackBar(
+        backgroundColor: Colors.red,
+        message: 'Aucun utilisateur trouvé',
+      );
     }
   }
 
   @override
   void initState() {
     super.initState();
-    /* readActivities(); */
+    _loadCurrentUser();
   }
 
   @override
@@ -375,7 +191,7 @@ class HomePageState extends State<HomePage> {
                 Padding(
                   padding: EdgeInsets.only(top: 32),
                   child: Text(
-                    'Je trouve mon activité',
+                    'Notifications par centres d\'intérêt',
                     style: TextStyle(
                       fontFamily: 'Satisfy-Regular',
                       fontSize: 30,
@@ -386,82 +202,6 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(height: 32),
-                // Barre de recherche
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: keywordsController,
-                          decoration: InputDecoration(
-                            labelText: 'Je recherche ...',
-                            hintText: 'Ex: Running, Peinture, ...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF5B59B4),
-                          foregroundColor: Colors.white,
-                          side: BorderSide(
-                            color: Color(0xFF5B59B4)
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                        ),
-                        onPressed: () async {
-                          filteredActivities.clear();
-                          String searchQuery = keywordsController.text.trim();
-                          debugPrint('searchQuery: $searchQuery');
-
-                          if (searchQuery.isNotEmpty) {
-                              
-                            await readAllActivities();
-
-                            List<String> keywords = searchQuery.split(' ').map((e) => e.trim()).toList();
-
-                            List<Map<String, dynamic>> filteredActivities = await sortActivities(
-                              keywords: keywords,
-                              activities: activities,
-                            );
-
-                            if (filteredActivities.isNotEmpty) {
-                              if (context.mounted) {
-                                context.push(
-                                  '/home/results',
-                                  extra: {
-                                    'filteredActivities': filteredActivities,
-                                  }
-                                );
-                              }
-                            } else {
-                              CustomSnackBar(
-                                message: 'Aucune activité trouvée !',
-                                backgroundColor: Colors.red,
-                              ).showSnackBar(context);
-                            }
-                          }
-                          keywordsController.clear();
-                          filteredActivities.clear();
-                        },
-                        child: Icon(
-                          Icons.search,
-                          size: 24,
-                        )
-                      )
-                    ],
-                  )
-                ),
-                SizedBox(height: 16),
-                //Sport or Culture section
                 LayoutBuilder(
                   builder: (context, constraints) {
                     EdgeInsetsGeometry padding;
@@ -478,7 +218,7 @@ class HomePageState extends State<HomePage> {
                         setState(() {
                           _selectedSection = section;
                           _resetFilters();
-                          readActivities();
+                          applyFilters();
                         });
                       },
                       color: Colors.black,
@@ -732,39 +472,43 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             onPressed: () async {
-
                               collectFilters();
-                              await readActivities();
-                              
-                              filteredActivities = await sortActivities(
-                                filters: filters,
-                                activities: activities,
+
+                              final interests = Filters(
+                                categoriesId: filters['categories'] ?? [],
+                                agesId: filters['ages'] ?? [],
+                                daysId: filters['days'] ?? [],
+                                schedulesId: filters['schedules'] ?? [],
+                                sectorsId: filters['sectors'] ?? [],
                               );
 
-                              if (filteredActivities.isNotEmpty) {
-                                setState(() {
-                                  filteredActivities = filteredActivities;
-                                });
-                                
-                                if (context.mounted) {
-                                  context.push(
-                                    '/home/results',
-                                    extra: {
-                                      'filteredActivities': filteredActivities,
-                                    }
-                                  );
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  filtersSport = interests;
+                                } else {
+                                  filtersCulture = interests;
                                 }
-                              } else {
-                                CustomSnackBar(
-                                  message: 'Aucune activité trouvée !',
-                                  backgroundColor: Colors.red,
-                                ).showSnackBar(context);
-                              }
+                              });
 
-                              _resetFilters();
-                              filters.clear();
+                              final updatedUser = UserModel(
+                                uid: user!.uid,
+                                email: user!.email,
+                                firstName: user!.firstName,
+                                name: user!.name,
+                                role: user!.role,
+                                filtersSport: _selectedSection == 0 ? filtersSport : null,
+                                filtersCulture: _selectedSection == 1 ? filtersCulture : null,
+                              );
+
+                              try {
+                                UserCRUD userCRUD = UserCRUD();
+                                await userCRUD.updateUser(user!.uid, updatedUser);
+                                debugPrint("User updated successfully");
+                              } catch (e) {
+                                debugPrint('Error updating user');
+                              }
                             },
-                            child: Text('Rechercher',
+                            child: Text('S\'abonner',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -812,40 +556,14 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             onPressed: () async {
-                              filteredActivities.clear();
 
                               collectFilters();
-                              readActivities();
+                              debugPrint('Filters: $filters');
 
-                              filteredActivities = await sortActivities(
-                                filters: filters,
-                                activities: activities
-                              );
-
-                              if (filteredActivities.isNotEmpty) {
-                                setState(() {
-                                  filteredActivities = filteredActivities;
-                                });
-
-                                if (context.mounted) {
-                                  context.push(
-                                    '/home/results',
-                                    extra: {
-                                      'filteredActivities': filteredActivities,
-                                    }
-                                  );
-                                }
-                              } else {
-                                CustomSnackBar(
-                                  message: 'Aucune activité trouvée !',
-                                  backgroundColor: Colors.red,
-                                ).showSnackBar(context);
-                              }
-
-                              _resetFilters();
-                              filters.clear();
+                              /* _resetFilters();
+                              filters.clear(); */
                             },
-                            child: Text('Rechercher',
+                            child: Text('S\'abonner',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -886,8 +604,8 @@ class HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          ),
-        ),
+          )
+        )
       ],
     );
   }

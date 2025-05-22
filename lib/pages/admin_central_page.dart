@@ -185,9 +185,9 @@ class AdminCentralPageState extends State<AdminCentralPage> {
                     ),
                     onPressed: () {
                       // Naviguer vers une autre page ici
-                      /* context.push('/auth/admin/activities'); */
+                      context.push('/auth/admin/notifications');
                     },
-                    child: Text('Mon profil utilisateur',
+                    child: Text('Notifications par centres d\'intérêt',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
