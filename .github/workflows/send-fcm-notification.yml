@@ -1,0 +1,66 @@
+name: Send FCM Notification
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Topic"
+        required: true
+      title:
+        description: "Notification title"
+        required: true
+      body:
+        description: "Notification body"
+        required: true
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install firebase-admin
+      run: npm install firebase-admin
+
+    - name: Create notification script
+      run: |
+        echo '
+        const admin = require("firebase-admin");
+        const serviceAccount = JSON.parse(process.env.FCM_SERVICE_ACCOUNT_JSON);
+
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount)
+        });
+
+        const message = {
+          topic: process.env.TOPIC,
+          notification: {
+            title: process.env.TITLE,
+            body: process.env.BODY,
+          }
+        };
+
+        admin.messaging().send(message)
+          .then(response => {
+            console.log("Successfully sent message:", response);
+          })
+          .catch(error => {
+            console.error("Error sending message:", error);
+            process.exit(1);
+          });
+        ' > send.js
+
+    - name: send notification
+      env:
+        FCM_SERVICE_ACCOUNT_JSON: ${{ secrets.FCM_SERVICE_ACCOUNT_JSON }}
+        TOPIC: ${{ github.event.inputs.topic }}
+        TITLE: ${{ github.event.inputs.title }}
+        BODY: ${{ github.event.inputs.body }}
+      run: node send.js
