@@ -1,10 +1,14 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
+import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:octoloupe/components/activity_card.dart';
 import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/model/activity_model.dart';
+import 'package:octoloupe/model/topic_model.dart';
+import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_activity_service.dart';
@@ -60,6 +64,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   List<Map<String, String>> selectedSubFiltersByDays = [];
   List<Map<String, String>> selectedSubFiltersBySchedules = [];
   List<Map<String, String>> selectedSubFiltersBySectors = [];
+  List<TopicModel> topics = [];
   
   Future<void> createNewActivity({
     required BuildContext context
@@ -162,6 +167,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           daysId,
           schedulesId,
           sectorsId,
+          topics,
         );
       } else {
         await cultureActivityService.addCultureActivity(
@@ -186,6 +192,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           daysId,
           schedulesId,
           sectorsId,
+          topics,
         );
       }
 
@@ -374,6 +381,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newDaysId,
           newSchedulesId,
           newSectorsId,
+          topics,
         );
       } else {
         await cultureActivityService.updateCultureActivity(
@@ -398,6 +406,7 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newDaysId,
           newSchedulesId,
           newSectorsId,
+          topics,
         );
       }
 
@@ -708,6 +717,54 @@ class AdminActivityPageState extends State<AdminActivityPage> {
       return false;
     }
   }
+
+  List<String> generateTopicNames({
+    required List<Map<String, String>> categories,
+    required List<Map<String, String>> sectors,
+  }) {
+    List<String> topicNames = [];
+
+    for (final category in categories) {
+      final categoryName = category['name'] ?? '';
+      for (final sector in sectors) {
+        final sectorName = sector['name'] ?? '';
+
+        String topic = '${categoryName}_${sectorName}'
+          .toLowerCase();
+
+        topicNames.add(topic);
+      }
+    }
+    return topicNames;
+  }
+
+  
+
+  /* bool userMatchesFilters(UserPreferences? userFilters, {
+    required UserModel user,
+    required bool isSport,
+    required List<Map<String, String>> selectedCategories,
+    required List<Map<String, String>> selectedAges,
+    required List<Map<String, String>> selectedDays,
+    required List<Map<String, String>> selectedSchedules,
+    required List<Map<String, String>> selectedSectors,
+  }) {
+    final filters = isSport ? user.filtersSport : user.filtersCulture;
+    if (filters == null) return false;
+
+    bool matches(List<Map<String, String>> userList, List<Map<String, String>> selectedList) {
+      if (selectedList.isEmpty) return true;
+      return selectedList.any((selected) =>
+        userList.any((userItem) => userItem['id'] == selected['id'])
+      );
+    }
+
+    return matches(filters.categoriesId, selectedCategories) &&
+      matches(filters.agesId, selectedAges) &&
+      matches(filters.daysId, selectedDays) &&
+      matches(filters.schedulesId, selectedSchedules) &&
+      matches(filters.sectorsId, selectedSectors);
+  } */
 
   @override
   void initState() {
@@ -2156,11 +2213,49 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
               if (_addActivityKey.currentState!.validate()) {
                 createNewActivity(
                   context: context,
                 );
+
+                /* List<String> topics = generateTopicNames(
+                  categories: selectedSubFiltersByCategories,
+                  sectors: selectedSubFiltersBySectors,
+                );
+
+                for (final topic in topics) {
+                  await FirebaseMessaging.subscribeToTopic(topic);
+                  debugPrint('Abooné au topic: $topic');
+                } */
+
+                /* List<UserModel> allUsers = await UserCRUD().getAllUsers();
+
+                final matchingUsers = allUsers.where((user) {
+                  return userMatchesFilters(
+                    selectedSection == 0 ? user.filtersSport : user.filtersCulture,
+                    user: user,
+                    isSport: selectedSection == 0,
+                    selectedCategories: selectedSubFiltersByCategories,
+                    selectedAges: selectedSubFiltersByAges,
+                    selectedDays: selectedSubFiltersByDays,
+                    selectedSchedules: selectedSubFiltersBySchedules,
+                    selectedSectors: selectedSubFiltersBySectors,
+                  );
+                });
+
+                for (var user in matchingUsers) {
+                  if (user.fcmToken != null && user.fcmToken!.isNotEmpty) {
+                    await FirebaseMessaging.instance.sendMessage(
+                      to: user.fcmToken!,
+                      data: {
+                        'title': 'Nouvelle activité',
+                        'body': 'Une activité qui pourrait vous correspondre vient d\'être créée',
+                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                      }
+                    );
+                  }
+                } */
                 readSubFilters();
                 disciplineController.clear();
                 informationControllers.clear();

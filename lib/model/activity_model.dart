@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:octoloupe/model/topic_model.dart';
 
 // Model for 1 activity
 
@@ -12,6 +13,7 @@ class ActivityModel {
   final List<Schedule> schedules;
   final List<Pricing> pricings;
   final Filters filters;
+  final List<TopicModel>? topics;
 
   ActivityModel({
     required this.activityId,
@@ -22,7 +24,8 @@ class ActivityModel {
     required this.contact,
     required this.schedules,
     required this.pricings,
-    required this.filters
+    required this.filters,
+    this.topics,
   });
 
   factory ActivityModel.fromFirestore(
@@ -74,6 +77,7 @@ class ActivityModel {
             schedulesId: [],
             sectorsId: [],
           ),
+        topics: [],
       );
     }
 
@@ -131,6 +135,12 @@ class ActivityModel {
         'schedulesId': [],
         'sectorsId': [],
       }),
+      topics: (data['topics'] as List? ?? [])
+        .map(
+          (e) => TopicModel.fromMap(
+            e as Map<String, dynamic>
+          )
+        ).toList(),
     );
   }
 
@@ -149,6 +159,7 @@ class ActivityModel {
         (e) => e.toMap()
       ).toList(),
       'filters': filters.toMap(),
+      'topics': topics?.map((e) => e.toMap()).toList(),
     };
   }
 }

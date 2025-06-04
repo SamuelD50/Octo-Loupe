@@ -52,6 +52,8 @@ class LocalNotificationsService {
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(_androidChannel);
 
+      debugPrint('[LocalNotificationsService] Created channel: ${_androidChannel.id}');
+
     _isFlutterLocalNotificationInitialized = true;
   }
 

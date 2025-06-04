@@ -107,6 +107,7 @@ class HomePageState extends State<HomePage> {
         activities = (await sportActivityService.getSportActivities())
           .map((item) => (item).toMap())
           .toList();
+        debugPrint('Activities: ${activities.toString()}');
       } else {
         activities = (await cultureActivityService.getCultureActivities())
           .map((item) => (item).toMap())
@@ -119,7 +120,7 @@ class HomePageState extends State<HomePage> {
         isLoading = false;
       });
     } catch (e) {
-      debugPrint('Error fetching activity: $e');
+      throw Exception('Error fetching activity: $e');
     }
   }
 
@@ -740,6 +741,8 @@ class HomePageState extends State<HomePage> {
                                 filters: filters,
                                 activities: activities,
                               );
+
+                              debugPrint('Activities: ${activities.toString()}');
 
                               if (filteredActivities.isNotEmpty) {
                                 setState(() {

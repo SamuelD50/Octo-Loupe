@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:octoloupe/components/snackbar.dart';
+import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
-
-import '../model/user_model.dart';
+import 'package:octoloupe/model/topic_model.dart';
+import 'package:octoloupe/model/user_model.dart';
 
 class UserNotificationsPage extends StatefulWidget {
   const UserNotificationsPage({super.key});
@@ -16,40 +18,29 @@ class UserNotificationsPage extends StatefulWidget {
 }
 
 class UserNotificationsPageState extends State<UserNotificationsPage> {
+
+  List<SportCategory> selectedSportCategories = [];
+  List<SportSector> selectedSportSectors = [];
+
+  List<CultureCategory> selectedCultureCategories = [];
+  List<CultureSector> selectedCultureSectors = [];
+
   int _selectedSection = 0;
-  Filters? filtersSport;
-  Filters? filtersCulture;
+  List<TopicModel>? topicsSport = [];
+  List<TopicModel>? topicsCulture = [];
   UserModel? user;
 
   void _resetFilters() {
     setState(() {
       if (_selectedSection == 0) {
         selectedSportCategories = [];
-        selectedSportAges = [];
-        selectedSportDays = [];
-        selectedSportSchedules = [];
         selectedSportSectors = [];
       } else {
         selectedCultureCategories = [];
-        selectedCultureAges = [];
-        selectedCultureDays = [];
-        selectedCultureSchedules = [];
         selectedCultureSectors = [];
       }
     });
   }
-
-  List<SportCategory> selectedSportCategories = [];
-  List<SportAge> selectedSportAges = [];
-  List<SportDay> selectedSportDays = [];
-  List<SportSchedule> selectedSportSchedules = [];
-  List<SportSector> selectedSportSectors = [];
-
-  List<CultureCategory> selectedCultureCategories = [];
-  List<CultureAge> selectedCultureAges = [];
-  List<CultureDay> selectedCultureDays = [];
-  List<CultureSchedule> selectedCultureSchedules = [];
-  List<CultureSector> selectedCultureSectors = [];
 
   Map<String, List<Map<String, String>>> filters = {};
 
@@ -59,82 +50,131 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
     
     if (_selectedSection == 0) {
       if (selectedSportCategories.isNotEmpty) {
-        filters['categories'] = selectedSportCategories.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportAges.isNotEmpty) {
-        filters['ages'] = selectedSportAges.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportDays.isNotEmpty) {
-        filters['days'] = selectedSportDays.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportSchedules.isNotEmpty) {
-        filters['schedules'] = selectedSportSchedules.map((e) => {'id': e.id!, 'name': e.name}).toList();
+        filters['categories'] = selectedSportCategories.map(
+          (e) => {
+            'id': e.id!,
+            'name': e.name
+          }
+        ).toList();
       }
       if (selectedSportSectors.isNotEmpty) {
-        filters['sectors'] = selectedSportSectors.map((e) => {'id': e.id!, 'name': e.name}).toList();
+        filters['sectors'] = selectedSportSectors.map(
+          (e) => {
+            'id': e.id!,
+            'name': e.name
+          }
+        ).toList();
       }
     } else {
       if (selectedCultureCategories.isNotEmpty) {
-        filters['categories'] = selectedCultureCategories.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureAges.isNotEmpty) {
-        filters['ages'] = selectedCultureAges.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureDays.isNotEmpty) {
-        filters['days'] = selectedCultureDays.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureSchedules.isNotEmpty) {
-        filters['schedules'] = selectedCultureSchedules.map((e) => {'id': e.id!, 'name': e.name}).toList();
+        filters['categories'] = selectedCultureCategories.map(
+          (e) => {
+            'id': e.id!,
+            'name': e.name
+          }
+        ).toList();
       }
       if (selectedCultureSectors.isNotEmpty) {
-        filters['sectors'] = selectedCultureSectors.map((e) => {'id': e.id!, 'name': e.name}).toList();
+        filters['sectors'] = selectedCultureSectors.map(
+          (e) => {
+            'id': e.id!,
+            'name': e.name
+          }
+        ).toList();
       }
     }
   }
 
-  void applyFilters() {
+  /* void applyFilters() {
     if (_selectedSection == 0) {
-      selectedSportCategories = (filtersSport?.categoriesId ?? [])
-        .map((e) => SportCategory.fromMap(e))
-        .toList();
+      selectedSportCategories = topicsSport
+        ?.map((topic) => SportCategory.fromMap(topic.category.toMap()))
+        .toList() ?? [];
 
-      selectedSportAges = (filtersSport?.agesId ?? [])
-        .map((e) => SportAge.fromMap(e))
-        .toList();
-
-      selectedSportDays = (filtersSport?.daysId ?? [])
-        .map((e) => SportDay.fromMap(e))
-        .toList();
-
-      selectedSportSchedules = (filtersSport?.schedulesId ?? [])
-        .map((e) => SportSchedule.fromMap(e))
-        .toList();
-
-      selectedSportSectors = (filtersSport?.sectorsId ?? [])
+      selectedSportSectors = (topicsSport?.sector ?? [])
         .map((e) => SportSector.fromMap(e))
         .toList();
     } else {
-      selectedCultureCategories = (filtersCulture?.categoriesId ?? [])
+      selectedCultureCategories = (topicsCulture?.category ?? [])
         .map((e) => CultureCategory.fromMap(e))
         .toList();
 
-      selectedCultureAges = (filtersCulture?.agesId ?? [])
-        .map((e) => CultureAge.fromMap(e))
-        .toList();
-
-      selectedCultureDays = (filtersCulture?.daysId ?? [])
-        .map((e) => CultureDay.fromMap(e))
-        .toList();
-
-      selectedCultureSchedules = (filtersCulture?.schedulesId ?? [])
-        .map((e) => CultureSchedule.fromMap(e))
-        .toList();
-
-      selectedCultureSectors = (filtersCulture?.sectorsId ?? [])
+      selectedCultureSectors = (topicsCulture?.sector ?? [])
         .map((e) => CultureSector.fromMap(e))
         .toList();
 
     }
+  } */
+  
+  void applyFilters() {
+    setState(() {
+      if (user?.topicsSport != null) {
+        for (final topicSport in user!.topicsSport!) {
+          for (final topicCategory in topicSport.topicCategories) {
+            if (!selectedSportCategories.any(
+              (category) => category.id == topicCategory.id)
+            ) {
+              selectedSportCategories.add(
+                SportCategory(
+                  id: topicCategory.id,
+                  name: topicCategory.name,
+                  imageUrl: '',
+                )
+              );
+              debugPrint('TopicCategory L120: id=${topicCategory.id} name=${topicCategory.name}');
+            }
+          }
+
+          debugPrint('SelectedSportCategories L124: ${selectedSportCategories[0].name}');
+
+          for (final topicSector in topicSport.topicSectors) {
+            if (!selectedSportSectors.any(
+              (sector) => sector.id == topicSector.id)
+            ) {
+              selectedSportSectors.add(
+                SportSector(
+                  id: topicSector.id,
+                  name: topicSector.name,
+                  imageUrl: '',
+                )
+              );
+            }
+          }
+        }
+      }
+
+      if (user?.topicsCulture != null) {
+        for (final topicCulture in user!.topicsCulture!) {
+          for (final topicCategory in topicCulture.topicCategories) {
+            if (!selectedCultureCategories.any(
+              (category) => category.id == topicCategory.id)
+            ) {
+              selectedCultureCategories.add(
+                CultureCategory(
+                  id: topicCategory.id,
+                  name: topicCategory.name,
+                  imageUrl: '',
+                )
+              );
+            }
+          }
+
+          for (final topicSector in topicCulture.topicSectors) {
+            if (!selectedCultureSectors.any(
+              (sector) => sector.id == topicSector.id)
+            ) {
+              selectedCultureSectors.add(
+                CultureSector(
+                  id: topicSector.id,
+                  name: topicSector.name,
+                  imageUrl: '',
+                )
+              );
+            }
+          }
+        }
+      }
+    });
   }
 
   Future<void> _loadCurrentUser() async {
@@ -146,22 +186,65 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
     if (userData != null) {
       setState(() {
         user = userData;
-        filtersSport = user!.filtersSport;
-        filtersCulture = user!.filtersCulture;
+        topicsSport = user!.topicsSport;
+        topicsCulture = user!.topicsCulture;
       });
 
-      debugPrint('L144 filtersSport: ${filtersSport?.toMap()}');
-      debugPrint('L145 filtersCulture: ${filtersCulture?.toMap()}');
-
       applyFilters();
-
-      /* refaire le chemin inverse de collectFilters pour redistribuer */
     } else {
       CustomSnackBar(
         backgroundColor: Colors.red,
         message: 'Aucun utilisateur trouvé',
       );
     }
+  }
+
+  List<String> _generateTopicNames(
+    List<TopicCategory> topicCategories,
+    List<TopicSector> topicSectors,
+  ) {
+    final List<String> result = [];
+
+    for (final topicCategory in topicCategories) {  
+      for (final topicSector in topicSectors) {
+        final categoryName = topicCategory.name
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-zA-Z0-9\-_.~%]'), '-');
+
+        final sectorName = topicSector.name
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-zA-Z0-9\-_.~%]'), '-');
+
+        result.add('${categoryName}_${sectorName}');
+      }
+    }
+    return result;
+  }
+
+  bool compareSelectedTopicsToDatabaseTopics(
+    List<TopicCategory> topicCategories,
+    List<TopicSector> topicSectors,
+    TopicModel databaseTopics,  
+  ) {
+    final selectedCategoryIds = topicCategories.map(
+      (selectedCategoryId) => selectedCategoryId.id)
+      .toSet();
+
+    final databaseCategoryIds = databaseTopics.topicCategories.map(
+      (databaseCategoryId) => databaseCategoryId.id)
+      .toSet();
+
+    final selectedSectorsIds = topicSectors.map(
+      (selectedSectorId) => selectedSectorId.id)
+      .toSet();
+    final databaseSectorIds = databaseTopics.topicSectors.map(
+      (databaseSectorId) => databaseSectorId.id)
+      .toSet();
+
+    return selectedCategoryIds.length == databaseCategoryIds.length &&
+      selectedCategoryIds.containsAll(databaseCategoryIds) &&
+      selectedSectorsIds.length == databaseSectorIds.length &&
+      selectedSectorsIds.containsAll(databaseSectorIds);
   }
 
   @override
@@ -299,120 +382,6 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
                         },
                         isSport: _selectedSection == 0,
                       ),
-                      //Filter button by ages
-                      _buildCriteriaTile(
-                        context,
-                        Icons.accessibility_new,
-                        'Par âge',
-                        () async {
-                          final List<Map<String, String>>? selectedAges = await context.push(
-                            '/home/ages',
-                            extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedAges': _selectedSection == 0 ?
-                                selectedSportAges.map((age) => {
-                                  'id': age.id ?? '',
-                                  'name': age.name,
-                                }).toList()
-                                : selectedCultureAges.map((age) => {
-                                  'id': age.id ?? '',
-                                  'name': age.name,
-                                }).toList(),
-                            }
-                          );
-                            
-                          setState(() {
-                            if (selectedAges != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportAges = selectedAges
-                                  .map((age) => SportAge.fromMap(age))
-                                  .toList();
-                              } else {
-                                selectedCultureAges = selectedAges
-                                  .map((age) => CultureAge.fromMap(age))
-                                  .toList();
-                              }
-                            }
-                          });
-                        },
-                        isSport: _selectedSection == 0,
-                      ),
-                      //Filter button by days
-                      _buildCriteriaTile(
-                        context,
-                        Icons.date_range,
-                        'Par jour',
-                        () async {
-                          final List<Map<String, String>>? selectedDays = await context.push(
-                            '/home/days',
-                            extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedDays': _selectedSection == 0 ?
-                                selectedSportDays.map((day) => {
-                                  'id': day.id ?? '',
-                                  'name': day.name,
-                                }).toList()
-                                : selectedCultureDays.map((day) => {
-                                  'id': day.id ?? '',
-                                  'name': day.name,
-                                }).toList(),
-                            }
-                          );
-
-                          setState(() {
-                            if (selectedDays != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportDays = selectedDays
-                                  .map((day) => SportDay.fromMap(day))
-                                  .toList();
-                              } else {
-                                selectedCultureDays = selectedDays
-                                  .map((day) => CultureDay.fromMap(day))
-                                  .toList();
-                              }
-                            }
-                          });
-                        },
-                        isSport: _selectedSection == 0,
-                      ),
-                      //Filter button by schedules
-                      _buildCriteriaTile(
-                        context,
-                        Icons.access_time,
-                        'Par horaire',
-                        () async {
-                          final List<Map<String, String>>? selectedSchedules = await context.push(
-                            '/home/schedules',
-                            extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedSchedules': _selectedSection == 0 ?
-                                selectedSportSchedules.map((schedule) => {
-                                  'id': schedule.id ?? '',
-                                  'name': schedule.name,
-                                }).toList()
-                                : selectedCultureSchedules.map((schedule) => {
-                                  'id': schedule.id ?? '',
-                                  'name': schedule.name,
-                                }).toList(),
-                            }
-                          );
-
-                          setState(() {
-                            if (selectedSchedules != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportSchedules = selectedSchedules
-                                  .map((schedule) => SportSchedule.fromMap(schedule))
-                                  .toList();
-                              } else {
-                                selectedCultureSchedules = selectedSchedules
-                                  .map((schedule) => CultureSchedule.fromMap(schedule))
-                                  .toList();
-                              }
-                            }
-                          });
-                        },
-                        isSport: _selectedSection == 0,
-                      ),
                       //Filter button by sectors
                       _buildCriteriaTile(
                         context,
@@ -472,23 +441,68 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
                               ),
                             ),
                             onPressed: () async {
+                              final isSelectionValid = (
+                                _selectedSection == 0 &&
+                                selectedSportCategories.isNotEmpty &&
+                                selectedSportSectors.isNotEmpty
+                              ) || (
+                                _selectedSection == 1 &&
+                                selectedCultureCategories.isNotEmpty &&
+                                selectedCultureSectors.isNotEmpty
+                              );
+
+                              if (!isSelectionValid) {
+                                CustomSnackBar(
+                                  message: 'Veuillez sélectionner au moins une catégorie et un secteur',
+                                  backgroundColor: Colors.red,
+                                ).showSnackBar(context);
+                              }
+
                               collectFilters();
 
-                              final interests = Filters(
-                                categoriesId: filters['categories'] ?? [],
-                                agesId: filters['ages'] ?? [],
-                                daysId: filters['days'] ?? [],
-                                schedulesId: filters['schedules'] ?? [],
-                                sectorsId: filters['sectors'] ?? [],
+                              final topicCategories = (filters['categories'] as List)
+                                .map((e) => TopicCategory.fromMap(e as Map<String, dynamic>))
+                                .toList();
+
+                              final topicSectors = (filters['sectors'] as List)
+                                .map((e) => TopicSector.fromMap(e as Map<String, dynamic>))
+                                .toList();
+
+                              final newTopicNames = _generateTopicNames(topicCategories, topicSectors);
+
+                              final interests = TopicModel(
+                                topicCategories: topicCategories,
+                                topicSectors: topicSectors,
+                                topicNames: newTopicNames,
                               );
 
                               setState(() {
                                 if (_selectedSection == 0) {
-                                  filtersSport = interests;
+                                  topicsSport = [interests];
                                 } else {
-                                  filtersCulture = interests;
+                                  topicsCulture = [interests];
                                 }
                               });
+
+                              final fcmToken = await FirebaseMessaging.instance.getToken();
+
+                              final oldTopicNames = _selectedSection == 0
+                                ? user?.topicsSport?.expand((t) => t.topicNames ?? []).toList() ?? []
+                                : user?.topicsCulture?.expand((t) => t.topicNames ?? []).toList() ?? [];
+
+                              debugPrint('OldTopicNames: ${oldTopicNames.toString()}');
+
+                              for (final oldTopic in oldTopicNames) {
+                                await FirebaseMessaging.instance.unsubscribeFromTopic(oldTopic);
+                                debugPrint('Désabonné de $oldTopic');
+                              }
+
+                              for (final newTopicName in newTopicNames) {
+                                await FirebaseMessaging.instance.subscribeToTopic(newTopicName);
+                                debugPrint('Abonné à $newTopicName');
+                              }
+
+                              /* Reessayer de renvoyer un topic a Athlétisme .. ne doit pas s'afficher en théorie */
 
                               final updatedUser = UserModel(
                                 uid: user!.uid,
@@ -496,16 +510,23 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
                                 firstName: user!.firstName,
                                 name: user!.name,
                                 role: user!.role,
-                                filtersSport: _selectedSection == 0 ? filtersSport : null,
-                                filtersCulture: _selectedSection == 1 ? filtersCulture : null,
+                                fcmToken: fcmToken,
+                                topicsSport: _selectedSection == 0 ? topicsSport : null,
+                                topicsCulture: _selectedSection == 1 ? topicsCulture : null,
                               );
 
                               try {
                                 UserCRUD userCRUD = UserCRUD();
                                 await userCRUD.updateUser(user!.uid, updatedUser);
-                                debugPrint("User updated successfully");
+                                CustomSnackBar(
+                                  message: 'Centres d\'intérêt mis à jour',
+                                  backgroundColor: Colors.green,
+                                ).showSnackBar(context);
                               } catch (e) {
-                                debugPrint('Error updating user');
+                                CustomSnackBar(
+                                  message: 'Erreur lors de la mise à jour des centres d\'intérêt',
+                                  backgroundColor: Colors.red,
+                                ).showSnackBar(context);
                               }
                             },
                             child: Text('S\'abonner',
@@ -556,12 +577,53 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
                               ),
                             ),
                             onPressed: () async {
-
                               collectFilters();
-                              debugPrint('Filters: $filters');
 
-                              /* _resetFilters();
-                              filters.clear(); */
+                              final topicCategories = (filters['categories'] as List)
+                                .map((e) => TopicCategory.fromMap(e as Map<String, String>))
+                                .toList();
+
+                              final topicSectors = (filters['sectors'] as List)
+                                .map((e) => TopicSector.fromMap(e as Map<String, String>))
+                                .toList();
+
+                              final topicNames = _generateTopicNames(topicCategories, topicSectors);
+
+                              final interests = TopicModel(
+                                topicCategories: topicCategories,
+                                topicSectors: topicSectors,
+                                topicNames: topicNames,
+                              );
+
+
+                              setState(() {
+                                if (_selectedSection == 0) {
+                                  topicsSport = [interests];
+                                } else {
+                                  topicsCulture = [interests];
+                                }
+                              });
+
+                              final fcmToken = await FirebaseMessaging.instance.getToken();
+
+                              final updatedUser = UserModel(
+                                uid: user!.uid,
+                                email: user!.email,
+                                firstName: user!.firstName,
+                                name: user!.name,
+                                role: user!.role,
+                                fcmToken: fcmToken,
+                                topicsSport: _selectedSection == 0 ? topicsSport : null,
+                                topicsCulture: _selectedSection == 1 ? topicsCulture : null,
+                              );
+
+                              try {
+                                UserCRUD userCRUD = UserCRUD();
+                                await userCRUD.updateUser(user!.uid, updatedUser);
+                                debugPrint("User updated successfully");
+                              } catch (e) {
+                                debugPrint('Error updating user');
+                              }
                             },
                             child: Text('S\'abonner',
                               style: TextStyle(

@@ -49,6 +49,20 @@ class UserCRUD {
     }
   }
 
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final querySnapshot = await usersCollection
+        .get();
+
+      return querySnapshot.docs
+        .map((doc) => UserModel.fromFirestore(doc))
+        .toList();
+    } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error fetching all users -> CRUD');
+      throw Exception('Error fetching all users');
+    }
+  }
+
   Future<void> updateUser(
     String uid,
     UserModel userModel,

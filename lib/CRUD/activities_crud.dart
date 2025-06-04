@@ -36,7 +36,6 @@ class ActivitiesCRUD {
     } catch (e, stackTrace) {
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating activity -> CRUD');
       throw Exception('Error creating activity');
-      
     }
   }
 

@@ -18,11 +18,7 @@ class FirebaseMessagingService {
 
     await _handlePushNotificationsToken();
 
-    debugPrint('Step 1 passed');
-
     await _requestPermission();
-
-    debugPrint('Step 2 passed');
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -39,8 +35,7 @@ class FirebaseMessagingService {
   //Function to fetch the token
   Future<void> _handlePushNotificationsToken() async {
     //Know the token
-    final token = await FirebaseMessaging.instance.getToken();
-    debugPrint('Push notifications token: $token');
+    await FirebaseMessaging.instance.getToken();
 
     //And if the token is refreshed
     FirebaseMessaging.instance.onTokenRefresh
@@ -53,7 +48,7 @@ class FirebaseMessagingService {
 
   //Function to request permission
   Future<void> _requestPermission() async {
-    final result = await FirebaseMessaging.instance.requestPermission(
+    await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -62,12 +57,9 @@ class FirebaseMessagingService {
       provisional: false,
       sound: true,
     );
-
-    debugPrint('User granted permission: ${result.authorizationStatus}');
   }
 
   void _onForegroundMessage(RemoteMessage message) {
-    debugPrint('Foreground message received: ${message.data.toString()}');
     final notificationData = message.notification;
     if (notificationData != null) {
       _localNotificationsService?.showNotification(
@@ -85,7 +77,7 @@ class FirebaseMessagingService {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('Background message received: ${message.data.toString()}');
+  await LocalNotificationsService.instance().init();
   await LocalNotificationsService.instance().showNotification(
     message.notification?.title,
     message.notification?.body,
