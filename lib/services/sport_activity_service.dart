@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:octoloupe/CRUD/activities_crud.dart';
 import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/model/topic_model.dart';
@@ -29,7 +30,9 @@ class SportActivityService {
     List<Map<String, String>> daysId,
     List<Map<String, String>> schedulesId,
     List<Map<String, String>> sectorsId,
-    List<TopicModel> topics,
+    List<TopicCategory> topicCategories,
+    List<TopicSector> topicSectors,
+    List<String> topicNames,
   ) async {
     final activityModel = ActivityModel(
       activityId: activityId ?? '',
@@ -59,7 +62,11 @@ class SportActivityService {
         schedulesId: schedulesId,
         sectorsId: sectorsId,
       ),
-      topics: topics,
+      topics: [TopicModel(
+        topicCategories: topicCategories,
+        topicSectors: topicSectors,
+        topicNames: topicNames,
+      )],
     );
 
     await activitiesCRUD.createActivity(
@@ -74,7 +81,9 @@ class SportActivityService {
       var activitiesData = await activitiesCRUD.getActivities('sports');
 
       return activitiesData.map((docSnapshot) {
+        debugPrint('ActivitiesData: ${activitiesData.length}');
         final activityId = docSnapshot.id;
+        debugPrint('ActivityId: ${activityId}');
         final discipline = docSnapshot['discipline'];
         final information = (docSnapshot['information'] is List) ?
           (docSnapshot['information'] as List).map((e) => e as String).toList() :
@@ -133,9 +142,10 @@ class SportActivityService {
               'id': e['id'] as String,
               'name': e['name'] as String,
             }).toList();
-          final topics = (docSnapshot['topics'] as List)
+          final topics = (docSnapshot['topics'] as List? ?? [])
             .map((e) => TopicModel.fromMap(e as Map<String, dynamic>))
             .toList();
+          
 
         return ActivityModel(
           activityId: activityId,
@@ -195,7 +205,9 @@ class SportActivityService {
     List<Map<String, String>> newDaysId,
     List<Map<String, String>> newSchedulesId,
     List<Map<String, String>> newSectorsId,
-    List<TopicModel> topics,
+    List<TopicCategory> newTopicCategories,
+    List<TopicSector> newTopicSectors,
+    List<String> newTopicNames,
   ) async {
     final activityModel = ActivityModel(
       activityId: activityId,
@@ -225,7 +237,11 @@ class SportActivityService {
         schedulesId: newSchedulesId,
         sectorsId: newSectorsId,
       ),
-      topics: topics,
+      topics: [TopicModel(
+        topicCategories: newTopicCategories,
+        topicSectors: newTopicSectors,
+        topicNames: newTopicNames,
+      )],
     );
 
     await activitiesCRUD.updateActivity(

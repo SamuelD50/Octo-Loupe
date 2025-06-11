@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:octoloupe/CRUD/user_crud.dart';
+import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/router/app_router.dart';
 import 'package:octoloupe/router/router_config.dart';
+import 'package:octoloupe/services/auth_service.dart';
 import 'package:octoloupe/services/firebase_messaging_service.dart';
 import 'package:octoloupe/services/local_notifications_services.dart';
 import 'components/custom_app_bar.dart';
@@ -167,13 +170,26 @@ int _getCurrentIndex(
 void _onItemTapped(
   BuildContext context,
   int index,
-) {
+) async {
   switch (index) {
     case 0:
       context.go('/home');
       break;
     case 1:
-      context.go('/auth');
+      final currentUser = AuthService().getCurrentUser();
+      if (currentUser == null) {
+        context.go('/auth');
+      } else {
+        final user = await UserCRUD().getUser(currentUser.uid);
+        if (!context.mounted) return;
+        if (user == null) {
+          context.go('/auth');
+        } else if (user.role == 'admin') {
+          context.go('/auth/admin');
+        } else if (user.role == 'user') {
+          context.go('/auth/user');
+        }
+      }
       break;
     case 2:
       context.go('/contact');

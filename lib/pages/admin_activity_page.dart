@@ -41,6 +41,28 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   SportActivityService sportActivityService = SportActivityService();
   CultureActivityService cultureActivityService = CultureActivityService();
 
+  List<String> _generateTopicNames(
+    List<TopicCategory> topicCategories,
+    List<TopicSector> topicSectors,
+  ) {
+    final List<String> result = [];
+
+    for (final topicCategory in topicCategories) {  
+      for (final topicSector in topicSectors) {
+        final categoryName = topicCategory.name
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-zA-Z0-9\-_.~%]'), '-');
+
+        final sectorName = topicSector.name
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-zA-Z0-9\-_.~%]'), '-');
+
+        result.add('${categoryName}_${sectorName}');
+      }
+    }
+    return result;
+  }
+
   TextEditingController disciplineController = TextEditingController();
   List<TextEditingController> informationControllers = [];
   TextEditingController imageUrlController = TextEditingController();
@@ -64,7 +86,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   List<Map<String, String>> selectedSubFiltersByDays = [];
   List<Map<String, String>> selectedSubFiltersBySchedules = [];
   List<Map<String, String>> selectedSubFiltersBySectors = [];
-  List<TopicModel> topics = [];
+  List<TopicCategory> topicCategories = [];
+  List<TopicSector> topicSectors = [];
+  List<String> topicNames = [];
   
   Future<void> createNewActivity({
     required BuildContext context
@@ -138,6 +162,19 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         'name': item['name'] ?? '',
       };
     }).toList();
+    List<TopicCategory> topicCategories = selectedSubFiltersByCategories.map((item) {
+      return TopicCategory(
+        id: item['id'] ?? '',
+        name: item['name'] ?? '',
+      );
+    }).toList();
+    List<TopicSector> topicSectors = selectedSubFiltersBySectors.map((item) {
+      return TopicSector(
+        id: item['id'] ?? '',
+        name: item['name'] ?? '',
+      );
+    }).toList();
+    List<String> topicNames = _generateTopicNames(topicCategories, topicSectors);
 
     try {
       setState(() {
@@ -167,7 +204,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           daysId,
           schedulesId,
           sectorsId,
-          topics,
+          topicCategories,
+          topicSectors,
+          topicNames,
         );
       } else {
         await cultureActivityService.addCultureActivity(
@@ -192,7 +231,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           daysId,
           schedulesId,
           sectorsId,
-          topics,
+          topicCategories,
+          topicSectors,
+          topicNames,
         );
       }
 
@@ -279,6 +320,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
   List<Map<String, String>> newSelectedSubFiltersByDays = [];
   List<Map<String, String>> newSelectedSubFiltersBySchedules = [];
   List<Map<String, String>> newSelectedSubFiltersBySectors = [];
+  List<TopicCategory> newTopicCategories = [];
+  List<TopicSector> newTopicSectors = [];
+  List<String> newTopicNames = [];
 
   Future<void> updateActivity({
     required BuildContext context
@@ -352,6 +396,19 @@ class AdminActivityPageState extends State<AdminActivityPage> {
         'name': item['name'] ?? '',
       };
     }).toList();
+    List<TopicCategory> newTopicCategories = newSelectedSubFiltersByCategories.map((item) {
+      return TopicCategory(
+        id: item['id'] ?? '',
+        name: item['name'] ?? '',
+      );
+    }).toList();
+    List<TopicSector> newTopicSectors = newSelectedSubFiltersBySectors.map((item) {
+      return TopicSector(
+        id: item['id'] ?? '',
+        name: item['name'] ?? '',
+      );
+    }).toList();
+    List<String> newTopicNames = _generateTopicNames(newTopicCategories, newTopicSectors);
 
     try {
       setState(() {
@@ -381,7 +438,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newDaysId,
           newSchedulesId,
           newSectorsId,
-          topics,
+          newTopicCategories,
+          newTopicSectors,
+          newTopicNames,
         );
       } else {
         await cultureActivityService.updateCultureActivity(
@@ -406,7 +465,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
           newDaysId,
           newSchedulesId,
           newSectorsId,
-          topics,
+          newTopicCategories,
+          newTopicSectors,
+          newTopicNames,
         );
       }
 
@@ -894,6 +955,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             selectedSubFiltersByDays.clear();
                             selectedSubFiltersBySchedules.clear();
                             selectedSubFiltersBySectors.clear();
+                            topicCategories.clear();
+                            topicSectors.clear();
+                            topicNames.clear();
                             addInformationField();
                             addDayField();
                             addProfilePricing();
@@ -969,6 +1033,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                             newSelectedSubFiltersByDays.clear();
                             newSelectedSubFiltersBySchedules.clear();
                             newSelectedSubFiltersBySectors.clear();
+                            newTopicCategories.clear();
+                            newTopicSectors.clear();
+                            newTopicNames.clear();
                           });
                         },
                         child: Icon(
@@ -1144,6 +1211,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 selectedSubFiltersByDays.clear();
                 selectedSubFiltersBySchedules.clear();
                 selectedSubFiltersBySectors.clear();
+                topicCategories.clear();
+                topicSectors.clear();
+                topicNames.clear();
                 addInformationField();
                 addDayField();
                 addProfilePricing();
@@ -1252,6 +1322,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     selectedSubFiltersBySectors.add(subFilterMap);
                   }
                 }
+                final topicCategories = selectedSubFiltersByCategories.map((item) {
+                  return TopicCategory(
+                    id: item['id'] ?? '',
+                    name: item['name'] ?? '',
+                  );
+                }).toList();
+                final topicSectors = selectedSubFiltersBySectors.map((item) {
+                  return TopicSector(
+                    id: item['id'] ?? '',
+                    name: item['name'] ?? '',
+                  );
+                }).toList();
+                if (selectedSubFiltersByCategories.isNotEmpty && selectedSubFiltersBySectors.isNotEmpty) {
+                  topicNames = _generateTopicNames(topicCategories, topicSectors);
+                }
               });
             },
             items: sortSubFilters(
@@ -1295,6 +1380,25 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     selectedSubFiltersByCategories.removeWhere(
                       (item) => item['id'] == subFilter['id']
                     );
+
+                    final topicCategories = selectedSubFiltersByCategories.map((item) {
+                      return TopicCategory(
+                        id: item['id'] ?? '',
+                        name: item['name'] ?? '',
+                      );
+                    }).toList();
+                    final topicSectors = selectedSubFiltersBySectors.map((item) {
+                      return TopicSector(
+                        id: item['id'] ?? '',
+                        name: item['name'] ?? '',
+                      );
+                    }).toList();
+
+                    if (topicCategories.isNotEmpty && topicSectors.isNotEmpty) {
+                      topicNames = _generateTopicNames(topicCategories, topicSectors);
+                    } else {
+                      topicNames = [];
+                    }
                   });
                 },
                 backgroundColor: Color(0xFF5B59B4),
@@ -1475,8 +1579,60 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                     selectedSubFiltersBySectors.removeWhere(
                       (item) => item['id'] == subFilter['id']
                     );
+
+                    final topicCategories = selectedSubFiltersByCategories.map((item) {
+                      return TopicCategory(
+                        id: item['id'] ?? '',
+                        name: item['name'] ?? '',
+                      );
+                    }).toList();
+                    final topicSectors = selectedSubFiltersBySectors.map((item) {
+                      return TopicSector(
+                        id: item['id'] ?? '',
+                        name: item['name'] ?? '',
+                      );
+                    }).toList();
+
+                    if (topicCategories.isNotEmpty && topicSectors.isNotEmpty) {
+                      topicNames = _generateTopicNames(topicCategories, topicSectors);
+                    } else {
+                      topicNames = [];
+                    }
                   });
                 },
+                backgroundColor: Color(0xFF5B59B4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  side: BorderSide(
+                    color: Color(0xFF5B59B4)
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Noms des topics',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 4.0,
+            children: topicNames.map((topicName) {
+              return Chip(
+                label: Text(
+                  topicName,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
                 backgroundColor: Color(0xFF5B59B4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -2280,6 +2436,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                 selectedSubFiltersByDays.clear();
                 selectedSubFiltersBySchedules.clear();
                 selectedSubFiltersBySectors.clear();
+                topicCategories.clear();
+                topicSectors.clear();
+                topicNames.clear();
                 addInformationField();
                 addDayField();
                 addProfilePricing();
@@ -2436,6 +2595,21 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       newSelectedSubFiltersBySectors.add(subFilterMap);
                     }
                   }
+                  final newTopicCategories = newSelectedSubFiltersByCategories.map((item) {
+                    return TopicCategory(
+                      id: item['id'] ?? '',
+                      name: item['name'] ?? '',
+                    );
+                  }).toList();
+                  final newTopicSectors = newSelectedSubFiltersBySectors.map((item) {
+                    return TopicSector(
+                      id: item['id'] ?? '',
+                      name: item['name'] ?? '',
+                    );
+                  }).toList();
+                  if (newSelectedSubFiltersByCategories.isNotEmpty && newSelectedSubFiltersBySectors.isNotEmpty) {
+                    newTopicNames = _generateTopicNames(newTopicCategories, newTopicSectors);
+                  }
                 });
               },
               items: sortSubFilters(
@@ -2479,6 +2653,26 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       newSelectedSubFiltersByCategories.removeWhere(
                         (item) => item['id'] == subFilter['id']
                       );
+
+                      final newTopicCategories = newSelectedSubFiltersByCategories.map((item) {
+                        return TopicCategory(
+                          id: item['id'] ?? '',
+                          name: item['name'] ?? '',
+                        );
+                      }).toList();
+
+                      final newTopicSectors = newSelectedSubFiltersBySectors.map((item) {
+                        return TopicSector(
+                          id: item['id'] ?? '',
+                          name: item['name'] ?? '',
+                        );
+                      }).toList();
+
+                      if (newTopicCategories.isNotEmpty && newTopicSectors.isNotEmpty) {
+                        newTopicNames = _generateTopicNames(newTopicCategories, newTopicSectors);
+                      } else {
+                        newTopicNames = [];
+                      }
                     });
                   },
                   backgroundColor: Color(0xFF5B59B4),
@@ -2659,8 +2853,61 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                       newSelectedSubFiltersBySectors.removeWhere(
                         (item) => item['id'] == subFilter['id']
                       );
+
+                      final newTopicCategories = newSelectedSubFiltersByCategories.map((item) {
+                        return TopicCategory(
+                          id: item['id'] ?? '',
+                          name: item['name'] ?? '',
+                        );
+                      }).toList();
+
+                      final newTopicSectors = newSelectedSubFiltersBySectors.map((item) {
+                        return TopicSector(
+                          id: item['id'] ?? '',
+                          name: item['name'] ?? '',
+                        );
+                      }).toList();
+
+                      if (newTopicCategories.isNotEmpty && newTopicSectors.isNotEmpty) {
+                        newTopicNames = _generateTopicNames(newTopicCategories, newTopicSectors);
+                      } else {
+                        newTopicNames = [];
+                      }
                     });
                   },
+                  backgroundColor: Color(0xFF5B59B4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    side: BorderSide(
+                      color: Color(0xFF5B59B4)
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical : 10),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Noms des topics',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 4.0,
+              children: (newTopicNames.isNotEmpty ? newTopicNames : topicNames).map((name) {
+                return Chip(
+                  label: Text(
+                    name,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
                   backgroundColor: Color(0xFF5B59B4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
@@ -3451,6 +3698,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   newSelectedSubFiltersByDays.clear();
                   newSelectedSubFiltersBySchedules.clear();
                   newSelectedSubFiltersBySectors.clear();
+                  newTopicCategories.clear();
+                  newTopicSectors.clear();
+                  newTopicNames.clear();
                   readActivities();
                   isEditing = false;
                 }
@@ -3503,6 +3753,9 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                   newSelectedSubFiltersByDays.clear();
                   newSelectedSubFiltersBySchedules.clear();
                   newSelectedSubFiltersBySectors.clear();
+                  newTopicCategories.clear();
+                  newTopicSectors.clear();
+                  newTopicNames.clear();
                 });
               },
               child: Text('Retour à la liste',
@@ -3660,6 +3913,23 @@ class AdminActivityPageState extends State<AdminActivityPage> {
                               'id': item['id'] ?? '',
                               'name': item['name'] ?? '',
                             }).toList();
+                          newTopicCategories = newSelectedSubFiltersByCategories.map((item) {
+                            return TopicCategory(
+                              id: item['id'] ?? '',
+                              name: item['name'] ?? '',
+                            );
+                          }).toList();
+                          newTopicSectors = newSelectedSubFiltersBySectors.map((item) {
+                            return TopicSector(
+                              id: item['id'] ?? '',
+                              name: item['name'] ?? '',
+                            );
+                          }).toList();
+                          if (newTopicCategories.isNotEmpty && newTopicSectors.isNotEmpty) {
+                            newTopicNames = _generateTopicNames(newTopicCategories, newTopicSectors);
+                          } else {
+                            newTopicNames = [];
+                          }
                           isEditing = true;
                         },
                       ),

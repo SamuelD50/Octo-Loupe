@@ -13,19 +13,19 @@ class TopicModel {
     Map<String, dynamic> map
   ) {
     return TopicModel(
-      topicCategories: (map['topicCategories'] as List)
+      topicCategories: (map['topicCategories'] as List? ?? [])
         .map(
           (e) => TopicCategory.fromMap(
             e as Map<String, dynamic>
           )
         ).toList(),
-      topicSectors: (map['topicSectors'] as List)
+      topicSectors: (map['topicSectors'] as List? ?? [])
         .map(
           (e) => TopicSector.fromMap(
             e as Map<String, dynamic>
           )
         ).toList(),
-      topicNames: (map['topicNames'] as List)
+      topicNames: (map['topicNames'] as List? ?? [])
         .map((e) => e.toString())
         .toList()
     );

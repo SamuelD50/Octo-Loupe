@@ -84,27 +84,6 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
       }
     }
   }
-
-  /* void applyFilters() {
-    if (_selectedSection == 0) {
-      selectedSportCategories = topicsSport
-        ?.map((topic) => SportCategory.fromMap(topic.category.toMap()))
-        .toList() ?? [];
-
-      selectedSportSectors = (topicsSport?.sector ?? [])
-        .map((e) => SportSector.fromMap(e))
-        .toList();
-    } else {
-      selectedCultureCategories = (topicsCulture?.category ?? [])
-        .map((e) => CultureCategory.fromMap(e))
-        .toList();
-
-      selectedCultureSectors = (topicsCulture?.sector ?? [])
-        .map((e) => CultureSector.fromMap(e))
-        .toList();
-
-    }
-  } */
   
   void applyFilters() {
     setState(() {
@@ -179,9 +158,7 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
 
   Future<void> _loadCurrentUser() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    debugPrint('uid: $uid');
     final userData = await UserCRUD().getUser(uid);
-    debugPrint('userData: ${userData?.toMap()}');
 
     if (userData != null) {
       setState(() {
@@ -221,7 +198,7 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
     return result;
   }
 
-  bool compareSelectedTopicsToDatabaseTopics(
+  /* bool compareSelectedTopicsToDatabaseTopics(
     List<TopicCategory> topicCategories,
     List<TopicSector> topicSectors,
     TopicModel databaseTopics,  
@@ -245,7 +222,7 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
       selectedCategoryIds.containsAll(databaseCategoryIds) &&
       selectedSectorsIds.length == databaseSectorIds.length &&
       selectedSectorsIds.containsAll(databaseSectorIds);
-  }
+  } */
 
   @override
   void initState() {
@@ -441,46 +418,37 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
                               ),
                             ),
                             onPressed: () async {
-                              final isSelectionValid = (
-                                _selectedSection == 0 &&
-                                selectedSportCategories.isNotEmpty &&
-                                selectedSportSectors.isNotEmpty
-                              ) || (
-                                _selectedSection == 1 &&
-                                selectedCultureCategories.isNotEmpty &&
-                                selectedCultureSectors.isNotEmpty
-                              );
-
-                              if (!isSelectionValid) {
-                                CustomSnackBar(
-                                  message: 'Veuillez sélectionner au moins une catégorie et un secteur',
-                                  backgroundColor: Colors.red,
-                                ).showSnackBar(context);
-                              }
-
                               collectFilters();
 
-                              final topicCategories = (filters['categories'] as List)
-                                .map((e) => TopicCategory.fromMap(e as Map<String, dynamic>))
+                              final topicCategories = (filters['categories'] as List?)
+                                ?.map((e) => TopicCategory.fromMap(e as Map<String, dynamic>))
                                 .toList();
 
-                              final topicSectors = (filters['sectors'] as List)
-                                .map((e) => TopicSector.fromMap(e as Map<String, dynamic>))
+                              final hasCategories = topicCategories != null && topicCategories.isNotEmpty;
+
+                              final topicSectors = (filters['sectors'] as List?)
+                                ?.map((e) => TopicSector.fromMap(e as Map<String, dynamic>))
                                 .toList();
 
-                              final newTopicNames = _generateTopicNames(topicCategories, topicSectors);
+                              final hasSectors = topicSectors != null && topicSectors.isNotEmpty;
 
-                              final interests = TopicModel(
-                                topicCategories: topicCategories,
-                                topicSectors: topicSectors,
-                                topicNames: newTopicNames,
-                              );
+                              final newTopicNames = (hasCategories && hasSectors) ?
+                                _generateTopicNames(topicCategories, topicSectors) : null;
 
+                              TopicModel? interests;
+                              if (hasCategories && hasSectors) {
+                                interests = TopicModel(
+                                  topicCategories: topicCategories,
+                                  topicSectors: topicSectors,
+                                  topicNames: newTopicNames,
+                                );
+                              }
+                              
                               setState(() {
                                 if (_selectedSection == 0) {
-                                  topicsSport = [interests];
+                                  topicsSport = interests != null ? [interests] : null;
                                 } else {
-                                  topicsCulture = [interests];
+                                  topicsCulture = interests != null ? [interests] : null;
                                 }
                               });
 
@@ -497,12 +465,12 @@ class UserNotificationsPageState extends State<UserNotificationsPage> {
                                 debugPrint('Désabonné de $oldTopic');
                               }
 
-                              for (final newTopicName in newTopicNames) {
-                                await FirebaseMessaging.instance.subscribeToTopic(newTopicName);
-                                debugPrint('Abonné à $newTopicName');
+                              if (newTopicNames != null && newTopicNames.isNotEmpty) {
+                                for (final newTopicName in newTopicNames) {
+                                  await FirebaseMessaging.instance.subscribeToTopic(newTopicName);
+                                  debugPrint('Abonné à $newTopicName');
+                                }
                               }
-
-                              /* Reessayer de renvoyer un topic a Athlétisme .. ne doit pas s'afficher en théorie */
 
                               final updatedUser = UserModel(
                                 uid: user!.uid,

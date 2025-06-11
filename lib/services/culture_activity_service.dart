@@ -29,7 +29,9 @@ class CultureActivityService {
     List<Map<String, String>> daysId,
     List<Map<String, String>> schedulesId,
     List<Map<String, String>> sectorsId,
-    List<TopicModel> topics,
+    List<TopicCategory> topicCategories,
+    List<TopicSector> topicSectors,
+    List<String> topicNames,
   ) async {
     final activityModel = ActivityModel(
       activityId: activityId ?? '',
@@ -59,7 +61,11 @@ class CultureActivityService {
         schedulesId: schedulesId,
         sectorsId: sectorsId,
       ),
-      topics: topics,
+      topics: [TopicModel(
+        topicCategories: topicCategories,
+        topicSectors: topicSectors,
+        topicNames: topicNames,
+      )],
     );
 
     await activitiesCRUD.createActivity(
@@ -133,9 +139,9 @@ class CultureActivityService {
             'id': e['id'] as String,
             'name': e['name'] as String,
           }).toList();
-        final topics = (docSnapshot['topics'] as List)
-          .map((e) => TopicModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+        final topics = (docSnapshot['topics'] as List? ?? [])
+            .map((e) => TopicModel.fromMap(e as Map<String, dynamic>))
+            .toList();
 
         return ActivityModel(
           activityId: activityId,
@@ -195,7 +201,9 @@ class CultureActivityService {
     List<Map<String, String>> newDaysId,
     List<Map<String, String>> newSchedulesId,
     List<Map<String, String>> newSectorsId,
-    List<TopicModel> topics,
+    List<TopicCategory> newTopicCategories,
+    List<TopicSector> newTopicSectors,
+    List<String> newTopicNames,
   ) async {
     final activityModel = ActivityModel(
       activityId: activityId,
@@ -225,7 +233,11 @@ class CultureActivityService {
         schedulesId: newSchedulesId,
         sectorsId: newSectorsId,
       ),
-      topics: topics,
+      topics: [TopicModel(
+        topicCategories: newTopicCategories,
+        topicSectors: newTopicSectors,
+        topicNames: newTopicNames,
+      )],
     );
 
     await activitiesCRUD.updateActivity(

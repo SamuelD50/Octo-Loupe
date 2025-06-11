@@ -9,6 +9,9 @@ import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/services/culture_activity_service.dart';
 import 'package:octoloupe/services/sport_activity_service.dart';
 
+
+/* Pour l'instant je ne fais récupère pas topics dans mes activités, il faut que j'ajoute ou modifie une activité pour ajouter topic puis modifier ensuite */
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -107,7 +110,6 @@ class HomePageState extends State<HomePage> {
         activities = (await sportActivityService.getSportActivities())
           .map((item) => (item).toMap())
           .toList();
-        debugPrint('Activities: ${activities.toString()}');
       } else {
         activities = (await cultureActivityService.getCultureActivities())
           .map((item) => (item).toMap())
@@ -317,6 +319,8 @@ class HomePageState extends State<HomePage> {
       }).toList();
     }
     
+    debugPrint('FilteredActivities L322: ${filteredActivities}');
+
     return filteredActivities;
   }
 
@@ -352,7 +356,6 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    /* readActivities(); */
   }
 
   @override
@@ -735,14 +738,12 @@ class HomePageState extends State<HomePage> {
                             onPressed: () async {
 
                               collectFilters();
-                              await readActivities();
+                              readActivities();
                               
                               filteredActivities = await sortActivities(
                                 filters: filters,
                                 activities: activities,
                               );
-
-                              debugPrint('Activities: ${activities.toString()}');
 
                               if (filteredActivities.isNotEmpty) {
                                 setState(() {

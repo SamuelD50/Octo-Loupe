@@ -77,7 +77,13 @@ class ActivityModel {
             schedulesId: [],
             sectorsId: [],
           ),
-        topics: [],
+        /* topics: [
+          TopicModel(
+            topicCategories: [],
+            topicSectors: [],
+            topicNames: [],
+          )
+        ], */
       );
     }
 
@@ -135,12 +141,12 @@ class ActivityModel {
         'schedulesId': [],
         'sectorsId': [],
       }),
-      topics: (data['topics'] as List? ?? [])
+      /* topics: (data['topics'] as List? ?? [])
         .map(
           (e) => TopicModel.fromMap(
             e as Map<String, dynamic>
           )
-        ).toList(),
+        ).toList(), */
     );
   }
 
@@ -159,7 +165,9 @@ class ActivityModel {
         (e) => e.toMap()
       ).toList(),
       'filters': filters.toMap(),
-      'topics': topics?.map((e) => e.toMap()).toList(),
+      'topics': (topics ?? []).map(
+        (e) => e.toMap())
+        .toList(),
     };
   }
 }
@@ -187,10 +195,10 @@ class Place {
     return Place(
       titleAddress: map['titleAddress'] ?? '',
       streetAddress: map['streetAddress'] ?? '',
-      postalCode: map['postalCode'] ?? '',
+      postalCode: map['postalCode'] ?? 00000,
       city: map['city'] ?? '',
-      latitude: map['latitude'] ?? '',
-      longitude: map['longitude'] ?? '',
+      latitude: map['latitude'] ?? 0.0,
+      longitude: map['longitude'] ?? 0.0,
     );
   }
 
