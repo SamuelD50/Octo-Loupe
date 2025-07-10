@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:octoloupe/pages/reset_password_page.dart';
 import 'package:octoloupe/services/auth_service.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:octoloupe/components/loader_spinning.dart';
+import 'package:octoloupe/components/loading.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});

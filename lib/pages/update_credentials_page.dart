@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
 import 'package:octoloupe/components/custom_app_bar.dart';
-import 'package:octoloupe/components/loader_spinning.dart';
+import 'package:octoloupe/components/loading.dart';
 import 'package:octoloupe/model/user_model.dart';
 import 'package:octoloupe/services/auth_service.dart';
 

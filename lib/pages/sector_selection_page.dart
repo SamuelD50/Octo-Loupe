@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/components/filter_card.dart';
+import 'package:octoloupe/components/loading.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
@@ -64,12 +65,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                   future: sportSectorsReceiver,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: SpinKitSpinningLines(
-                          color: Colors.black,
-                          size: 60,
-                        ),
-                      );
+                      return const Loading();
                     } else if (snapshot.hasError) {
                       return Center(
                         child: Text('Erreur: ${snapshot.error}')
@@ -162,12 +158,7 @@ class SectorSelectionPageState extends State<SectorSelectionPage> {
                   future: cultureSectorsReceiver,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: SpinKitSpinningLines(
-                          color: Colors.black,
-                          size: 60,
-                        ),
-                      );
+                      return const Loading();
                     } else if (snapshot.hasError) {
                       return Center(
                         child: Text('Erreur: ${snapshot.error}')

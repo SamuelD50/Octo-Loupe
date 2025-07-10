@@ -60,70 +60,12 @@ class MyApp extends StatelessWidget {
       showSemanticsDebugger: false,
       theme: ThemeData(
         useMaterial3: true,
-        textTheme: TextTheme(
-          displaySmall: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          displayMedium: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          displayLarge: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          headlineSmall: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          headlineMedium: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          headlineLarge: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          titleSmall: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          titleMedium: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          titleLarge: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          bodySmall: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          bodyMedium: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          bodyLarge: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          labelSmall: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          labelMedium: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
-          labelLarge: TextStyle(
-            fontFamily: 'Poppins-Regular',
-            color: Colors.black,
-          ),
+        fontFamily: 'Poppins-Regular',
+        textTheme: Theme.of(context).textTheme.apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
         ),  
       ),
-      /* home: const SplashPage(), */
     );
   }
 }
@@ -140,7 +82,12 @@ class MainPage extends StatelessWidget {
   Widget build(
     BuildContext context
   ) {
-    canPopNotifier.value = GoRouter.of(context).canPop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final canPop = GoRouter.of(context).canPop();
+      if (canPopNotifier.value != canPop) {
+        canPopNotifier.value = canPop;
+      }
+    });
     final currentIndex = _getCurrentIndex(context);
     return SafeArea(
       child: Scaffold(

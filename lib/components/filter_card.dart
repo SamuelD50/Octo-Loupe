@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 // This component is used to filter activities by category, by age, by day, by schedule or even by sector
 
@@ -19,85 +18,78 @@ class FilterCard extends StatelessWidget {
     required this.fontSize,
   });
 
-  Future<bool> checkImageValidity(String imageUrl) async {
-    try {
-      final response = await http.head(Uri.parse(imageUrl));
-      return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
-  }
-
   @override
   Widget build(
     BuildContext context
   ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blueAccent : Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: isSelected
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black54,
-                  offset: Offset(2, 2),
-                  blurRadius: 4,
-                ),
-              ],
-        ),
-        child: Card(
-          elevation: isSelected ?
-            2 : 4,
-          shape: RoundedRectangleBorder(
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.blueAccent : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
+            boxShadow: isSelected
+              ? []
+              : const [
+                  BoxShadow(
+                    color: Colors.black54,
+                    offset: Offset(2, 2),
+                    blurRadius: 4,
+                  ),
+                ],
           ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              FutureBuilder(
-                future: checkImageValidity(imageUrl),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.asset(
+          child: Card(
+            elevation: isSelected ?
+              2 : 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      
+                      return Image.asset(
                         'assets/images/FilterByDefault.webp',
                         fit: BoxFit.cover,
-                      )
-                    );
-                  }
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Image.network(
-                      imageUrl,
-                      fit:BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(30),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/FilterByDefault.webp',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
                 ),
-                child: Center(
-                  child: Text(
-                    name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Center(
+                    child: Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
