@@ -47,7 +47,7 @@ T getExtra<T>(GoRouterState state, String key) {
   return data[key] as T;
 }
 
-final appRouter = GoRouter(
+GoRouter appRouter(BuildContext context) => GoRouter(
   debugLogDiagnostics: true,
   initialLocation: '/',
   routes: [
@@ -131,9 +131,7 @@ final appRouter = GoRouter(
               pageBuilder: (context, state) => buildPage(
                 state: state,
                 canPop: true,
-                child: ActivityPage(
-                  filteredActivities: getExtra<List<Map<String, dynamic>>>(state, 'filteredActivities'),
-                ),
+                child: ActivityPage(),
               ),
             ),
           ]

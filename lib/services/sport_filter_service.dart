@@ -204,7 +204,6 @@ class SportFilterService {
     );
   }
 
-
   //CRUD SportSchedules
 
   //Create SportSchedules

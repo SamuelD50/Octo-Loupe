@@ -69,7 +69,6 @@ class FiltersCRUD {
     }
   }
 
-
   Future<void> updateFilter(
     String section,
     String filterType,

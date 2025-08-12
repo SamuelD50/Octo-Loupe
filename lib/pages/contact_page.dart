@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:octoloupe/components/custom_app_bar.dart';
 import 'package:octoloupe/components/loading.dart';
-import 'package:octoloupe/components/snackbar.dart';
 import 'package:octoloupe/services/contact_service.dart';
 
 /* Mailtrap */
@@ -23,7 +21,6 @@ class ContactPageState extends State<ContactPage> {
   final TextEditingController subjectController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
   
-
   final List<String> titles = ['Mlle', 'Mme', 'M.'];
   String? selectedTitle;
   bool loading = false;

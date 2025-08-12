@@ -9,10 +9,14 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: RepaintBoundary(
-        child: SpinKitSpinningLines(
-          color: Colors.black,
-          size: 60.0,
+      child: Semantics(
+        label: 'Chargement en cours',
+        liveRegion: true,
+        child: RepaintBoundary(
+          child: SpinKitSpinningLines(
+            color: Colors.black,
+            size: 60.0,
+          ),
         ),
       ),
     );

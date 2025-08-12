@@ -4,13 +4,15 @@ import 'package:http/http.dart' as http;
 import 'package:octoloupe/model/activity_model.dart';
 import 'package:octoloupe/components/activity_card.dart';
 import 'package:octoloupe/components/activity_map.dart';
+import 'package:octoloupe/providers/activities_provider.dart';
+import 'package:octoloupe/providers/activity_map_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // Show activities after the user has completed their filtering
 
 class ActivityPage extends StatefulWidget {
-  final List<Map<String, dynamic>> filteredActivities;
-  const ActivityPage({super.key, required this.filteredActivities});
+  const ActivityPage({super.key});
 
   @override
   ActivityPageState createState() => ActivityPageState();
@@ -18,10 +20,9 @@ class ActivityPage extends StatefulWidget {
 
 class ActivityPageState extends State<ActivityPage> {
   bool isLoading = false;
-  List<Map<String, dynamic>> activities = [];
-  List<Map<String, dynamic>> filteredActivities = [];
   late String activityId;
   Map<String, dynamic>? selectedActivity;
+  final ScrollController _scrollController = ScrollController();
 
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri.parse(url);
@@ -35,28 +36,27 @@ class ActivityPageState extends State<ActivityPage> {
     }
   }
 
-  Future<bool> checkImageValidity(String imageUrl) async {
-    try {
-      final response = await http.head(Uri.parse(imageUrl));
-      return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
-  }
-
   List<Map<String, dynamic>> markers = [];
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    filteredActivities = widget.filteredActivities;
   }
     
   @override
   Widget build(
     BuildContext context
   ) {
-    return isLoading?
+    final watchActivitiesProvider = context.watch<ActivitiesProvider>();
+    final filteredActivities = watchActivitiesProvider.filteredActivities;
+
+    return watchActivitiesProvider.isLoading ?
       Stack(
         children: [
           Container(
@@ -84,21 +84,20 @@ class ActivityPageState extends State<ActivityPage> {
               color: Colors.white,
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              child: selectedActivity != null && selectedActivity!.isNotEmpty ?
-                _buildDetailActivity() :
-                _buildListActivities(),
-            ),
-          )
+          SingleChildScrollView(
+            controller: _scrollController,
+            child: watchActivitiesProvider.selectedActivity != null ?
+              _buildDetailActivity(context, watchActivitiesProvider.selectedActivity!) :
+              _buildListActivities(filteredActivities),
+          ),
         ],
       );
-    }
-
+  }
 
     /* List of activities after filtering in HomePage */
-    Widget _buildListActivities() {
+    Widget _buildListActivities(
+      List<Map<String, dynamic>> filteredActivities,
+    ) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -174,9 +173,13 @@ class ActivityPageState extends State<ActivityPage> {
                     schedules: schedules,
                     pricings: pricings,
                     onTap: () {
-                      setState(() {
-                        selectedActivity = filteredActivity;
-                      });
+                      final readActivitiesProvider = context.read<ActivitiesProvider>();
+                      readActivitiesProvider.setSelectedActivity(filteredActivity);
+
+                      final readActivityMapProvider = context.read<ActivityMapProvider>();
+                      readActivityMapProvider.clearSelection();
+
+                      _scrollController.jumpTo(0);
                     },
                   ),
                 ),
@@ -188,17 +191,20 @@ class ActivityPageState extends State<ActivityPage> {
     }
 
     /* Details of activity after being selected from list */
-    _buildDetailActivity() {
-      activityId = selectedActivity!['activityId'];
-      String discipline = selectedActivity!['discipline'];
-      List<String>? information = selectedActivity?['information']?.cast<String>();
-      String imageUrl = selectedActivity?['imageUrl'];
-      Place place = Place.fromMap(selectedActivity?['place']);
-      Contact? contact = Contact.fromMap(selectedActivity?['contact']) ;
-      List<Schedule> schedules = (selectedActivity!['schedules'] as List?)
+    _buildDetailActivity(
+      BuildContext context,
+      Map<String, dynamic> selectedActivity,
+    ) {
+      activityId = selectedActivity['activityId'];
+      String discipline = selectedActivity['discipline'];
+      List<String>? information = selectedActivity['information']?.cast<String>();
+      String imageUrl = selectedActivity['imageUrl'];
+      Place place = Place.fromMap(selectedActivity['place']);
+      Contact? contact = Contact.fromMap(selectedActivity['contact']) ;
+      List<Schedule> schedules = (selectedActivity['schedules'] as List?)
         ?.map((schedule) => Schedule.fromMap(schedule as Map<String, dynamic>))
         .toList() ?? [];
-      List<Pricing> pricings = (selectedActivity!['pricings'] as List?)
+      List<Pricing> pricings = (selectedActivity['pricings'] as List?)
         ?.map((pricing) => Pricing.fromMap(pricing as Map<String, String>))
         .toList() ?? [];
 
@@ -209,54 +215,40 @@ class ActivityPageState extends State<ActivityPage> {
           Padding(
             padding: EdgeInsets.only(top: 32),
           ),
-          FutureBuilder(
-            future: checkImageValidity(imageUrl),
-            builder: (context, snapshot) {
-              if (snapshot.hasError || !snapshot.hasData || snapshot.data == false) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xFF5B59B4),
-                        width: 4,
-                      ),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: Image.asset(
-                        'assets/images/ActivityByDefault.webp',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                );
-              }
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: const Color(0xFF5B59B4),
-                      width: 4,
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color(0xFF5B59B4),
+                  width: 4,
                 ),
-              );
-            }
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+
+                    return Image.asset(
+                      'assets/images/ActivityByDefault.webp',
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/images/ActivityByDefault.webp',
+                      fit: BoxFit.cover,
+                    );
+                  }
+                )
+              )
+            )
           ),
           SizedBox(height: 15),
           Text(
@@ -672,9 +664,13 @@ class ActivityPageState extends State<ActivityPage> {
               ),
             ),
             onPressed: () {
-              setState(() {
-                selectedActivity = null;
-              });
+              final readActivitiesProvider = context.read<ActivitiesProvider>();
+              readActivitiesProvider.clearSelectedActivity();
+
+              final readActivityMapProvider = context.read<ActivityMapProvider>();
+              readActivityMapProvider.clearSelection();
+
+              _scrollController.jumpTo(0);
             },
             child: Text('Retour à la liste',
               style: TextStyle(

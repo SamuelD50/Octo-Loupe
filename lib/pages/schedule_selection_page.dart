@@ -5,8 +5,10 @@ import 'package:octoloupe/components/filter_card.dart';
 import 'package:octoloupe/components/loading.dart';
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/providers/filter_provider.dart';
 import 'package:octoloupe/services/sport_filter_service.dart';
 import 'package:octoloupe/services/culture_filter_service.dart';
+import 'package:provider/provider.dart';
 
 class ScheduleSelectionPage extends StatefulWidget {
   final List<Map<String, String>>? selectedSchedules;
@@ -23,16 +25,25 @@ class ScheduleSelectionPage extends StatefulWidget {
 }
 
 class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
-  late List<Map<String, String>> selectedSchedules;
   late Future<List<SportSchedule>> sportSchedulesReceiver;
   late Future<List<CultureSchedule>> cultureSchedulesReceiver;
 
   @override
   void initState() {
     super.initState();
-    selectedSchedules = List.from(widget.selectedSchedules ?? []);
     sportSchedulesReceiver = SportFilterService().getSportSchedules();
     cultureSchedulesReceiver = CultureFilterService().getCultureSchedules();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final readFilterProvider = context.read<FilterProvider>();
+      readFilterProvider.setSection(widget.isSport ? 0 : 1);
+      if (widget.selectedSchedules != null) {
+        readFilterProvider.setSelectedSchedules(
+          selectedSection: widget.isSport ? 0 : 1,
+          selectedSchedules: widget.selectedSchedules,
+        );
+      }
+    });
   }
 
   List<T> sortSchedules<T>(
@@ -66,9 +77,11 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
   Widget build(
     BuildContext context
   ) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth > 325 ?
-      20.0 : 14.0;
+    final watchFilterProvider = context.watch<FilterProvider>();
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final fontSize = screenWidth > 325 ? 20.0 : 14.0;
+    final crossAxisCount = screenWidth < 250 ? 1 : screenWidth < 600 ? 2 : 3;
 
     return Stack(
       children: [
@@ -88,97 +101,119 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                   padding: EdgeInsets.only(top: 8)
                 ),
                 widget.isSport ?
-                FutureBuilder<List<SportSchedule>>(
-                  future: sportSchedulesReceiver,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Loading();
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Erreur: ${snapshot.error}')
-                      );
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                        child: Text('Aucun horaire trouvé')
-                      );
-                    }
+                  FutureBuilder<List<SportSchedule>>(
+                    future: sportSchedulesReceiver,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Loading();
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Erreur: ${snapshot.error}')
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(
+                          child: Text('Aucun horaire trouvé')
+                        );
+                      }
 
-                    final sportSchedules = snapshot.data!;
+                      final sportSchedules = snapshot.data!;
+                      final sortedSchedules = sortSchedules(sportSchedules);
 
-                    final sortedSchedules = sortSchedules(sportSchedules);
-
-                    return Column(
-                      children: [
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(2.0),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                              1 : MediaQuery.of(context).size.width < 600 ?
-                                2 : 3, // Deux colonnes
-                            crossAxisSpacing: 2.0,
-                            mainAxisSpacing: 2.0,
-                          ),
-                          itemCount: sortedSchedules.length,
-                          itemBuilder: (context, index) {
-                            final schedule = sortedSchedules[index];
-                            final isSelected = selectedSchedules.any((selected) =>
-                              selected['id'] == schedule.id);
-
-                            return FilterCard(
-                              name: schedule.name,
-                              imageUrl: schedule.imageUrl,
-                              isSelected: isSelected,
-                              fontSize: fontSize,
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    selectedSchedules.removeWhere((selected) =>
-                                      selected['id'] == schedule.id);
-                                  } else {
-                                    if (schedule.id != null) {
-                                      selectedSchedules.add({
-                                        'id': schedule.id!,
-                                        'name': schedule.name,
-                                      });
-                                    }
-                                  }
-                                });
-                              },
-                            );
-                          },
-                        ),
-                        if (sportSchedules.isNotEmpty)
-                          SizedBox(height: 8),
-                        if (sportSchedules.isNotEmpty)
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF5B59B4),
-                              foregroundColor: Colors.white,
-                              side: BorderSide(color: Color(0xFF5B59B4)),
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(2.0),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount, // Deux colonnes
+                              crossAxisSpacing: 2.0,
+                              mainAxisSpacing: 2.0,
                             ),
-                            onPressed: () {
-                              context.pop(selectedSchedules);
+                            itemCount: sortedSchedules.length,
+                            itemBuilder: (context, index) {
+                              final schedule = sortedSchedules[index];
+                              final isSelected = watchFilterProvider.selectedSportSchedules.any((selected) =>
+                                selected.id == schedule.id);
+
+                              return Semantics(
+                                button: true,
+                                selected: isSelected,
+                                label: schedule.name,
+                                hint: isSelected ?
+                                  'Sélectionné, tapez pour désélectionner'
+                                  : 'Non sélectionné, tapez pour sélectionner',
+                                  child: Focus(
+                                    child: FilterCard(
+                                      name: schedule.name,
+                                      imageUrl: schedule.imageUrl,
+                                      isSelected: isSelected,
+                                      fontSize: fontSize,
+                                      onTap: () {
+                                        final selectedSchedules = watchFilterProvider.selectedSportSchedules
+                                          .map((schedule) => {
+                                            'id': schedule.id!,
+                                            'name': schedule.name,
+                                          }).toList();
+
+                                        if (isSelected) {
+                                          selectedSchedules
+                                            .removeWhere((selected) => selected['id'] == schedule.id);
+                                        } else {
+                                          if (schedule.id != null) {
+                                            selectedSchedules.add({
+                                              'id': schedule.id!,
+                                              'name': schedule.name,
+                                            });
+                                          }
+                                        }
+
+                                        watchFilterProvider.setSelectedSchedules(
+                                          selectedSection: 0,
+                                          selectedSchedules: selectedSchedules,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                              );
                             },
-                            child: Text('Valider',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
+                          ),
+                          if (sportSchedules.isNotEmpty)
+                            SizedBox(height: 8),
+                          if (sportSchedules.isNotEmpty)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF5B59B4),
+                                foregroundColor: Colors.white,
+                                side: BorderSide(color: Color(0xFF5B59B4)),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                final readFilterProvider = context.read<FilterProvider>();
+                                final selectedSchedules = readFilterProvider.selectedSportSchedules
+                                  .map((schedule) => {
+                                    'id': schedule.id!,
+                                    'name': schedule.name
+                                  }).toList();
+                                context.pop(selectedSchedules);
+                              },
+                              child: Text('Valider',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8)
                           ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8)
-                        ),
-                      ],
-                    );
-                  },
-                )
+                        ],
+                      );
+                    },
+                  )
                 : FutureBuilder<List<CultureSchedule>>(
                   future: cultureSchedulesReceiver,
                   builder: (context, snapshot) {
@@ -195,7 +230,6 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                     }
 
                     final cultureSchedules = snapshot.data!;
-
                     final sortedSchedules = sortSchedules(cultureSchedules);
 
                     return Column(
@@ -205,38 +239,55 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                           physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.all(2.0),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: MediaQuery.of(context).size.width < 250 ?
-                              1 : MediaQuery.of(context).size.width < 600 ?
-                                2 : 3, // Deux colonnes
+                            crossAxisCount: crossAxisCount, // Deux colonnes
                             crossAxisSpacing: 2.0,
                             mainAxisSpacing: 2.0,
                           ),
                           itemCount: sortedSchedules.length,
                           itemBuilder: (context, index) {
                             final schedule = sortedSchedules[index];
-                            final isSelected = selectedSchedules.any((selected) =>
-                              selected['id'] == schedule.id);
+                            final isSelected = watchFilterProvider.selectedCultureSchedules.any((selected) =>
+                              selected.id == schedule.id);
 
-                            return FilterCard(
-                              name: schedule.name,
-                              imageUrl: schedule.imageUrl,
-                              isSelected: isSelected,
-                              fontSize: fontSize,
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    selectedSchedules.removeWhere((selected) =>
-                                      selected['id'] == schedule.id);
-                                  } else {
-                                    if (schedule.id != null) {
-                                      selectedSchedules.add({
-                                        'id': schedule.id!,
-                                        'name': schedule.name,
-                                      });
-                                    }
-                                  }
-                                });
-                              },
+                            return Semantics(
+                              button: true,
+                              selected: isSelected,
+                              label: schedule.name,
+                              hint: isSelected ?
+                                'Sélectionné, tapez pour désélectionnner'
+                                : 'Non sélectionné, tapez pour sélectionner',
+                                child: Focus(
+                                  child: FilterCard(
+                                    name: schedule.name,
+                                    imageUrl: schedule.imageUrl,
+                                    isSelected: isSelected,
+                                    fontSize: fontSize,
+                                    onTap: () {
+                                      final selectedSchedules = watchFilterProvider.selectedCultureSchedules
+                                        .map((schedule) => {
+                                          'id': schedule.id!,
+                                          'name': schedule.name,
+                                        }).toList();
+
+                                      if (isSelected) {
+                                        selectedSchedules
+                                          .removeWhere((selected) => selected['id'] == schedule.id);
+                                      } else {
+                                        if (schedule.id != null) {
+                                          selectedSchedules.add({
+                                            'id': schedule.id!,
+                                            'name': schedule.name,
+                                          });
+                                        }
+                                      }
+                                      
+                                      watchFilterProvider.setSelectedSchedules(
+                                        selectedSection: 1,
+                                        selectedSchedules: selectedSchedules,
+                                      );
+                                    },
+                                  ),
+                                )
                             );
                           },
                         ),
@@ -254,6 +305,12 @@ class ScheduleSelectionPageState extends State<ScheduleSelectionPage> {
                               ),
                             ),
                             onPressed: () {
+                              final readFilterProvider = context.read<FilterProvider>();
+                              final selectedSchedules = readFilterProvider.selectedCultureSchedules
+                                .map((schedule) => {
+                                  'id': schedule.id!,
+                                  'name': schedule.name,
+                                }).toList();
                               context.pop(selectedSchedules);
                             },
                             child: Text('Valider',

@@ -3,7 +3,7 @@ import 'package:octoloupe/CRUD/filters_crud.dart';
 
 class CultureFilterService {
   final FiltersCRUD filtersCRUD = FiltersCRUD();
-  //CRUD SportCategories
+  //CRUD CultureCategories
 
   //Create CultureCategory
   Future<void> addCultureCategory(

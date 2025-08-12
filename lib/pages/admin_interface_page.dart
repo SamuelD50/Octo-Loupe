@@ -523,7 +523,6 @@ class AdminInterfacePageState extends State<AdminInterfacePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Stack(

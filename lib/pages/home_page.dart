@@ -5,12 +5,12 @@ import 'package:octoloupe/components/snackbar.dart';
 // Models
 import 'package:octoloupe/model/sport_filters_model.dart';
 import 'package:octoloupe/model/culture_filters_model.dart';
+import 'package:octoloupe/providers/activities_provider.dart';
+import 'package:octoloupe/providers/filter_provider.dart';
 // Services
 import 'package:octoloupe/services/culture_activity_service.dart';
 import 'package:octoloupe/services/sport_activity_service.dart';
-
-
-/* Pour l'instant je ne fais récupère pas topics dans mes activités, il faut que j'ajoute ou modifie une activité pour ajouter topic puis modifier ensuite */
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,25 +20,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _selectedSection = 0;
-  
-  void _resetFilters() {
-    setState(() {
-      if (_selectedSection == 0) {
-        selectedSportCategories = [];
-        selectedSportAges = [];
-        selectedSportDays = [];
-        selectedSportSchedules = [];
-        selectedSportSectors = [];
-      } else {
-        selectedCultureCategories = [];
-        selectedCultureAges = [];
-        selectedCultureDays = [];
-        selectedCultureSchedules = [];
-        selectedCultureSectors = [];
-      }
-    });
-  }
+  final int _selectedSection = 0;
+  bool isLoading = false;
 
   List<SportCategory> selectedSportCategories = [];
   List<SportAge> selectedSportAges = [];
@@ -52,306 +35,12 @@ class HomePageState extends State<HomePage> {
   List<CultureSchedule> selectedCultureSchedules = [];
   List<CultureSector> selectedCultureSectors = []; 
 
-  Map<String, List<Map<String, String>>> filters = {};
-
-  // Collect filters to search for matching activities
-  void collectFilters() {
-    filters.clear();
-    
-    if (_selectedSection == 0) {
-      if (selectedSportCategories.isNotEmpty) {
-        filters['categories'] = selectedSportCategories.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportAges.isNotEmpty) {
-        filters['ages'] = selectedSportAges.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportDays.isNotEmpty) {
-        filters['days'] = selectedSportDays.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportSchedules.isNotEmpty) {
-        filters['schedules'] = selectedSportSchedules.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedSportSectors.isNotEmpty) {
-        filters['sectors'] = selectedSportSectors.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-    } else {
-      if (selectedCultureCategories.isNotEmpty) {
-        filters['categories'] = selectedCultureCategories.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureAges.isNotEmpty) {
-        filters['ages'] = selectedCultureAges.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureDays.isNotEmpty) {
-        filters['days'] = selectedCultureDays.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureSchedules.isNotEmpty) {
-        filters['schedules'] = selectedCultureSchedules.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-      if (selectedCultureSectors.isNotEmpty) {
-        filters['sectors'] = selectedCultureSectors.map((e) => {'id': e.id!, 'name': e.name}).toList();
-      }
-    }
-  }
-
   //List of all activities
   List<Map<String, dynamic>> activities = [];
-  SportActivityService sportActivityService = SportActivityService();
-  CultureActivityService cultureActivityService = CultureActivityService();
-  bool isLoading = false;
-
-  //Get activities
-  Future<void> readActivities() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      if (_selectedSection == 0) {
-        activities = (await sportActivityService.getSportActivities())
-          .map((item) => (item).toMap())
-          .toList();
-      } else {
-        activities = (await cultureActivityService.getCultureActivities())
-          .map((item) => (item).toMap())
-          .toList();
-      }
-
-      await Future.delayed(Duration(milliseconds: 25));
-
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      throw Exception('Error fetching activity: $e');
-    }
-  }
-
-  //List of activities after filtering
-  List<Map<String, dynamic>> filteredActivities = [];
-
-  Future<List<Map<String, dynamic>>> sortActivities({
-    required List<Map<String, dynamic>> activities,
-    Map<String, List<Map<String, String>>>? filters,
-    List<String>? keywords,
-  }) async {
-
-    //Filter activities by categories, ages, days, schedules and sectors
-    List<Map<String, String>> categories = [];
-    List<Map<String, String>> ages = [];
-    List<Map<String, String>> days = [];
-    List<Map<String, String>> schedules = [];
-    List<Map<String, String>> sectors = [];
-
-    if (filters != null) {
-      if (filters.containsKey('categories')) {
-        categories = filters['categories']!.map((category) {
-          return {
-            'id': category['id']!,
-            'name': category['name']!,
-          };
-        }).toList();
-      }
-      
-      if (filters.containsKey('ages')) {
-        ages = filters['ages']!.map((age) {
-          return {
-            'id': age['id']!,
-            'name': age['name']!,
-          };
-        }).toList();
-      }
-
-      if (filters.containsKey('days')) {
-        days = filters['days']!.map((day) {
-          return {
-            'id': day['id']!,
-            'name': day['name']!,
-          };
-        }).toList();
-      }
-
-      if (filters.containsKey('schedules')) {
-        schedules = filters['schedules']!.map((schedule) {
-          return {
-            'id': schedule['id']!,
-            'name': schedule['name']!,
-          };
-        }).toList();
-      }
-
-      if (filters.containsKey('sectors')) {
-        sectors = filters['sectors']!.map((sector) {
-          return {
-            'id': sector['id']!,
-            'name': sector['name']!,
-          };
-        }).toList();
-      }
-    }
-
-    List<Map<String, dynamic>> filteredActivities = [];
-
-    for (var activity in activities) {
-      List<Map<String, dynamic>> categoriesId = (activity['filters']?['categoriesId'] as List?)
-        ?.map((categoryId) {
-          return {
-            'id': categoryId['id'] ?? '',
-            'name': categoryId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> agesId = (activity['filters']?['agesId'] as List?)
-        ?.map((ageId) {
-          return {
-            'id': ageId['id'] ?? '',
-            'name': ageId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> daysId = (activity['filters']?['daysId'] as List?)
-        ?.map((dayId) {
-          return {
-            'id': dayId['id'] ?? '',
-            'name': dayId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> schedulesId = (activity['filters']?['schedulesId'] as List?)
-        ?.map((scheduleId) {
-          return {
-            'id': scheduleId['id'] ?? '',
-            'name': scheduleId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      List<Map<String, dynamic>> sectorsId = (activity['filters']?['sectorsId'] as List?)
-        ?.map((sectorId) {
-          return {
-            'id': sectorId['id'] ?? '',
-            'name': sectorId['name'] ?? '',
-          };
-        }).toList() ?? [];
-
-      bool matchesCategory = categories.isEmpty || categories.any((category) {
-        return categoriesId.any((categoryId) => category['id'] == categoryId['id']);
-      });
-
-      bool matchesAge = ages.isEmpty || ages.any((age) {
-        return agesId.any((ageId) => age['id'] == ageId['id']);
-      });
-
-      bool matchesDay = days.isEmpty || days.any((day) {
-        return daysId.any((dayId) => day['id'] == dayId['id']);
-      });
-
-      bool matchesSchedule = schedules.isEmpty || schedules.any((schedule) {
-        return schedulesId.any((scheduleId) => schedule['id'] == scheduleId['id']);
-      });
-
-      bool matchesSector = sectors.isEmpty || sectors.any((sector) {
-        return sectorsId.any((sectorId) => sector['id'] == sectorId['id']);
-      });
-
-      if (matchesCategory && matchesAge && matchesDay && matchesSchedule && matchesSector) {
-        filteredActivities.add(activity);
-      }
-    }
-  
-    //Filter activities by keywords
-    if (keywords != null && keywords.isNotEmpty) {
-      filteredActivities = filteredActivities.where((activity) {
-        List<RegExp> regExps = keywords.map((keyword) {
-          return RegExp(r'\b' + RegExp.escape(keyword.toLowerCase()) + r'\b');
-        }).toList();
-
-        String discipline = activity['discipline'] ?? '';
-        List<String>? information = activity['information'] ?? [];
-        String structureName = activity['contact']['structureName'] ?? '';
-        String email = activity['contact']['email'] ?? '';
-        String phoneNumber = activity['contact']['phoneNumber'] ?? '';
-        String webSite = activity['contact']['webSite'] ?? '';
-        String titleAddress = activity['place']['titleAddress'] ?? '';
-        String streetAddress = activity['place']['streetAddress'] ?? '';
-        String postalCode = activity['place']['postalCode']?.toString() ?? '';
-        String city = activity['place']['city'] ?? '';
-
-        bool matchesSchedule = activity['schedules']?.any((schedule) {
-          String day = schedule['day'] ?? '';
-          List<Map<String, dynamic>> timeSlots = schedule['timeSlots'] ?? [];
-
-          bool matchesDay = regExps.any((regExp) => day.toLowerCase().contains(regExp));
-          bool matchesTimeSlots = timeSlots.any((timeSlot) {
-            String startHour = timeSlot['startHour'] ?? '';
-            String endHour = timeSlot['endHour'] ?? '';
-            return regExps.any((regExp) =>
-              startHour.toLowerCase().contains(regExp) ||
-              endHour.toLowerCase().contains(regExp)
-            );
-          });
-
-          return matchesDay || matchesTimeSlots;
-        }) ?? false;
-
-        bool matchesPricing = activity['pricings']?.any((pricing) {
-          String profile = pricing['profile'] ?? '';
-          String pricingValue = pricing['pricing'] ?? '';
-          return regExps.any((regExp) =>
-            profile.toLowerCase().contains(regExp) ||
-            pricingValue.toLowerCase().contains(regExp));
-        }) ?? false;
-        
-        bool matchesKeywords = regExps.every((regExp) {
-          return discipline.toLowerCase().contains(regExp) ||
-          (information != null ? information.join(' ') : '').toLowerCase().contains(regExp) ||
-          structureName.toLowerCase().contains(regExp) ||
-          email.toLowerCase().contains(regExp) ||
-          phoneNumber.toLowerCase().contains(regExp) ||
-          webSite.toLowerCase().contains(regExp) ||
-          titleAddress.toLowerCase().contains(regExp) ||
-          streetAddress.toLowerCase().contains(regExp) ||
-          postalCode.toLowerCase().contains(regExp) ||
-          city.toLowerCase().contains(regExp) ||
-          matchesSchedule ||
-          matchesPricing;
-        });
-
-        return matchesKeywords;
-      }).toList();
-    }
-    
-    debugPrint('FilteredActivities L322: ${filteredActivities}');
-
-    return filteredActivities;
-  }
 
   final keywordsController = TextEditingController();
 
-  //Get all activities before filtering by keyword
-  Future<void> readAllActivities() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      List<Map<String, dynamic>> sportActivities = (await sportActivityService.getSportActivities())
-        .map((item) => (item).toMap())
-        .toList();
-
-      List<Map<String, dynamic>> cultureActivities = (await cultureActivityService.getCultureActivities())
-        .map((item) => (item).toMap())
-        .toList();
-
-      activities = [...sportActivities, ...cultureActivities];
-
-      await Future.delayed(Duration(milliseconds: 25));
-
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error fetching activities: $e');
-    }
-  }
+  List<Map<String, dynamic>> filteredActivities = [];
 
   @override
   void initState() {
@@ -362,6 +51,12 @@ class HomePageState extends State<HomePage> {
   Widget build(
     BuildContext context
   ) {
+    final readFilterProvider = context.read<FilterProvider>();
+    final watchFilterProvider = context.watch<FilterProvider>();
+
+    final readActivitiesProvider = context.read<ActivitiesProvider>();
+    final watchActivitiesProvider = context.watch<ActivitiesProvider>();
+    
     return Stack(
       children: [
         Container(
@@ -427,12 +122,12 @@ class HomePageState extends State<HomePage> {
                           debugPrint('searchQuery: $searchQuery');
 
                           if (searchQuery.isNotEmpty) {
-                              
-                            await readAllActivities();
+                            await readActivitiesProvider.readAllActivities();
+                            final activities = readActivitiesProvider.activities;
 
                             List<String> keywords = searchQuery.split(' ').map((e) => e.trim()).toList();
 
-                            List<Map<String, dynamic>> filteredActivities = await sortActivities(
+                            List<Map<String, dynamic>> filteredActivities = await readActivitiesProvider.sortActivities(
                               keywords: keywords,
                               activities: activities,
                             );
@@ -468,6 +163,8 @@ class HomePageState extends State<HomePage> {
                 //Sport or Culture section
                 LayoutBuilder(
                   builder: (context, constraints) {
+                    final selectedSection = watchFilterProvider.selectedSection;
+
                     EdgeInsetsGeometry padding;
 
                     if (constraints.maxWidth < 325) {
@@ -477,13 +174,14 @@ class HomePageState extends State<HomePage> {
                     }
 
                     return ToggleButtons(
-                      isSelected: [_selectedSection == 0, _selectedSection == 1],
-                      onPressed: (int section) {
-                        setState(() {
-                          _selectedSection = section;
-                          _resetFilters();
-                          readActivities();
-                        });
+                      isSelected: [
+                        selectedSection == 0,
+                        selectedSection == 1,
+                      ],
+                      onPressed: (int section) async {
+                        readFilterProvider.setSection(section);
+                        readFilterProvider.resetFilters();
+                        await readActivitiesProvider.readActivities(context);
                       },
                       color: Colors.black,
                       selectedColor: Colors.white,
@@ -531,35 +229,29 @@ class HomePageState extends State<HomePage> {
                         Icons.category,
                         'Par catégorie',
                         () async {
+                          final selectedSection = readFilterProvider.selectedSection;
                           final List<Map<String, String>>? selectedCategories = await context.push(
                             '/home/categories',
                             extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedCategories': _selectedSection == 0 ?
-                                selectedSportCategories.map((category) => {
-                                  'id': category.id ?? '',
-                                  'name': category.name,
-                                }).toList()
-                                : selectedCultureCategories.map((category) => {
-                                  'id': category.id ?? '',
-                                  'name': category.name,
-                                }).toList(),
+                              'isSport': selectedSection == 0,
+                              'selectedCategories': selectedSection == 0 ?
+                                readFilterProvider.selectedSportCategories
+                                  .map((category) => {
+                                    'id': category.id ?? '',
+                                    'name': category.name,
+                                  }).toList()
+                                : readFilterProvider.selectedCultureCategories
+                                  .map((category) => {
+                                    'id': category.id ?? '',
+                                    'name': category.name,
+                                  }).toList(),
                             }
                           );
 
-                          setState(() {
-                            if (selectedCategories != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportCategories = selectedCategories
-                                  .map((category) => SportCategory.fromMap(category))
-                                  .toList();
-                              } else {
-                                selectedCultureCategories = selectedCategories
-                                  .map((category) => CultureCategory.fromMap(category))
-                                  .toList();
-                              }
-                            }
-                          });
+                          readFilterProvider.setSelectedCategories(
+                            selectedSection: selectedSection,
+                            selectedCategories: selectedCategories,
+                          );
                         },
                         isSport: _selectedSection == 0,
                       ),
@@ -569,35 +261,29 @@ class HomePageState extends State<HomePage> {
                         Icons.accessibility_new,
                         'Par âge',
                         () async {
+                          final selectedSection = readFilterProvider.selectedSection;
                           final List<Map<String, String>>? selectedAges = await context.push(
                             '/home/ages',
                             extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedAges': _selectedSection == 0 ?
-                                selectedSportAges.map((age) => {
-                                  'id': age.id ?? '',
-                                  'name': age.name,
-                                }).toList()
-                                : selectedCultureAges.map((age) => {
-                                  'id': age.id ?? '',
-                                  'name': age.name,
-                                }).toList(),
+                              'isSport': selectedSection == 0,
+                              'selectedAges': selectedSection == 0 ?
+                                readFilterProvider.selectedSportAges
+                                  .map((age) => {
+                                    'id': age.id ?? '',
+                                    'name': age.name,
+                                  }).toList()
+                                : readFilterProvider.selectedCultureAges
+                                  .map((age) => {
+                                    'id': age.id ?? '',
+                                    'name': age.name,
+                                  }).toList(),
                             }
                           );
                             
-                          setState(() {
-                            if (selectedAges != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportAges = selectedAges
-                                  .map((age) => SportAge.fromMap(age))
-                                  .toList();
-                              } else {
-                                selectedCultureAges = selectedAges
-                                  .map((age) => CultureAge.fromMap(age))
-                                  .toList();
-                              }
-                            }
-                          });
+                          readFilterProvider.setSelectedAges(
+                            selectedSection: selectedSection,
+                            selectedAges: selectedAges,
+                          );
                         },
                         isSport: _selectedSection == 0,
                       ),
@@ -607,35 +293,29 @@ class HomePageState extends State<HomePage> {
                         Icons.date_range,
                         'Par jour',
                         () async {
+                          final selectedSection = readFilterProvider.selectedSection;
                           final List<Map<String, String>>? selectedDays = await context.push(
                             '/home/days',
                             extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedDays': _selectedSection == 0 ?
-                                selectedSportDays.map((day) => {
-                                  'id': day.id ?? '',
-                                  'name': day.name,
-                                }).toList()
-                                : selectedCultureDays.map((day) => {
-                                  'id': day.id ?? '',
-                                  'name': day.name,
-                                }).toList(),
+                              'isSport': selectedSection == 0,
+                              'selectedDays': selectedSection == 0 ?
+                                readFilterProvider.selectedSportDays
+                                  .map((day) => {
+                                    'id': day.id ?? '',
+                                    'name': day.name,
+                                  }).toList()
+                                : readFilterProvider.selectedCultureDays
+                                  .map((day) => {
+                                    'id': day.id ?? '',
+                                    'name': day.name,
+                                  }).toList(),
                             }
                           );
 
-                          setState(() {
-                            if (selectedDays != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportDays = selectedDays
-                                  .map((day) => SportDay.fromMap(day))
-                                  .toList();
-                              } else {
-                                selectedCultureDays = selectedDays
-                                  .map((day) => CultureDay.fromMap(day))
-                                  .toList();
-                              }
-                            }
-                          });
+                          readFilterProvider.setSelectedDays(
+                            selectedSection: selectedSection,
+                            selectedDays: selectedDays,
+                          );
                         },
                         isSport: _selectedSection == 0,
                       ),
@@ -645,35 +325,29 @@ class HomePageState extends State<HomePage> {
                         Icons.access_time,
                         'Par horaire',
                         () async {
+                          final selectedSection = readFilterProvider.selectedSection;
                           final List<Map<String, String>>? selectedSchedules = await context.push(
                             '/home/schedules',
                             extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedSchedules': _selectedSection == 0 ?
-                                selectedSportSchedules.map((schedule) => {
-                                  'id': schedule.id ?? '',
-                                  'name': schedule.name,
-                                }).toList()
-                                : selectedCultureSchedules.map((schedule) => {
-                                  'id': schedule.id ?? '',
-                                  'name': schedule.name,
-                                }).toList(),
+                              'isSport': selectedSection == 0,
+                              'selectedSchedules': selectedSection == 0 ?
+                                readFilterProvider.selectedSportSchedules
+                                  .map((schedule) => {
+                                    'id': schedule.id ?? '',
+                                    'name': schedule.name,
+                                  }).toList()
+                                : readFilterProvider.selectedCultureSchedules
+                                  .map((schedule) => {
+                                    'id': schedule.id ?? '',
+                                    'name': schedule.name,
+                                  }).toList(),
                             }
                           );
 
-                          setState(() {
-                            if (selectedSchedules != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportSchedules = selectedSchedules
-                                  .map((schedule) => SportSchedule.fromMap(schedule))
-                                  .toList();
-                              } else {
-                                selectedCultureSchedules = selectedSchedules
-                                  .map((schedule) => CultureSchedule.fromMap(schedule))
-                                  .toList();
-                              }
-                            }
-                          });
+                          readFilterProvider.setSelectedSchedules(
+                            selectedSection: selectedSection,
+                            selectedSchedules: selectedSchedules,
+                          );
                         },
                         isSport: _selectedSection == 0,
                       ),
@@ -683,35 +357,29 @@ class HomePageState extends State<HomePage> {
                         Icons.apartment_rounded,
                         'Par secteur',
                         () async {
+                          final selectedSection = readFilterProvider.selectedSection;
                           final List<Map<String, String>>? selectedSectors = await context.push(
                             '/home/sectors',
                             extra: {
-                              'isSport': _selectedSection == 0,
-                              'selectedSectors': _selectedSection == 0 ?
-                                selectedSportSectors.map((sector) => {
-                                  'id': sector.id ?? '',
-                                  'name': sector.name,
-                                }).toList()
-                                : selectedCultureSectors.map((sector) => {
-                                  'id': sector.id ?? '',
-                                  'name': sector.name,
-                                }).toList(),
+                              'isSport': selectedSection == 0,
+                              'selectedSectors': selectedSection == 0 ?
+                                readFilterProvider.selectedSportSectors
+                                  .map((sector) => {
+                                    'id': sector.id ?? '',
+                                    'name': sector.name,
+                                  }).toList()
+                                : readFilterProvider.selectedCultureSectors
+                                  .map((sector) => {
+                                    'id': sector.id ?? '',
+                                    'name': sector.name,
+                                  }).toList(),
                             }
                           );
                             
-                          setState(() {
-                            if (selectedSectors != null) {
-                              if (_selectedSection == 0) {
-                                selectedSportSectors = selectedSectors
-                                  .map((sector) => SportSector.fromMap(sector))
-                                  .toList();
-                              } else {
-                                selectedCultureSectors = selectedSectors
-                                  .map((sector) => CultureSector.fromMap(sector))
-                                  .toList();
-                              }
-                            }
-                          });
+                          readFilterProvider.setSelectedSectors(
+                            selectedSection: selectedSection,
+                            selectedSectors: selectedSectors,
+                          );
                         },
                         isSport: _selectedSection == 0,
                       ),
@@ -736,26 +404,22 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             onPressed: () async {
-
-                              collectFilters();
-                              readActivities();
+                              final filters = readFilterProvider.collectFilters();
+                              await readActivitiesProvider.readActivities(context);
+                              final activities = readActivitiesProvider.activities;
                               
-                              filteredActivities = await sortActivities(
+                              final filteredActivities = await readActivitiesProvider.sortActivities(
                                 filters: filters,
                                 activities: activities,
                               );
 
                               if (filteredActivities.isNotEmpty) {
-                                setState(() {
-                                  filteredActivities = filteredActivities;
-                                });
-                                
+                                readActivitiesProvider.setFilteredActivities(filteredActivities);
+                                readActivitiesProvider.clearSelectedActivity();
+
                                 if (context.mounted) {
                                   context.push(
                                     '/home/results',
-                                    extra: {
-                                      'filteredActivities': filteredActivities,
-                                    }
                                   );
                                 }
                               } else {
@@ -765,7 +429,7 @@ class HomePageState extends State<HomePage> {
                                 ).showSnackBar(context);
                               }
 
-                              _resetFilters();
+                              readFilterProvider.resetFilters();
                               filters.clear();
                             },
                             child: Text('Rechercher',
@@ -787,7 +451,8 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             onPressed: () {
-                              _resetFilters();
+                              readFilterProvider.resetFilters();
+
                               CustomSnackBar(
                                 message: 'Filtres réinitialisés !',
                                 backgroundColor: Colors.amber,
@@ -816,27 +481,22 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             onPressed: () async {
-                              filteredActivities.clear();
-
-                              collectFilters();
-                              readActivities();
-
-                              filteredActivities = await sortActivities(
+                              final filters = readFilterProvider.collectFilters();
+                              await readActivitiesProvider.readActivities(context);
+                              final activities = readActivitiesProvider.activities;
+                              
+                              final filteredActivities = await readActivitiesProvider.sortActivities(
                                 filters: filters,
-                                activities: activities
+                                activities: activities,
                               );
 
                               if (filteredActivities.isNotEmpty) {
-                                setState(() {
-                                  filteredActivities = filteredActivities;
-                                });
+                                readActivitiesProvider.setFilteredActivities(filteredActivities);
+                                readActivitiesProvider.clearSelectedActivity();
 
                                 if (context.mounted) {
                                   context.push(
                                     '/home/results',
-                                    extra: {
-                                      'filteredActivities': filteredActivities,
-                                    }
                                   );
                                 }
                               } else {
@@ -846,7 +506,7 @@ class HomePageState extends State<HomePage> {
                                 ).showSnackBar(context);
                               }
 
-                              _resetFilters();
+                              readFilterProvider.resetFilters();
                               filters.clear();
                             },
                             child: Text('Rechercher',
@@ -868,7 +528,8 @@ class HomePageState extends State<HomePage> {
                               ),
                             ),
                             onPressed: () {
-                              _resetFilters();
+                              readFilterProvider.resetFilters();
+                              
                               CustomSnackBar(
                                 message: 'Filtres réinitialisés !',
                                 backgroundColor: Colors.amber,

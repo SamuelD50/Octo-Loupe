@@ -77,13 +77,13 @@ class ActivityModel {
             schedulesId: [],
             sectorsId: [],
           ),
-        /* topics: [
+        topics: [
           TopicModel(
             topicCategories: [],
             topicSectors: [],
             topicNames: [],
           )
-        ], */
+        ],
       );
     }
 
@@ -141,12 +141,12 @@ class ActivityModel {
         'schedulesId': [],
         'sectorsId': [],
       }),
-      /* topics: (data['topics'] as List? ?? [])
+      topics: (data['topics'] as List? ?? [])
         .map(
           (e) => TopicModel.fromMap(
             e as Map<String, dynamic>
           )
-        ).toList(), */
+        ).toList(),
     );
   }
 

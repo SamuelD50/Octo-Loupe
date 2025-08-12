@@ -2,12 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octoloupe/CRUD/user_crud.dart';
-import 'package:octoloupe/model/user_model.dart';
+import 'package:octoloupe/providers/activities_provider.dart';
+import 'package:octoloupe/providers/activity_map_provider.dart';
+import 'package:octoloupe/providers/filter_provider.dart';
+import 'package:octoloupe/providers/navbar_provider.dart';
 import 'package:octoloupe/router/app_router.dart';
-import 'package:octoloupe/router/router_config.dart';
 import 'package:octoloupe/services/auth_service.dart';
 import 'package:octoloupe/services/firebase_messaging_service.dart';
 import 'package:octoloupe/services/local_notifications_services.dart';
+import 'package:provider/provider.dart';
 import 'components/custom_app_bar.dart';
 import 'components/custom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,7 +46,24 @@ void main() async {
   await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
   
   runApp(
-    const MyApp()
+    MultiProvider(
+      providers: [
+        Provider<LocalNotificationsService>.value(
+          value: localNotificationsService,
+        ),
+        Provider<FirebaseMessagingService>.value(
+          value: firebaseMessagingService,
+        ),
+        ChangeNotifierProvider(create: (_) => NavbarProvider()),
+        ChangeNotifierProvider(create: (_) => FilterProvider()),
+        ChangeNotifierProvider(create: (_) => ActivitiesProvider()),
+        ChangeNotifierProvider(create: (_) => ActivityMapProvider()),
+        /* ChangeNotifierProvider<NavbarProvider>(
+          create: (_) => NavbarProvider(),
+        ) */
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -55,7 +75,7 @@ class MyApp extends StatelessWidget {
     BuildContext context
   ) {
     return MaterialApp.router(
-      routerConfig: appRouter,
+      routerConfig: appRouter(context),
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,
       theme: ThemeData(
@@ -88,58 +108,13 @@ class MainPage extends StatelessWidget {
         canPopNotifier.value = canPop;
       }
     });
-    final currentIndex = _getCurrentIndex(context);
+    
     return SafeArea(
       child: Scaffold(
         appBar: const CustomAppBar(),
         body: child,
-        bottomNavigationBar: CustomNavBar(
-          currentIndex: currentIndex,
-          onItemSelected: (index) => _onItemTapped(context, index),
-        ),
+        bottomNavigationBar: CustomNavbar(),
       ),
     );
-  }
-}
-
-int _getCurrentIndex(
-  BuildContext context,
-) {
-  final location = GoRouterState.of(context).uri.toString();
-
-  if (location.startsWith('/home')) return 0;
-  if (location.startsWith('/auth')) return 1;
-  if (location.startsWith('/contact')) return 2;
-
-  return 0;
-}
-
-void _onItemTapped(
-  BuildContext context,
-  int index,
-) async {
-  switch (index) {
-    case 0:
-      context.go('/home');
-      break;
-    case 1:
-      final currentUser = AuthService().getCurrentUser();
-      if (currentUser == null) {
-        context.go('/auth');
-      } else {
-        final user = await UserCRUD().getUser(currentUser.uid);
-        if (!context.mounted) return;
-        if (user == null) {
-          context.go('/auth');
-        } else if (user.role == 'admin') {
-          context.go('/auth/admin');
-        } else if (user.role == 'user') {
-          context.go('/auth/user');
-        }
-      }
-      break;
-    case 2:
-      context.go('/contact');
-      break;
   }
 }

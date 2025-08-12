@@ -9,6 +9,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(60);
+
+  List<PopupMenuItem<int>> _buildPopupItems() => const [
+    PopupMenuItem(
+      value: 0,
+      child: Text(
+        'Mentions légales'
+      ),
+    ),
+    PopupMenuItem(
+      value: 1,
+      child: Text(
+        'CGU'
+      ),
+    ),
+    PopupMenuItem(
+      value: 2,
+      child: Text(
+        'Politique de confidentialité'
+      ),
+    ),
+  ];
   
   @override
   Widget build(BuildContext context) {
@@ -18,40 +39,45 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, canPop, _) {
         return AppBar(
           leading: canPop ?
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_rounded,
-                color: Colors.white,
-                size: 25,
+            Semantics(
+              label: 'Bouton retour',
+              button: true,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_rounded,
+                  color: Colors.white,
+                  size: 25,
+                ),
+                onPressed: () {
+                  GoRouter.of(context).pop();
+                },
+                tooltip: 'Retour',
               ),
-              onPressed: () {
-                GoRouter.of(context).pop();
-              },
-              tooltip: 'Retour',
             ) :
-            Padding(
-              padding: EdgeInsets.only(left: 5),
-            ),
+            const SizedBox.shrink(),
           title: Padding(
             padding: const EdgeInsets.only(right: 55),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/icons/icon_app.webp'),
-                  backgroundColor: const Color(0xFF5B59B4),
-                  radius: 22.5,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  'Octo\'Loupe',
-                  style: TextStyle(
-                    fontFamily: 'GreatVibes',
-                    color: Colors.white,
-                    fontSize: 30,
+            child: Semantics(
+              label: 'Application Octo\'Loupe',
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: AssetImage('assets/icons/icon_app.webp'),
+                    backgroundColor: Color(0xFF5B59B4),
+                    radius: 22.5,
                   ),
-                ),
-              ],
+                  SizedBox(width: 5),
+                  Text(
+                    'Octo\'Loupe',
+                    style: TextStyle(
+                      fontFamily: 'GreatVibes',
+                      color: Colors.white,
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           backgroundColor: const Color(0xFF5B59B4),
@@ -76,26 +102,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     break;
                 }
               },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 0,
-                  child: Text(
-                    'Mentions légales'
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 1,
-                  child: Text(
-                    'CGU'
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 2,
-                  child: Text(
-                    'Politique de confidentialité'
-                  ),
-                ),
-              ],
+              itemBuilder: (_) => _buildPopupItems(),
             ),
           ],
         );
